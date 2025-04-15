@@ -18,7 +18,7 @@ class SPTLeaderboard {
 
         if (!config.fika) {
             RouterService.registerStaticRouter("SPTLBProfileLogin", [{
-                url: "/launcher/profile/login",
+                url: "/client/match/local/end",
                 action: async (url, info, sessionId, output) => {
                     if (!sessionId) return output;
 
@@ -212,7 +212,7 @@ class SPTLeaderboard {
 
     // UTILS
 
-    // Online?
+    // Online? (doesnt work this way)
     isOnline() {
         return navigator.onLine;
     }
