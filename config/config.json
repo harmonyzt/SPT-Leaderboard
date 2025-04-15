@@ -1,3 +1,5 @@
 {
-    "test": true
+    "noConnectionTries": 1,
+    "fika": false,
+    "debug": true
 }

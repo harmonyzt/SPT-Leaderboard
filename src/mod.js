@@ -1,6 +1,7 @@
 "use strict";
 const https = require('https');
 const fs = require('fs');
+const { connect } = require('http2');
 
 class SPTLeaderboard {
     CFG = require("../config/config.json");
@@ -8,9 +9,12 @@ class SPTLeaderboard {
     PHP_PATH = "/hidden/SPTprofileRecorder.php";
 
     preSptLoad(container) {
-        this.logger = container.resolve("WinstonLogger");
+        logger = container.resolve("WinstonLogger");
         this.profileHelper = container.resolve("ProfileHelper");
         const RouterService = container.resolve("StaticRouterModService");
+
+        // Right now we try only once
+        let connectivity = 1;
 
         RouterService.registerStaticRouter("SPTLBProfileLogin", [{
             url: "/launcher/profile/login",
@@ -19,11 +23,14 @@ class SPTLeaderboard {
                 
                 try {
                     const fullProfile = this.profileHelper.getFullProfile(sessionId);
-                    if (this.isProfileValid(fullProfile)) {
+                    if (this.isProfileValid(fullProfile) && this.isOnline() && connectivity == 1) {
                         await this.processAndSendProfile(fullProfile);
+                    } else {
+                        logger.log(`[SPT Leaderboard] Could not establish internet connection. Pausing mod...`, "red");
+                        connectivity = 0
                     }
                 } catch (e) {
-                    this.logger.log(`[SPTLeaderboard] Error: ${e.message}`, "red");
+                    logger.log(`[SPTLeaderboard] Error: ${e.message}`, "red");
                 }
 
                 return output;
@@ -31,15 +38,17 @@ class SPTLeaderboard {
         }], "aki");
     }
 
+    // Calculate stats from profile
     async processAndSendProfile(profile) {
         const profileData = this.processProfile(profile);
-        this.logger.log(`[SPTLeaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
+        logger.log(`[SPT Leaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
         
         try {
             await this.sendProfileData(profileData);
-            this.logger.log("[SPTLeaderboard] Data sent successfully!", "green");
+            
+            logger.log("[SPT Leaderboard] Data sent successfully!", "green");
         } catch (e) {
-            this.logger.log(`[SPTLeaderboard] Send error: ${e.message}`, "red");
+            logger.log(`[SPT Leaderboard] Send error: ${e.message}`, "red");
         }
     }
 
@@ -51,6 +60,7 @@ class SPTLeaderboard {
             return item?.Value || 0;
         };
 
+        // Initial Profile Stats
         const kills = getStatValue(['Kills']);
         const deaths = getStatValue(['Deaths']);
         const totalRaids = getStatValue(['Sessions', 'Pmc']);
@@ -75,6 +85,7 @@ class SPTLeaderboard {
         };
     }
 
+    // Send the data
     async sendProfileData(data) {
         return new Promise((resolve, reject) => {
             const postData = JSON.stringify(data);
@@ -118,14 +129,27 @@ class SPTLeaderboard {
         });
     }
 
+    // UTILS
+
+    // Online?
+    isOnline() {
+        return navigator.onLine;
+    }
+
+    // Let's see if you are ready to enter the battle
     isProfileValid(profile) {
         if (!profile?.characters?.pmc?.Info) {
-            this.logger.log("[SPTLeaderboard] Invalid profile structure", "yellow");
+            logger.log("[SPT Leaderboard] Invalid profile structure", "yellow");
             return false;
         }
         
-        if (profile.characters.pmc.Info.Level <= 1) {
-            this.logger.log("[SPTLeaderboard] Profile level too low (<=1)", "yellow");
+        if (profile.characters.pmc.Info.Level <= 5) {
+            logger.log("[SPT Leaderboard] PMC level too low to enter Leaderboard (<=5)", "yellow");
+            return false;
+        }
+
+        if (getStatValue(['Sessions', 'Pmc']) <= 5) {
+            logger.log("[SPT Leaderboard] Not enough raids to enter Leaderboard (<=5)", "yellow");
             return false;
         }
         
