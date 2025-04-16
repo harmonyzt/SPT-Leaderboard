@@ -172,7 +172,7 @@ class SPTLeaderboard {
                 averageLifeTime: avgLifeTime,
                 accountType: profile.characters.pmc.Info.GameVersion,
                 sptVer: version,
-                fika: config.fika,
+                fika: "false",
                 publicProfile: "true",
                 registrationDate: profile.characters.pmc.Info.RegistrationDate,
                 faction: profile.characters.pmc.Info.Side,
