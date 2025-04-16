@@ -1,102 +1,112 @@
 "use strict";
+const { connect } = require('http2');
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 class SPTLeaderboard {
+    constructor() {
+        this.retriesCount = 0;
+        this.connectivity = 1;
+        this.TOKEN_FILE = path.join(__dirname, 'secret.token');
+        this.uniqueToken = this.loadOrCreateToken();
+    }
+
+    loadOrCreateToken() {
+        try {
+            // If token exists
+            if (fs.existsSync(this.TOKEN_FILE)) {
+                console.log(`[SPT Leaderboard] Your secret token was initialized. Remember to never show it to anyone!`);
+                return fs.readFileSync(this.TOKEN_FILE, 'utf8').trim();
+            } else {
+                // If it doesn't
+                const newToken = crypto.randomBytes(32).toString('hex');
+                fs.writeFileSync(this.TOKEN_FILE, newToken, 'utf8');
+                console.log(`[SPT Leaderboard] Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard!`);
+                return newToken;
+            }
+        } catch (e) {
+            console.error(`[SPT Leaderboard] Error handling token file: ${e.message}`);
+            // Generating token in case
+            return crypto.randomBytes(32).toString('hex');
+        }
+    }
+
     CFG = require("../config/config.json");
     PHP_ENDPOINT = "visuals.nullcore.net";
     PHP_PATH = "/hidden/SPTprofileRecorder.php";
 
     preSptLoad(container) {
         const logger = container.resolve("WinstonLogger");
-        const config = this.CFG;
-
-        this.profileHelper = container.resolve("ProfileHelper");
         const RouterService = container.resolve("StaticRouterModService");
 
-        let retriesCount = 0;
-        let connectivity = 1;
+        // Define SPT version
+        var configServer = container.resolve("ConfigServer");
+        var coreConfig = configServer.getConfig("spt-core");
+        var sptVersion = coreConfig.sptVersion;
 
-        if (!config.fika) {
-            RouterService.registerStaticRouter("SPTLBProfileLogin", [{
-                url: "/client/match/local/end",
-                action: async (url, info, sessionId, output) => {
-                    if (!sessionId) return output;
+        RouterService.registerStaticRouter("SPTLBProfileRaidEnd", [{
+            url: "/client/match/local/end",
+            action: async (url, info, sessionId, output) => {
+                await this.gatherProfileInfo(info, logger, sptVersion);
 
-                    logger.log(`[SPT Leaderboard] Ready to update statistics...`, "cyan");
+                return output;
+            }
+        }], "aki");
 
-                    try {
-                        const fullProfile = this.profileHelper.getFullProfile(sessionId);
-                        if (this.isProfileValid(fullProfile, logger)) {
-                            await this.processAndSendProfile(fullProfile, logger);
-                        } else {
-                            // Time out and retry next raid
-                            if (retriesCount >= config.connectionRetries) {
-                                retriesCount += 1;
-                            } else {
-                                logger.log(`[SPT Leaderboard] Could not establish internet connection with PHP. Mod will be paused until next SPT Server start.`, "red");
-                                connectivity = 0;
+    }
 
-                                return;
-                            }
-                        }
-                    } catch (e) {
-                        logger.log(`[SPT Leaderboard] Error: ${e.message}`, "red");
-                    }
+    async gatherProfileInfo(data, logger, version) {
+        const config = this.CFG;
 
-                    return output;
+        try {
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const fullProfile = jsonData.results.profile;
+
+            if (this.connectivity == 0) return;
+
+            logger.log(`[SPT Leaderboard] Ready to update statistics...`, "cyan");
+
+            if (this.isProfileValid(fullProfile, logger)) {
+                await this.processAndSendProfile(fullProfile, logger, version);
+            } else {
+                // Time out and retry next raid
+                if (this.retriesCount <= config.connectionRetries) {
+                    this.retriesCount += 1;
+                } else {
+                    logger.log(`[SPT Leaderboard] Could not establish internet connection with PHP. Mod will be paused until next SPT Server start.`, "red");
+                    this.connectivity = 0;
+
+                    return;
                 }
-            }], "aki");
-        } else {
-            RouterService.registerStaticRouter("SPTLBProfileLogin", [{
-                url: "/fika/raid/leave",
-                action: async (url, info, sessionId, output) => {
-                    if (!sessionId) return output;
-
-                    try {
-                        const fullProfile = this.profileHelper.getFullProfile(sessionId);
-                        if (this.isProfileValid(fullProfile, logger) && this.isOnline() && connectivity == 1) {
-                            await this.processAndSendProfile(fullProfile, logger);
-                        } else {
-                            // Time out and retry next raid
-                            if (connectionRetries < config.connectionRetries) {
-                                connectivity = 1;
-                            } else {
-                                logger.log(`[SPT Leaderboard] Could not establish internet connection with PHP. Mod will be paused until next SPT Server start.`, "red");
-                                connectivity = 0;
-
-                                return;
-                            }
-                        }
-                    } catch (e) {
-                        logger.log(`[SPT Leaderboard] Error: ${e.message}`, "red");
-                    }
-
-                    return output;
-                }
-            }], "aki");
+            }
+        } catch (e) {
+            logger.log(`[SPT Leaderboard] Error: ${e.message}`, "red");
         }
     }
 
     // Calculate stats from profile
-    async processAndSendProfile(profile, logger) {
-        const profileData = this.processProfile(profile);
+    async processAndSendProfile(profile, logger, version) {
+        const profileData = this.processProfile(profile, version);
+        const config = this.CFG;
 
-        if(config.debug)
+        if (config.debug)
             logger.log(`[SPT Leaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
 
         try {
             await this.sendProfileData(profileData);
 
-            if(config.debug)
+            if (config.debug)
                 logger.log("[SPT Leaderboard] Data sent successfully!", "green");
         } catch (e) {
             logger.log(`[SPT Leaderboard] Send error: ${e.message}`, "red");
         }
     }
 
-    processProfile(profile) {
+    processProfile(profile, version) {
         const getStatValue = (keys) => {
-            const item = profile.characters.pmc.Stats.Eft.OverallCounters.Items?.find(item =>
+            const item = profile.Stats.Eft.OverallCounters.Items?.find(item =>
                 item.Key && keys.every((k, i) => item.Key[i] === k)
             );
             return item?.Value || 0;
@@ -128,16 +138,18 @@ class SPTLeaderboard {
         // If profile is set to public we send more data to PHP so more stats will be avalivable (updates every end of the raid)
         if (!config.publicProfile) {
             return {
-                id: profile.info.id,
-                name: profile.characters.pmc.Info.Nickname,
-                lastPlayed: profile.characters.pmc.Stats.Eft.LastSessionDate,
-                pmcLevel: profile.characters.pmc.Info.Level,
+                token: this.uniqueToken,
+                id: profile._id,
+
+                name: profile.Info.Nickname,
+                lastPlayed: profile.Stats.Eft.LastSessionDate,
+                pmcLevel: profile.Info.Level,
                 totalRaids: totalRaids,
                 survivedToDiedRatio: surviveRate,
                 killToDeathRatio: killToDeathRatio,
                 averageLifeTime: avgLifeTime,
-                accountType: profile.characters.pmc.Info.GameVersion,
-                sptVer: profile.spt.version,
+                accountType: profile.Info.GameVersion,
+                sptVer: version,
                 fika: "false",
                 publicProfile: "false",
                 registrationDate: 0,
@@ -148,7 +160,9 @@ class SPTLeaderboard {
             };
         } else {
             return {
+                token: this.uniqueToken,
                 id: profile.info.id,
+
                 name: profile.characters.pmc.Info.Nickname,
                 lastPlayed: profile.characters.pmc.Stats.Eft.LastSessionDate,
                 pmcLevel: profile.characters.pmc.Info.Level,
@@ -157,7 +171,7 @@ class SPTLeaderboard {
                 killToDeathRatio: killToDeathRatio,
                 averageLifeTime: avgLifeTime,
                 accountType: profile.characters.pmc.Info.GameVersion,
-                sptVer: profile.spt.version,
+                sptVer: version,
                 fika: config.fika,
                 publicProfile: "true",
                 registrationDate: profile.characters.pmc.Info.RegistrationDate,
@@ -222,12 +236,12 @@ class SPTLeaderboard {
 
     // Let's see if you are ready to enter the battle
     isProfileValid(profile, logger) {
-        if (!profile?.characters?.pmc?.Info) {
+        if (!profile?.Info) {
             logger.log("[SPT Leaderboard] Invalid profile structure", "yellow");
             return false;
         }
 
-        if (profile.characters.pmc.Info.Level <= 5) {
+        if (profile.Info.Level <= 4) {
             logger.log("[SPT Leaderboard] PMC level too low to enter Leaderboard (<=5)", "yellow");
             return false;
         }
