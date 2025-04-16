@@ -92,7 +92,7 @@ class SPTLeaderboard {
         const config = this.CFG;
 
         if (config.debug)
-            logger.log(`[SPT Leaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
+            logger.log(`[SPT Leaderboard] Data ready!`, "green");
 
         try {
             await this.sendProfileData(profileData);
