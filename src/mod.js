@@ -48,7 +48,7 @@ class SPTLeaderboard {
             }], "aki");
         } else {
             RouterService.registerStaticRouter("SPTLBProfileLogin", [{
-                url: "/fika/client/disconnect",
+                url: "/fika/raid/leave",
                 action: async (url, info, sessionId, output) => {
                     if (!sessionId) return output;
 
@@ -80,12 +80,15 @@ class SPTLeaderboard {
     // Calculate stats from profile
     async processAndSendProfile(profile, logger) {
         const profileData = this.processProfile(profile);
-        logger.log(`[SPT Leaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
+
+        if(config.debug)
+            logger.log(`[SPT Leaderboard] Data ready: ${JSON.stringify(profileData)}`, "green");
 
         try {
             await this.sendProfileData(profileData);
 
-            logger.log("[SPT Leaderboard] Data sent successfully!", "green");
+            if(config.debug)
+                logger.log("[SPT Leaderboard] Data sent successfully!", "green");
         } catch (e) {
             logger.log(`[SPT Leaderboard] Send error: ${e.message}`, "red");
         }
@@ -224,7 +227,7 @@ class SPTLeaderboard {
             return false;
         }
 
-        if (profile.characters.pmc.Info.Level <= 4) {
+        if (profile.characters.pmc.Info.Level <= 5) {
             logger.log("[SPT Leaderboard] PMC level too low to enter Leaderboard (<=5)", "yellow");
             return false;
         }

@@ -1,6 +1,6 @@
 {
     "connectionRetries": 1,
-    "publicProfile": true,
+    "publicProfile": false,
     "fika": false,
-    "debug": true
+    "debug": false
 }
