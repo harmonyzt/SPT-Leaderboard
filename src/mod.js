@@ -9,6 +9,8 @@ class SPTLeaderboard {
     constructor() {
         this.retriesCount = 0;
         this.connectivity = 1;
+        this.allMods = [];
+        this.key_size = 0;
         this.TOKEN_FILE = path.join(__dirname, 'secret.token');
         this.uniqueToken = this.loadOrCreateToken();
     }
@@ -35,11 +37,16 @@ class SPTLeaderboard {
 
     CFG = require("../config/config.json");
     PHP_ENDPOINT = "visuals.nullcore.net";
-    PHP_PATH = "/hidden/SPTprofileRecorder.php";
+    PHP_PATH = "/hidden/SPT_Profiles_Backend.php";
 
     preSptLoad(container) {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
+
+        // For later - 1.0.3
+        const modPath = path.join(__dirname, 'mod.js');
+        const stats = fs.statSync(modPath);
+        this.key_size = stats.size;
 
         // Define SPT version
         var configServer = container.resolve("ConfigServer");
@@ -54,6 +61,20 @@ class SPTLeaderboard {
                 return output;
             }
         }], "aki");
+
+        //RouterService.registerStaticRouter("SPTLBProfileLogin", [{
+        //    url: "/launcher/profile/info",
+        //    action: async (url, info, sessionId, output) => {
+//
+        //        const jsonData = JSON.parse(output); 
+        //        this.allMods = jsonData.sptData.mods;
+        //        logger.log(this.allMods, "cyan");
+//
+                //await this.gatherProfileInfo(info, logger, sptVersion);
+
+        //        return output;
+        //    }
+        //}], "aki");
 
     }
 
@@ -75,7 +96,7 @@ class SPTLeaderboard {
                 if (this.retriesCount <= config.connectionRetries) {
                     this.retriesCount += 1;
                 } else {
-                    logger.log(`[SPT Leaderboard] Could not establish internet connection with PHP. Mod will be paused until next SPT Server start.`, "red");
+                    logger.error(`[SPT Leaderboard] Could not establish internet connection with PHP or your profile does not match requirements. Pausing mod until next SPT Server start...`, "red");
                     this.connectivity = 0;
 
                     return;
@@ -100,11 +121,11 @@ class SPTLeaderboard {
             if (config.debug)
                 logger.log("[SPT Leaderboard] Data sent successfully!", "green");
         } catch (e) {
-            logger.log(`[SPT Leaderboard] Send error: ${e.message}`, "red");
+            logger.log(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`, "red");
         }
     }
 
-    processProfile(profile, version) {
+    processProfile(profile, versionSPT) {
         const getStatValue = (keys) => {
             const item = profile.Stats.Eft.OverallCounters.Items?.find(item =>
                 item.Key && keys.every((k, i) => item.Key[i] === k)
@@ -115,7 +136,7 @@ class SPTLeaderboard {
         const config = this.CFG;
 
         // Initial Profile Stats (Public, will always be sent)
-        const kills = getStatValue(['Kills']);
+        const kills = getStatValue(['KilledPmc']);
         const deaths = getStatValue(['Deaths']);
         const totalRaids = getStatValue(['Sessions', 'Pmc']);
         const totalLifetime = getStatValue(['LifeTime', 'Pmc']);
@@ -124,7 +145,6 @@ class SPTLeaderboard {
         const avgLifeTime = totalRaids > 0 ? this.formatTime((totalLifetime / 60) / totalRaids) : "00:00";
 
         // If profile is public we send more profile data
-        // this is a FLOAT without floating point
         const damage = getStatValue(['CauseBodyDamage']);
         const curWinStreak = getStatValue(['CurrentWinStreak'], ['Pmc']);
         const longestShot = getStatValue(['LongestShot']);
@@ -149,7 +169,7 @@ class SPTLeaderboard {
                 killToDeathRatio: killToDeathRatio,
                 averageLifeTime: avgLifeTime,
                 accountType: profile.Info.GameVersion,
-                sptVer: version,
+                sptVer: versionSPT,
                 fika: "false",
                 publicProfile: "false",
                 registrationDate: 0,
@@ -161,7 +181,7 @@ class SPTLeaderboard {
         } else {
             return {
                 token: this.uniqueToken,
-                id: profile.info.id,
+                id: profile.info._id,
 
                 name: profile.characters.pmc.Info.Nickname,
                 lastPlayed: profile.characters.pmc.Stats.Eft.LastSessionDate,
@@ -171,7 +191,7 @@ class SPTLeaderboard {
                 killToDeathRatio: killToDeathRatio,
                 averageLifeTime: avgLifeTime,
                 accountType: profile.characters.pmc.Info.GameVersion,
-                sptVer: version,
+                sptVer: versionSPT,
                 fika: "false",
                 publicProfile: "true",
                 registrationDate: profile.characters.pmc.Info.RegistrationDate,
@@ -228,16 +248,11 @@ class SPTLeaderboard {
     }
 
     // UTILS
-
-    // Online? (doesnt work this way)
-    isOnline() {
-        return navigator.onLine;
-    }
-
+    
     // Let's see if you are ready to enter the battle
     isProfileValid(profile, logger) {
         if (!profile?.Info) {
-            logger.log("[SPT Leaderboard] Invalid profile structure", "yellow");
+            logger.log("[SPT Leaderboard] Invalid profile structure.", "yellow");
             return false;
         }
 

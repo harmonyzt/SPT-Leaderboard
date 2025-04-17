@@ -1,5 +1,5 @@
 {
-    "connectionRetries": 1,
     "publicProfile": false,
+    "connectionRetries": 1,
     "debug": false
 }
