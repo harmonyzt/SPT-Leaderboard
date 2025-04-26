@@ -98,9 +98,18 @@ class SPTLeaderboard {
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
 
-                const staticProfile = profileHelper.getFullProfile(sessionId);
-
                 await gatherProfileInfo(info, logger, sptVersion);
+
+                return output;
+            }
+        }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBProfileLogin", [{
+            url: "/launcher/profile/login",
+            action: async (url, info, sessionId, output) => {
+                if (!sessionId) return;
+
+                const staticProfile = profileHelper.getFullProfile(sessionId);
 
                 return output;
             }
@@ -166,15 +175,16 @@ class SPTLeaderboard {
             };
 
             const config = this.CFG;
+            const isScavRaid = profile.Info.Side === "Savage";
 
             // If this was a SCAV raid, handle differently
-            if(profile.Info.Side === "Savage") {
+            if (isScavRaid && config.public_profile) {
                 // We want to keep actual player name so it can't be changed by accident to SCAVs name
-                const pmcProfileName = profile.Info.MainProfileNickname;
+                const profileName = profile.Info.MainProfileNickname;
                 const scavLevel = profile.Info.Level;
             } else {
-                const pmcProfileName = staticProfile.Info.id;
-                const pmcProfileLevel = staticProfile.characters.pmc.Level;
+                const profileName = staticProfile.Info.id;
+                const pmcLevel = staticProfile.characters.pmc.Level;
             }
 
             // Initial Profile Stats that are always used
@@ -192,94 +202,48 @@ class SPTLeaderboard {
             const totalLongestShot = parseInt(modLongestShot.slice(0, -2), 10);
             const totalDamage = parseInt(modDamage.slice(0, -2), 10);
 
-            // If profile is set to public we send more data to PHP so more stats will be avalivable (updates every end of the raid)
-            if (config.public_profile) {
-                if(profile.Info.Side === "Savage"){
-                    return {
-                        // Never changed by the Side
-                        token: this.uniqueToken,
-                        id: staticProfile.Info.id,
-                        modINT: this.key_size,
-                        mods: modData,
-                        
-                        name: pmcProfileName,
-                        lastPlayed: profile.Stats.Eft.LastSessionDate,
-                        accountType: profile.Info.GameVersion,
-                        sptVer: versionSPT,
-                        disqualified: false,
-                        raidEndResult: raidEndResult,
-                        kills: kills,
-    
-                        // Public Profile Only
-                        publicProfile: true,
-                        profilePfp: config.profile_profilePicture,
-                        profileAbout: config.profile_aboutMe,
-                        registrationDate: profile.Info.RegistrationDate,
-                        faction: staticProfile.characters.pmc.Info.Side,
-                        damage: totalDamage,
-                        currentWinstreak: curWinStreak,
-                        longestShot: totalLongestShot,
+            // Barebones of data
+            const baseData = {
+                token: this.uniqueToken,
+                id: staticProfile.Info.id,
+                modINT: this.key_size,
+                mods: modData,
+                name: profileName,
+                raidKills: kills,
+                disqualified: false,
+                sptVer: versionSPT,
+                raidResult: raidEndResult,
+                raidTime: playTime
+            }
 
-                        // For SCAV
-                        scavLevel: profile.Info.Level,
-                        scavRaids: 1
-                    };
-                } else {
-                    return {
-                        // Never changed by the Side
-                        token: this.uniqueToken,
-                        id: staticProfile.Info.id,
-                        modINT: this.key_size,
-                        mods: modData,
-
-                        name: profileName,
-                        lastPlayed: profile.Stats.Eft.LastSessionDate,
-                        pmcLevel: profile.Info.Level,
-                        totalRaids: totalRaids,
-                        survivedToDiedRatio: surviveRate,
-                        killToDeathRatio: killToDeathRatio,
-                        averageLifeTime: avgLifeTime,
-                        accountType: profile.Info.GameVersion,
-                        sptVer: versionSPT,
-                        disqualified: false,
-    
-                        // Public Profile Only
-                        publicProfile: true,
-                        profilePfp: config.profile_profilePicture,
-                        profileAbout: config.profile_aboutMe,
-                        registrationDate: profile.Info.RegistrationDate,
-                        faction: profile.Info.Side,
-                        damage: totalDamage,
-                        currentWinstreak: curWinStreak,
-                        longestShot: totalLongestShot,
-                    };
+            // Public SCAV raid (can't be otherwise)
+            if (config.public_profile && isScavRaid) {
+                return {
+                    ...baseData,
+                    publicProfile: true,
+                    raidDamage: totalDamage,
+                    longestShot: totalLongestShot,
+                    playedAs: "SCAV",
+                    pmcLevel: pmcLevel,
+                    scavLevel: scavLevel,
+                    winRaidStreak: curWinStreak
                 }
+            // PMC Raid with public profile on
+            } else if(config.public_profile && !isScavRaid) {
+                return {
+                    ...baseData,
+                    raidDamage: totalDamage,
+                    longestShot: totalLongestShot,
+                    playedAs: profile.Info.Side,
+                    pmcLevel: pmcLevel,
+                    scavLevel: scavLevel,
+                    winRaidStreak: curWinStreak
+                }
+            // Private profile raid
             } else {
                 return {
-                    token: this.uniqueToken,
-                    id: staticProfile.Info.id,
-                    modINT: this.key_size,
-                    fullSPTProfile: fullProfile,
-                    mods: modData,
-
-                    name: profileName,
-                    lastPlayed: profile.Stats.Eft.LastSessionDate,
-                    pmcLevel: profile.Info.Level,
-                    totalRaids: totalRaids,
-                    survivedToDiedRatio: surviveRate,
-                    killToDeathRatio: killToDeathRatio,
-                    averageLifeTime: avgLifeTime,
-                    accountType: profile.Info.GameVersion,
-                    sptVer: versionSPT,
-                    disqualified: false,
-
-                    publicProfile: true,
-                    registrationDate: profile.Info.RegistrationDate,
-                    faction: profile.Info.Side,
-                    damage: totalDamage,
-                    currentWinstreak: curWinStreak,
-                    longestShot: totalLongestShot,
-                };
+                    ...baseData
+                }
             }
         }
 
@@ -321,12 +285,6 @@ class SPTLeaderboard {
             }
 
             return true;
-        }
-
-        const formatTime = (minutes) => {
-            const mins = Math.floor(minutes);
-            const secs = Math.floor((minutes - mins) * 60);
-            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
     }
 }
