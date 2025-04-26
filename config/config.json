@@ -1,9 +1,0 @@
-{
-    "NA": "If you want to share more Profile SPT stats with anyone on leaderboard - set to true",
-    "publicProfile": false,
-
-    "NB": "Maximum raids to retry to connect to the leaderboard before pausing the mod",
-    "connectionRetries": 1,
-
-    "debug": false
-}

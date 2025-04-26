@@ -1,0 +1,364 @@
+{
+	"info": {
+		"id": "6802f7b70000c26033bf4c0f",
+		"scavId": "6802f7b70005e0153a06cdfe",
+		"aid": 1094060,
+		"username": "prestigeTest",
+		"password": "",
+		"wipe": false,
+		"edition": "SPT Developer"
+	},
+	"characters": {
+		"pmc": {
+			"Achievements": {
+				"664f1f8768508d74604bf556": 1745025058,
+				"676091c0f457869a94017a23": 1745025094
+			},
+			"Prestige": {
+				"672df12f97f0469cea52f55e": 1745025094
+			},
+			"TaskConditionCounters": {},
+			"Bonuses": [
+				{
+					"id": "64f5b9e5fa34f11b380756c0",
+					"templateId": "566abbc34bdc2d92178b4576",
+					"type": "StashSize"
+				},
+				{
+					"id": "64f5b9e5fa34f11b380756c2",
+					"templateId": "5811ce572459770cba1a34ea",
+					"type": "StashSize"
+				},
+				{
+					"id": "64f5b9e5fa34f11b380756c4",
+					"templateId": "5811ce662459770f6f490f32",
+					"type": "StashSize"
+				},
+				{
+					"id": "64f5b9e5fa34f11b380756c6",
+					"templateId": "5811ce772459770e9e5f9532",
+					"type": "StashSize"
+				}
+			],
+			"Customization": {
+				"Body": "5cc0858d14c02e000c6bea66",
+				"Feet": "5cc085bb14c02e000e67a5c5",
+				"Hands": "5cc0876314c02e000c6bea6b",
+				"Head": "5cc084dd14c02e000b0550a3",
+				"DogTag": "674dbf593bee1152d407f005"
+			},
+			"Health": {
+				"BodyParts": {
+					"Chest": {
+						"Health": {
+							"Current": 85,
+							"Maximum": 85
+						}
+					},
+					"Head": {
+						"Health": {
+							"Current": 35,
+							"Maximum": 35
+						}
+					},
+					"LeftArm": {
+						"Health": {
+							"Current": 60,
+							"Maximum": 60
+						}
+					},
+					"LeftLeg": {
+						"Health": {
+							"Current": 65,
+							"Maximum": 65
+						}
+					},
+					"RightArm": {
+						"Health": {
+							"Current": 60,
+							"Maximum": 60
+						}
+					},
+					"RightLeg": {
+						"Health": {
+							"Current": 65,
+							"Maximum": 65
+						}
+					},
+					"Stomach": {
+						"Health": {
+							"Current": 70,
+							"Maximum": 70
+						}
+					}
+				},
+				"Energy": {
+					"Current": 100,
+					"Maximum": 100
+				},
+				"Hydration": {
+					"Current": 100,
+					"Maximum": 100
+				},
+				"Temperature": {
+					"Current": 36.6,
+					"Maximum": 40
+				},
+				"UpdateTime": 1745025094
+			},
+			"Info": {
+				"AccountType": 0,
+				"BannedState": false,
+				"BannedUntil": 0,
+				"Bans": [],
+				"Experience": 19926895,
+				"GameVersion": "edge_of_darkness",
+				"IsStreamerModeAvailable": true,
+				"LastTimePlayedAsSavage": 0,
+				"Level": 69,
+				"LowerNickname": "prestigetest",
+				"MemberCategory": 2,
+				"PrestigeLevel": 1,
+				"isMigratedSkills": false,
+				"SelectedMemberCategory": 2,
+				"NeedWipeOptions": [],
+				"Nickname": "prestigeTest",
+				"NicknameChangeDate": 0,
+				"RegistrationDate": 1745025094,
+				"SavageLockTime": 0,
+				"Settings": {
+					"BotDifficulty": "easy",
+					"Experience": -1,
+					"Role": "assault"
+				},
+				"Side": "Bear",
+				"SquadInviteRestriction": false,
+				"HasCoopExtension": false,
+				"HasPveGame": true,
+				"Voice": "Bear_2_Eng",
+				"lockedMoveCommands": true
+			},
+			"InsuredItems": [],
+			"Notes": {
+				"Notes": []
+			},
+			"RagfairInfo": {
+				"isRatingGrowing": true,
+				"offers": [],
+				"rating": 0.2
+			},
+			"Stats": {
+				"Eft": {
+					"CarriedQuestItems": [],
+					"DamageHistory": {
+						"LethalDamagePart": "Head",
+						"BodyParts": []
+					},
+					"DroppedItems": [],
+					"ExperienceBonusMult": 0,
+					"FoundInRaidItems": [],
+					"LastSessionDate": 0,
+					"OverallCounters": {
+						"Items": []
+					},
+					"SessionCounters": {
+						"Items": []
+					},
+					"SessionExperienceMult": 0,
+					"SurvivorClass": "Unknown",
+					"TotalInGameTime": 0,
+					"TotalSessionExperience": 0,
+					"Victims": []
+				}
+			},
+			"TradersInfo": {
+				"656f0f98d80a697f855d34b1": {
+					"disabled": false,
+					"loyaltyLevel": 1,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745032121,
+					"unlocked": false
+				},
+				"5c0647fdd443bc2504c2d371": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745027706,
+					"unlocked": true
+				},
+				"6617beeaa9cfa777ca915b7c": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745028900,
+					"unlocked": false
+				},
+				"54cb50c76803fa8b248b4571": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745035998,
+					"unlocked": true
+				},
+				"54cb57776803fa99248b456e": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745030946,
+					"unlocked": true
+				},
+				"579dc571d53a0658a154fbec": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1631484143,
+					"unlocked": true
+				},
+				"58330581ace78e27b8b10cee": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745031422,
+					"unlocked": true
+				},
+				"5a7c2eca46aef81a7ca2145d": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745038140,
+					"unlocked": true
+				},
+				"5935c25fb3acc3127c3d8cd9": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745036370,
+					"unlocked": true
+				},
+				"5ac3b934156ae10c4430e83c": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1745036799,
+					"unlocked": true
+				},
+				"638f541a29ffd1183d187f57": {
+					"disabled": false,
+					"loyaltyLevel": 4,
+					"salesSum": 2600000,
+					"standing": 6,
+					"nextResupply": 1672241513,
+					"unlocked": true
+				}
+			},
+			"moneyTransferLimitData": {
+				"nextResetTime": 1717865474,
+				"remainingLimit": 1000000,
+				"totalLimit": 1000000,
+				"resetInterval": 86400
+			},
+			"WishList": [],
+			"karmaValue": 0.2,
+			"_id": "6802f7b70000c26033bf4c0f",
+			"aid": 1094060,
+			"savage": "6802f7b70005e0153a06cdfe",
+			"sessionId": "6802f7b70000c26033bf4c0f",
+			"CarExtractCounts": {},
+			"CoopExtractCounts": {}
+		}
+	},
+	"spt": {
+		"version": "3.11.3 (35392)",
+		"freeRepeatableRefreshUsedCount": {
+			"daily": 0,
+			"weekly": 0,
+			"daily_savage": 0
+		},
+		"extraRepeatableQuests": {},
+		"migrations": {},
+		"cultistRewards": {},
+		"mods": [],
+		"receivedGifts": []
+	},
+	"inraid": {},
+	"insurance": [],
+	"traderPurchases": {},
+	"friends": [],
+	"customisationUnlocks": [
+		{
+			"id": "6746fd09bafff85008048838",
+			"source": "default",
+			"type": "dogTag"
+		},
+		{
+			"id": "67471938bafff850080488b7",
+			"source": "default",
+			"type": "dogTag"
+		},
+		{
+			"id": "67585108def253bd97084552",
+			"source": "default",
+			"type": "environment"
+		},
+		{
+			"id": "5cd946231388ce000d572fe3",
+			"source": "unlockedInGame",
+			"type": "suite"
+		},
+		{
+			"id": "5cd945d71388ce000a659dfb",
+			"source": "unlockedInGame",
+			"type": "suite"
+		},
+		{
+			"id": "666841a02537107dc508b704",
+			"source": "unlockedInGame",
+			"type": "suite"
+		},
+		{
+			"id": "675466825b7ebafefd0ebc2c",
+			"source": "prestige",
+			"type": "floor"
+		},
+		{
+			"id": "675198f2a34a61ba7f053e4d",
+			"source": "prestige",
+			"type": "gesture"
+		},
+		{
+			"id": "67519925ba5968fd800a01e4",
+			"source": "prestige",
+			"type": "gesture"
+		},
+		{
+			"id": "6751990a490b32072c06f1b3",
+			"source": "prestige",
+			"type": "gesture"
+		},
+		{
+			"id": "674dbf593bee1152d407f005",
+			"source": "prestige",
+			"type": "dogTag"
+		},
+		{
+			"id": "67604ac650dfa9253901a548",
+			"source": "prestige",
+			"type": "mannequinPose"
+		}
+	],
+	"userbuilds": {
+		"equipmentBuilds": [],
+		"weaponBuilds": [],
+		"magazineBuilds": []
+	}
+}

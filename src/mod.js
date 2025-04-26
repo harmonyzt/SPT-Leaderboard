@@ -13,9 +13,10 @@ class SPTLeaderboard {
         this.key_size = 0;
         this.TOKEN_FILE = path.join(__dirname, 'secret.token');
         this.uniqueToken = this.loadOrCreateToken();
-        this.CFG = require("../config/config.json");
+        this.CFG = require("../config/config");
         this.PHP_ENDPOINT = "visuals.nullcore.net";
         this.PHP_PATH = "/hidden/SPT_Profiles_Backend.php";
+        this.raidResult = "Died";
     }
 
     loadOrCreateToken() {
@@ -33,7 +34,7 @@ class SPTLeaderboard {
             }
         } catch (e) {
             console.error(`[SPT Leaderboard] Error handling token file: ${e.message}`);
-            // Generating token in case
+            // Generating new token in case
             return crypto.randomBytes(32).toString('hex');
         }
     }
@@ -41,6 +42,8 @@ class SPTLeaderboard {
     preSptLoad(container) {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
+
+        const profileHelper = container.resolve("ProfileHelper");
 
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
@@ -51,18 +54,16 @@ class SPTLeaderboard {
 
         const modPath = path.join(__dirname, 'mod.js');
         const packagePath = path.join(__dirname, '../package.json');
-
-        const modHash = calculateFileHash(modPath);
-        const packageHash = calculateFileHash(packagePath);
-
-        this.key_size = modHash + packageHash;
-
         const modBasePath = path.resolve(__dirname, '..', '..');
         const sptRoot = path.resolve(modBasePath, '..', '..');
-
         const userModsPath = path.join(sptRoot, 'user', 'mods');
         const bepinexPluginsPath = path.join(sptRoot, 'BepInEx', 'plugins');
 
+        const modHash = calculateFileHash(modPath);
+        const packageHash = calculateFileHash(packagePath);
+        this.key_size = modHash + packageHash;
+
+        // Mod data
         function getDirectories(dirPath) {
             if (!fs.existsSync(dirPath)) return [];
             return fs.readdirSync(dirPath, { withFileTypes: true })
@@ -96,6 +97,9 @@ class SPTLeaderboard {
         RouterService.registerStaticRouter("SPTLBProfileRaidEnd", [{
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
+
+                const staticProfile = profileHelper.getFullProfile(sessionId);
+
                 await gatherProfileInfo(info, logger, sptVersion);
 
                 return output;
@@ -105,13 +109,17 @@ class SPTLeaderboard {
         const gatherProfileInfo = async (data, logger, version) => {
             const config = this.CFG;
 
-            try {
-                const jsonData = JSON.parse(JSON.stringify(data));
-                const fullProfile = jsonData.results.profile;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const fullProfile = jsonData.results.profile;
 
+            // Get the result of a raid (Died/Survived/Runner)
+            raidResult = jsonData.results.result;
+            playTime = jsonData.results.playTime;
+
+            try {
                 if (this.connectivity == 0) return;
 
-                logger.log(`[SPT Leaderboard] Ready to update statistics...`, "cyan");
+                logger.log(`[SPT Leaderboard] Getting ready to send statistics...`, "cyan");
 
                 if (isProfileValid(fullProfile, logger)) {
                     await processAndSendProfile(fullProfile, logger, version);
@@ -137,7 +145,7 @@ class SPTLeaderboard {
             const config = this.CFG;
 
             if (config.debug)
-                logger.log(`[SPT Leaderboard] Data ready!`, "green");
+                logger.log(`[SPT Leaderboard] Data ready! ${profileData}`, "green");
 
             try {
                 await sendProfileData(profileData);
@@ -151,7 +159,7 @@ class SPTLeaderboard {
 
         const processProfile = async (profile, versionSPT) => {
             const getStatValue = (keys) => {
-                const item = profile.Stats.Eft.OverallCounters.Items?.find(item =>
+                const item = profile.Stats.Eft.SessionCounters.Items?.find(item =>
                     item.Key && keys.every((k, i) => item.Key[i] === k)
                 );
                 return item?.Value || 0;
@@ -159,14 +167,20 @@ class SPTLeaderboard {
 
             const config = this.CFG;
 
-            // Initial Profile Stats (Public, will always be sent)
+            // If this was a SCAV raid, handle differently
+            if(profile.Info.Side === "Savage") {
+                // We want to keep actual player name so it can't be changed by accident to SCAVs name
+                const pmcProfileName = profile.Info.MainProfileNickname;
+                const scavLevel = profile.Info.Level;
+            } else {
+                const pmcProfileName = staticProfile.Info.id;
+                const pmcProfileLevel = staticProfile.characters.pmc.Level;
+            }
+
+            // Initial Profile Stats that are always used
             const kills = getStatValue(['KilledPmc']);
-            const deaths = getStatValue(['Deaths']);
-            const totalRaids = getStatValue(['Sessions', 'Pmc']);
-            const totalLifetime = getStatValue(['LifeTime', 'Pmc']);
-            const surviveRate = totalRaids > 0 ? ((totalRaids - deaths) / totalRaids * 100).toFixed(2) : 0;
-            const killToDeathRatio = deaths !== 0 ? (kills / deaths).toFixed(2) : kills.toFixed(2);
-            const avgLifeTime = totalRaids > 0 ? formatTime((totalLifetime / 60) / totalRaids) : "00:00";
+            // This determines deaths, too
+            const raidEndResult = raidResult;
 
             // If profile is public we send more profile data
             const damage = getStatValue(['CauseBodyDamage']);
@@ -175,43 +189,80 @@ class SPTLeaderboard {
             // Perform this abomination to get damage without FLOATING GHOST NUMBERS (thanks BSG)
             const modDamage = damage.toString();
             const modLongestShot = longestShot.toString();
-
             const totalLongestShot = parseInt(modLongestShot.slice(0, -2), 10);
             const totalDamage = parseInt(modDamage.slice(0, -2), 10);
 
             // If profile is set to public we send more data to PHP so more stats will be avalivable (updates every end of the raid)
-            if (!config.publicProfile) {
-                return {
-                    // ALWAYS sent.
-                    token: this.uniqueToken,
-                    id: profile._id,
-                    modINT: this.key_size,
+            if (config.public_profile) {
+                if(profile.Info.Side === "Savage"){
+                    return {
+                        // Never changed by the Side
+                        token: this.uniqueToken,
+                        id: staticProfile.Info.id,
+                        modINT: this.key_size,
+                        mods: modData,
+                        
+                        name: pmcProfileName,
+                        lastPlayed: profile.Stats.Eft.LastSessionDate,
+                        accountType: profile.Info.GameVersion,
+                        sptVer: versionSPT,
+                        disqualified: false,
+                        raidEndResult: raidEndResult,
+                        kills: kills,
+    
+                        // Public Profile Only
+                        publicProfile: true,
+                        profilePfp: config.profile_profilePicture,
+                        profileAbout: config.profile_aboutMe,
+                        registrationDate: profile.Info.RegistrationDate,
+                        faction: staticProfile.characters.pmc.Info.Side,
+                        damage: totalDamage,
+                        currentWinstreak: curWinStreak,
+                        longestShot: totalLongestShot,
 
-                    name: profile.Info.Nickname,
-                    lastPlayed: profile.Stats.Eft.LastSessionDate,
-                    pmcLevel: profile.Info.Level,
-                    totalRaids: totalRaids,
-                    survivedToDiedRatio: surviveRate,
-                    killToDeathRatio: killToDeathRatio,
-                    averageLifeTime: avgLifeTime,
-                    accountType: profile.Info.GameVersion,
-                    sptVer: versionSPT,
-                    fika: "false",
-                    publicProfile: "false",
-                    disqualified: "false",
-                    registrationDate: 0,
-                    faction: 0,
-                    damage: 0,
-                    currentWinstreak: 0,
-                    longestShot: 0
-                };
+                        // For SCAV
+                        scavLevel: profile.Info.Level,
+                        scavRaids: 1
+                    };
+                } else {
+                    return {
+                        // Never changed by the Side
+                        token: this.uniqueToken,
+                        id: staticProfile.Info.id,
+                        modINT: this.key_size,
+                        mods: modData,
+
+                        name: profileName,
+                        lastPlayed: profile.Stats.Eft.LastSessionDate,
+                        pmcLevel: profile.Info.Level,
+                        totalRaids: totalRaids,
+                        survivedToDiedRatio: surviveRate,
+                        killToDeathRatio: killToDeathRatio,
+                        averageLifeTime: avgLifeTime,
+                        accountType: profile.Info.GameVersion,
+                        sptVer: versionSPT,
+                        disqualified: false,
+    
+                        // Public Profile Only
+                        publicProfile: true,
+                        profilePfp: config.profile_profilePicture,
+                        profileAbout: config.profile_aboutMe,
+                        registrationDate: profile.Info.RegistrationDate,
+                        faction: profile.Info.Side,
+                        damage: totalDamage,
+                        currentWinstreak: curWinStreak,
+                        longestShot: totalLongestShot,
+                    };
+                }
             } else {
                 return {
                     token: this.uniqueToken,
-                    id: profile._id,
+                    id: staticProfile.Info.id,
                     modINT: this.key_size,
+                    fullSPTProfile: fullProfile,
+                    mods: modData,
 
-                    name: profile.Info.Nickname,
+                    name: profileName,
                     lastPlayed: profile.Stats.Eft.LastSessionDate,
                     pmcLevel: profile.Info.Level,
                     totalRaids: totalRaids,
@@ -220,14 +271,14 @@ class SPTLeaderboard {
                     averageLifeTime: avgLifeTime,
                     accountType: profile.Info.GameVersion,
                     sptVer: versionSPT,
-                    fika: "false",
-                    publicProfile: "true",
-                    disqualified: "false",
+                    disqualified: false,
+
+                    publicProfile: true,
                     registrationDate: profile.Info.RegistrationDate,
                     faction: profile.Info.Side,
                     damage: totalDamage,
                     currentWinstreak: curWinStreak,
-                    longestShot: totalLongestShot
+                    longestShot: totalLongestShot,
                 };
             }
         }
@@ -263,23 +314,11 @@ class SPTLeaderboard {
         }
 
         // UTILS
-
-        // Let's see if you are ready to enter the battle
         const isProfileValid = (profile, logger) => {
             if (!profile?.Info) {
                 logger.log("[SPT Leaderboard] Invalid profile structure.", "yellow");
                 return false;
             }
-
-            if (profile.Info.Level <= 4) {
-                logger.log("[SPT Leaderboard] PMC level too low to enter Leaderboard (<=5)", "yellow");
-                return false;
-            }
-
-            //if (getStatValue(['Sessions', 'Pmc']) <= 5) {
-            //    logger.log("[SPT Leaderboard] Not enough raids to enter Leaderboard (<=5)", "yellow");
-            //    return false;
-            //}
 
             return true;
         }
