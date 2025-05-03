@@ -44,9 +44,22 @@ class SPTLeaderboard {
     preSptLoad(container) {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
-
         const profileHelper = container.resolve("ProfileHelper");
 
+        logger.log(" ", "cyan");
+        logger.log("=============================================", "cyan");
+        logger.log("__/\\\\\\______________/\\\\\\\\\\\\\\\\\\\\__        ", "cyan");
+        logger.log(" _\\/\\\\\\_____________\\/\\\\\\///////\\\\\\__       ", "cyan");
+        logger.log("  _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__      ", "cyan");
+        logger.log("   _\\/\\\\\\_____________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\__     ", "cyan");
+        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       TEST BUILD v1.0.95", "cyan");
+        logger.log("     _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__   ", "cyan");
+        logger.log("      _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__  ", "cyan");
+        logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
+        logger.log("        _\\///////////////__\\/////////////_", "cyan");
+        logger.log("=============================================", "cyan");
+        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!", "yellow");
+        logger.log(" ", "cyan");
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
             const hashSum = crypto.createHash('sha256');
@@ -149,7 +162,7 @@ class SPTLeaderboard {
             const config = this.CFG;
 
             if (config.debug)
-                logger.log(`[SPT Leaderboard] Data ready! ${profileData}`, "green");
+                logger.log(`[SPT Leaderboard] Data ready!`, "green");
 
             try {
                 await sendProfileData(profileData);
