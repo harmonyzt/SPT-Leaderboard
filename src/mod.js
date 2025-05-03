@@ -17,6 +17,8 @@ class SPTLeaderboard {
         this.PHP_ENDPOINT = "visuals.nullcore.net";
         this.PHP_PATH = "/hidden/SPT_Profiles_Backend.php";
         this.raidResult = "Died";
+        this.playTime = 0;
+        this.staticProfile;
     }
 
     loadOrCreateToken() {
@@ -98,18 +100,9 @@ class SPTLeaderboard {
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
 
+                this.staticProfile = profileHelper.getFullProfile(sessionId);
+
                 await gatherProfileInfo(info, logger, sptVersion);
-
-                return output;
-            }
-        }], "aki");
-
-        RouterService.registerStaticRouter("SPTLBProfileLogin", [{
-            url: "/launcher/profile/login",
-            action: async (url, info, sessionId, output) => {
-                if (!sessionId) return;
-
-                const staticProfile = profileHelper.getFullProfile(sessionId);
 
                 return output;
             }
@@ -121,9 +114,11 @@ class SPTLeaderboard {
             const jsonData = JSON.parse(JSON.stringify(data));
             const fullProfile = jsonData.results.profile;
 
+            logger.log(jsonData, "yellow");
+
             // Get the result of a raid (Died/Survived/Runner)
-            raidResult = jsonData.results.result;
-            playTime = jsonData.results.playTime;
+            this.raidResult = jsonData.results.result;
+            this.playTime = jsonData.results.playTime;
 
             try {
                 if (this.connectivity == 0) return;
@@ -177,24 +172,29 @@ class SPTLeaderboard {
             const config = this.CFG;
             const isScavRaid = profile.Info.Side === "Savage";
 
+            // Keep names and such separate
+            let scavLevel = 0;
+            let pmcLevel = 0;
+            let profileName = "DefaultName";
+
             // If this was a SCAV raid, handle differently
             if (isScavRaid && config.public_profile) {
                 // We want to keep actual player name so it can't be changed by accident to SCAVs name
-                const profileName = profile.Info.MainProfileNickname;
-                const scavLevel = profile.Info.Level;
+                profileName = profile.Info.MainProfileNickname;
+                scavLevel = profile.Info.Level;
             } else {
-                const profileName = staticProfile.Info.id;
-                const pmcLevel = staticProfile.characters.pmc.Level;
+                profileName = this.staticProfile.characters.pmc.Info.Nickname;
+                pmcLevel = this.staticProfile.characters.pmc.Info.Level;
             }
 
             // Initial Profile Stats that are always used
             const kills = getStatValue(['KilledPmc']);
             // This determines deaths, too
-            const raidEndResult = raidResult;
+            const raidEndResult = this.raidResult;
 
             // If profile is public we send more profile data
             const damage = getStatValue(['CauseBodyDamage']);
-            const curWinStreak = getStatValue(['CurrentWinStreak'], ['Pmc']);
+            const curWinStreak = getStatValue(['CurrentWinStreak', 'Pmc']);
             const longestShot = getStatValue(['LongestShot']);
             // Perform this abomination to get damage without FLOATING GHOST NUMBERS (thanks BSG)
             const modDamage = damage.toString();
@@ -205,7 +205,7 @@ class SPTLeaderboard {
             // Barebones of data
             const baseData = {
                 token: this.uniqueToken,
-                id: staticProfile.Info.id,
+                id: this.staticProfile.info.id,
                 modINT: this.key_size,
                 mods: modData,
                 name: profileName,
@@ -213,7 +213,10 @@ class SPTLeaderboard {
                 disqualified: false,
                 sptVer: versionSPT,
                 raidResult: raidEndResult,
-                raidTime: playTime
+                raidTime: this.playTime,
+                lastPlayed: profile.Stats.Eft.LastSessionDate,
+                isScav: isScavRaid,
+                accountType: profile.Info.GameVersion
             }
 
             // Public SCAV raid (can't be otherwise)
@@ -225,23 +228,35 @@ class SPTLeaderboard {
                     longestShot: totalLongestShot,
                     playedAs: "SCAV",
                     pmcLevel: pmcLevel,
+                    pmcSide: this.staticProfile.characters.pmc.Info.Side,
                     scavLevel: scavLevel,
-                    winRaidStreak: curWinStreak
+                    winRaidStreak: curWinStreak,
+                    profileAboutMe: config.profile_aboutMe,
+                    profilePicture: config.profile_profilePicture,
+                    registrationDate: profile.Info.RegistrationDate,
+                    lastRaidMap: profile.Info.EntryPoint
                 }
-            // PMC Raid with public profile on
-            } else if(config.public_profile && !isScavRaid) {
+                // PMC Raid with public profile on
+            } else if (config.public_profile && !isScavRaid) {
                 return {
                     ...baseData,
+                    publicProfile: true,
                     raidDamage: totalDamage,
                     longestShot: totalLongestShot,
-                    playedAs: profile.Info.Side,
+                    playedAs: "PMC",
                     pmcLevel: pmcLevel,
+                    pmcSide: this.staticProfile.characters.pmc.Info.Side,
                     scavLevel: scavLevel,
-                    winRaidStreak: curWinStreak
+                    winRaidStreak: curWinStreak,
+                    profileAboutMe: config.profile_aboutMe,
+                    profilePicture: config.profile_profilePicture,
+                    registrationDate: profile.Info.RegistrationDate,
+                    lastRaidMap: profile.Info.EntryPoint
                 }
-            // Private profile raid
+                // Private profile raid
             } else {
                 return {
+                    publicProfile: false,
                     ...baseData
                 }
             }
