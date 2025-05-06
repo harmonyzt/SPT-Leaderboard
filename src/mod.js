@@ -62,7 +62,7 @@ class SPTLeaderboard {
         logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
         logger.log("        _\\///////////////__\\/////////////_", "cyan");
         logger.log("=============================================", "cyan");
-        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!");
+        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!", "cyan");
         logger.log(" ", "cyan");
 
         function calculateFileHash(filePath) {
@@ -142,7 +142,7 @@ class SPTLeaderboard {
             this.raidResult = jsonData.results.result;
             this.playTime = jsonData.results.playTime;
 
-            this.transitionMap = jsonData?.results?.locationTransit?.location ?? "None";
+            this.transitionMap = jsonData?.locationTransit?.location ?? "None";
 
             try {
                 if (this.connectivity == 0) return;
@@ -213,9 +213,15 @@ class SPTLeaderboard {
             // End of the raid (KIA/Survived/Transit)
             const raidEndResult = this.raidResult;
 
+            // If left the raid
+            let discFromRaid = false;
+            if(raidEndResult === "Left") {
+                discFromRaid = true
+            }
+
             // For transit
-            const isTransition = false;
-            const lastRaidTransitionTo = "None";
+            let isTransition = false;
+            let lastRaidTransitionTo = "None";
             if (raidEndResult === "Transit" && !this.transitionMap === "None") {
                 isTransition = true;
                 lastRaidTransitionTo = this.transitionMap;
@@ -271,6 +277,7 @@ class SPTLeaderboard {
                     lastRaidEXP: lootEXP,
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
+                    discFromRaid: discFromRaid,
                     prestige: profile.Info.PrestigeLevel,
                     usePrestigeStyling: config.profile_usePrestigeStyling
                 }
@@ -293,6 +300,7 @@ class SPTLeaderboard {
                     lastRaidEXP: lootEXP,
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
+                    discFromRaid: discFromRaid,
                     prestige: profile.Info.PrestigeLevel,
                     usePrestigeStyling: config.profile_usePrestigeStyling
                 }
