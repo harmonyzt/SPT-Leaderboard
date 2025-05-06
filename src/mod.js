@@ -19,6 +19,7 @@ class SPTLeaderboard {
         this.raidResult = "Died";
         this.playTime = 0;
         this.staticProfile;
+        this.transitionMap;
     }
 
     loadOrCreateToken() {
@@ -45,21 +46,25 @@ class SPTLeaderboard {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
+        const config = this.CFG;
 
+        logger.log(" ", "cyan");
+        logger.info("SPT LEADERBOARD - TEST BUILD v1.0.96. FOR TESTERS, AND TESTING PURPOSES ONLY")
         logger.log(" ", "cyan");
         logger.log("=============================================", "cyan");
         logger.log("__/\\\\\\______________/\\\\\\\\\\\\\\\\\\\\__        ", "cyan");
         logger.log(" _\\/\\\\\\_____________\\/\\\\\\///////\\\\\\__       ", "cyan");
         logger.log("  _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__      ", "cyan");
         logger.log("   _\\/\\\\\\_____________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\__     ", "cyan");
-        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       TEST BUILD v1.0.95", "cyan");
+        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       ", "cyan");
         logger.log("     _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__   ", "cyan");
         logger.log("      _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__  ", "cyan");
         logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
         logger.log("        _\\///////////////__\\/////////////_", "cyan");
         logger.log("=============================================", "cyan");
-        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!", "yellow");
+        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!");
         logger.log(" ", "cyan");
+
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
             const hashSum = crypto.createHash('sha256');
@@ -94,15 +99,17 @@ class SPTLeaderboard {
         }
 
         function collectModData() {
-            const mods = [
+            return [
                 ...getDirectories(userModsPath),
                 ...getDirectories(bepinexPluginsPath),
                 ...getDllFiles(bepinexPluginsPath)
             ];
-            return { mods };
         }
 
         const modData = collectModData();
+
+        if (config.debug)
+            logger.info(`Collected mod data: ${modData}`);
 
         // Define SPT version
         var configServer = container.resolve("ConfigServer");
@@ -122,16 +129,20 @@ class SPTLeaderboard {
         }], "aki");
 
         const gatherProfileInfo = async (data, logger, version) => {
-            const config = this.CFG;
 
             const jsonData = JSON.parse(JSON.stringify(data));
             const fullProfile = jsonData.results.profile;
 
-            logger.log(jsonData, "yellow");
+            if (config.debug) {
+                logger.info(JSON.stringify(jsonData, null, 2));
+                logger.log("Data above was saved in server log file.", "green");
+            }
 
             // Get the result of a raid (Died/Survived/Runner)
             this.raidResult = jsonData.results.result;
             this.playTime = jsonData.results.playTime;
+
+            this.transitionMap = jsonData?.results?.locationTransit?.location ?? "None";
 
             try {
                 if (this.connectivity == 0) return;
@@ -152,7 +163,7 @@ class SPTLeaderboard {
                     }
                 }
             } catch (e) {
-                logger.log(`[SPT Leaderboard] Error: ${e.message}`, "red");
+                logger.info(`[SPT Leaderboard] Error: ${e.message}`);
             }
         }
 
@@ -162,15 +173,15 @@ class SPTLeaderboard {
             const config = this.CFG;
 
             if (config.debug)
-                logger.log(`[SPT Leaderboard] Data ready!`, "green");
+                logger.info(`[SPT Leaderboard] Data ready!`);
 
             try {
                 await sendProfileData(profileData);
 
                 if (config.debug)
-                    logger.log("[SPT Leaderboard] Data sent successfully!", "green");
+                    logger.info("[SPT Leaderboard] Data sent to the server successfully!");
             } catch (e) {
-                logger.log(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`, "red");
+                logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
             }
         }
 
@@ -182,33 +193,42 @@ class SPTLeaderboard {
                 return item?.Value || 0;
             };
 
+            const getGlobalStatValue = (keys) => {
+                const item = profile.Stats.Eft.OverallCounters.Items?.find(item =>
+                    item.Key && keys.every((k, i) => item.Key[i] === k)
+                );
+                return item?.Value || 0;
+            };
+
             const config = this.CFG;
             const isScavRaid = profile.Info.Side === "Savage";
 
             // Keep names and such separate
-            let scavLevel = 0;
-            let pmcLevel = 0;
-            let profileName = "DefaultName";
-
-            // If this was a SCAV raid, handle differently
-            if (isScavRaid && config.public_profile) {
-                // We want to keep actual player name so it can't be changed by accident to SCAVs name
-                profileName = profile.Info.MainProfileNickname;
-                scavLevel = profile.Info.Level;
-            } else {
-                profileName = this.staticProfile.characters.pmc.Info.Nickname;
-                pmcLevel = this.staticProfile.characters.pmc.Info.Level;
-            }
+            let scavLevel = this.staticProfile.characters.scav.Info.Level;
+            let pmcLevel = this.staticProfile.characters.pmc.Info.Level;
+            let profileName = this.staticProfile.characters.pmc.Info.Nickname;
 
             // Initial Profile Stats that are always used
             const kills = getStatValue(['KilledPmc']);
-            // This determines deaths, too
+            // End of the raid (KIA/Survived/Transit)
             const raidEndResult = this.raidResult;
+
+            // For transit
+            const isTransition = false;
+            const lastRaidTransitionTo = "None";
+            if (raidEndResult === "Transit" && !this.transitionMap === "None") {
+                isTransition = true;
+                lastRaidTransitionTo = this.transitionMap;
+            } else {
+                isTransition = false;
+                lastRaidTransitionTo = "None";
+            }
 
             // If profile is public we send more profile data
             const damage = getStatValue(['CauseBodyDamage']);
-            const curWinStreak = getStatValue(['CurrentWinStreak', 'Pmc']);
-            const longestShot = getStatValue(['LongestShot']);
+            const curWinStreak = getGlobalStatValue(['CurrentWinStreak', 'Pmc']);
+            const longestShot = getGlobalStatValue(['LongestKillShot']);
+            const lootEXP = getStatValue(['ExpLooting']);
             // Perform this abomination to get damage without FLOATING GHOST NUMBERS (thanks BSG)
             const modDamage = damage.toString();
             const modLongestShot = longestShot.toString();
@@ -247,7 +267,12 @@ class SPTLeaderboard {
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
                     registrationDate: profile.Info.RegistrationDate,
-                    lastRaidMap: profile.Info.EntryPoint
+                    lastRaidMap: profile.Info.EntryPoint,
+                    lastRaidEXP: lootEXP,
+                    isTransition: isTransition,
+                    lastRaidTransitionTo: lastRaidTransitionTo,
+                    prestige: profile.Info.PrestigeLevel,
+                    usePrestigeStyling: config.profile_usePrestigeStyling
                 }
                 // PMC Raid with public profile on
             } else if (config.public_profile && !isScavRaid) {
@@ -264,7 +289,12 @@ class SPTLeaderboard {
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
                     registrationDate: profile.Info.RegistrationDate,
-                    lastRaidMap: profile.Info.EntryPoint
+                    lastRaidMap: profile.Info.EntryPoint,
+                    lastRaidEXP: lootEXP,
+                    isTransition: isTransition,
+                    lastRaidTransitionTo: lastRaidTransitionTo,
+                    prestige: profile.Info.PrestigeLevel,
+                    usePrestigeStyling: config.profile_usePrestigeStyling
                 }
                 // Private profile raid
             } else {
@@ -308,7 +338,7 @@ class SPTLeaderboard {
         // UTILS
         const isProfileValid = (profile, logger) => {
             if (!profile?.Info) {
-                logger.log("[SPT Leaderboard] Invalid profile structure.", "yellow");
+                logger.info("[SPT Leaderboard] Invalid profile structure.");
                 return false;
             }
 

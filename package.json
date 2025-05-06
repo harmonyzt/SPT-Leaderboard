@@ -1,6 +1,6 @@
 {
     "name": "SPT Leaderboard",
-    "version": "1.0.95",
+    "version": "1.0.96",
     "main": "src/mod.js",
     "license": "MIT",
     "author": "harmony",
