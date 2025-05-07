@@ -48,23 +48,6 @@ class SPTLeaderboard {
         const profileHelper = container.resolve("ProfileHelper");
         const config = this.CFG;
 
-        logger.log(" ", "cyan");
-        logger.info("SPT LEADERBOARD - TEST BUILD v1.0.96. FOR TESTERS, AND TESTING PURPOSES ONLY")
-        logger.log(" ", "cyan");
-        logger.log("=============================================", "cyan");
-        logger.log("__/\\\\\\______________/\\\\\\\\\\\\\\\\\\\\__        ", "cyan");
-        logger.log(" _\\/\\\\\\_____________\\/\\\\\\///////\\\\\\__       ", "cyan");
-        logger.log("  _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__      ", "cyan");
-        logger.log("   _\\/\\\\\\_____________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\__     ", "cyan");
-        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       ", "cyan");
-        logger.log("     _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__   ", "cyan");
-        logger.log("      _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__  ", "cyan");
-        logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
-        logger.log("        _\\///////////////__\\/////////////_", "cyan");
-        logger.log("=============================================", "cyan");
-        logger.log("[SPT Leaderboard] WARNING: This is a test build of a mod from developer. Support provided only at Discord development channel!", "cyan");
-        logger.log(" ", "cyan");
-
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
             const hashSum = crypto.createHash('sha256');
@@ -107,9 +90,6 @@ class SPTLeaderboard {
         }
 
         const modData = collectModData();
-
-        if (config.debug)
-            logger.info(`Collected mod data: ${modData}`);
 
         // Define SPT version
         var configServer = container.resolve("ConfigServer");
@@ -215,8 +195,8 @@ class SPTLeaderboard {
 
             // If left the raid
             let discFromRaid = false;
-            if(raidEndResult === "Left") {
-                discFromRaid = true
+            if (raidEndResult === "Left") {
+                discFromRaid = true;
             }
 
             // For transit
