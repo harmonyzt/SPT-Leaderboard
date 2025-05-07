@@ -222,7 +222,7 @@ class SPTLeaderboard {
             // For transit
             let isTransition = false;
             let lastRaidTransitionTo = "None";
-            if (raidEndResult === "Transit" && !this.transitionMap === "None") {
+            if (raidEndResult === "Transit" && this.transitionMap !== "None") {
                 isTransition = true;
                 lastRaidTransitionTo = this.transitionMap;
             } else {
