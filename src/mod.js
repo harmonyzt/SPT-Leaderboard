@@ -20,6 +20,11 @@ class SPTLeaderboard {
         this.playTime = 0;
         this.staticProfile;
         this.transitionMap;
+        this.mostRecentAchievementTimestamp = 0;
+        this.mostRecentAchievementImageUrl = null;
+        this.mostRecentAchievementName = null;
+        this.mostRecentAchievementDescription = null;
+
     }
 
     loadOrCreateToken() {
@@ -107,6 +112,69 @@ class SPTLeaderboard {
                 return output;
             }
         }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBProfileAchievements", [{
+            url: "/client/achievement/list",
+            action: async (url, info, sessionId, output) => {
+                this.staticProfile = profileHelper.getPmcProfile(sessionId);
+                const allAchievements = JSON.parse(output);
+        
+                let latestAchievement = null;
+                let latestTimestamp = 0;
+        
+                // Finding the most recent achivement
+                if (this.staticProfile?.Achievements) {
+                    for (const [achievementId, timestamp] of Object.entries(this.staticProfile.Achievements)) {
+                        if (timestamp > latestTimestamp) {
+                            latestTimestamp = timestamp;
+                            latestAchievement = achievementId;
+                        }
+                    }
+                }
+        
+                // Get the image URL and name/description from locale file
+                if (latestAchievement) {
+                    let achievementImageUrl = "";
+                    const achievementElements = allAchievements?.data?.elements || [];
+                    const achievementData = achievementElements.find(el => el?.id === latestAchievement);
+                    
+                    if (achievementData) {
+                        achievementImageUrl = achievementData.imageUrl || "";
+                    }
+        
+                    const localePath = path.join(__dirname, "..", "temp", "locale.json");
+                    let achievementName = "";
+                    let achievementDescription = "";
+        
+                    try {
+                        const localeFileContent = fs.readFileSync(localePath, "utf-8");
+                        const localeData = JSON.parse(localeFileContent);
+        
+                        if (localeData) {
+                            const nameKey = `${latestAchievement} name`;
+                            const descKey = `${latestAchievement} description`;
+        
+                            achievementName = localeData[nameKey] || "";
+                            achievementDescription = localeData[descKey] || "";
+                        }
+                    } catch (e) {
+                        logger.error(`Failed to read locale file.`);
+                    }
+
+                    this.mostRecentAchievementTimestamp = latestTimestamp;
+                    this.mostRecentAchievementImageUrl = achievementImageUrl;
+                    this.mostRecentAchievementName = achievementName;
+                    this.mostRecentAchievementDescription = achievementDescription;
+        
+                } else {
+                    if(config.debug)
+                        logger.info("No achievements found in profile");
+                }
+        
+                return output;
+            }
+        }], "aki");
+        
 
         const gatherProfileInfo = async (data, logger, version) => {
 
@@ -215,6 +283,11 @@ class SPTLeaderboard {
             const curWinStreak = getGlobalStatValue(['CurrentWinStreak', 'Pmc']);
             const longestShot = getGlobalStatValue(['LongestKillShot']);
             const lootEXP = getStatValue(['ExpLooting']);
+            let lastHits = getStatValue(['HitCount']);
+            if(!lastHits || lastHits <= 0){
+                lastHits = 0;
+            }
+
             // Perform this abomination to get damage without FLOATING GHOST NUMBERS (thanks BSG)
             const modDamage = damage.toString();
             const modLongestShot = longestShot.toString();
@@ -252,14 +325,20 @@ class SPTLeaderboard {
                     winRaidStreak: curWinStreak,
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
+                    profileTheme: config.profile_profileTheme,
                     registrationDate: profile.Info.RegistrationDate,
                     lastRaidMap: profile.Info.EntryPoint,
                     lastRaidEXP: lootEXP,
+                    lastRaidHits: lastHits,
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     discFromRaid: discFromRaid,
                     prestige: profile.Info.PrestigeLevel,
-                    usePrestigeStyling: config.profile_usePrestigeStyling
+                    usePrestigeStyling: config.profile_usePrestigeStyling,
+                    latestAchievementName: this.mostRecentAchievementName,
+                    latestAchievementDescription: this.mostRecentAchievementDescription,
+                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
+                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp
                 }
                 // PMC Raid with public profile on
             } else if (config.public_profile && !isScavRaid) {
@@ -274,14 +353,20 @@ class SPTLeaderboard {
                     winRaidStreak: curWinStreak,
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
+                    profileTheme: config.profile_profileTheme,
                     registrationDate: profile.Info.RegistrationDate,
                     lastRaidMap: profile.Info.EntryPoint,
                     lastRaidEXP: lootEXP,
+                    lastRaidHits: lastHits,
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     discFromRaid: discFromRaid,
                     prestige: profile.Info.PrestigeLevel,
-                    usePrestigeStyling: config.profile_usePrestigeStyling
+                    usePrestigeStyling: config.profile_usePrestigeStyling,
+                    latestAchievementName: this.mostRecentAchievementName,
+                    latestAchievementDescription: this.mostRecentAchievementDescription,
+                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
+                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp
                 }
                 // Private profile raid
             } else {
