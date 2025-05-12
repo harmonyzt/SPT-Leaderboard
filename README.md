@@ -29,7 +29,6 @@ Edit `config/config.js` to customize:
 
 ```json
 {
-  "debug": false,
   "public_profile": true,
   "connectionRetries": 1,
   "profile_aboutMe": "Your profile description",

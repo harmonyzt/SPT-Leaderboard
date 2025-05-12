@@ -13,7 +13,7 @@ module.exports = {
 
     // Profile theme
     // Will change the background of your profile if it's public
-    // Can be - Default | Darker | Light
+    // Choose one - Default | Dark | Light | Gradient
     profile_profileTheme: "Default",
 
     // Public Profile only
@@ -24,5 +24,5 @@ module.exports = {
     connectionRetries: 1,
 
     // Debug
-    debug: false
+    debug: true
 };

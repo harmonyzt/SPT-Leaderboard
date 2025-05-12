@@ -24,7 +24,6 @@ class SPTLeaderboard {
         this.mostRecentAchievementImageUrl = null;
         this.mostRecentAchievementName = null;
         this.mostRecentAchievementDescription = null;
-
     }
 
     loadOrCreateToken() {
@@ -283,6 +282,8 @@ class SPTLeaderboard {
             const curWinStreak = getGlobalStatValue(['CurrentWinStreak', 'Pmc']);
             const longestShot = getGlobalStatValue(['LongestKillShot']);
             const lootEXP = getStatValue(['ExpLooting']);
+            
+            // Handling hits this way because stats wont be sent if there's 0 hits
             let lastHits = getStatValue(['HitCount']);
             if(!lastHits || lastHits <= 0){
                 lastHits = 0;
@@ -333,7 +334,7 @@ class SPTLeaderboard {
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     discFromRaid: discFromRaid,
-                    prestige: profile.Info.PrestigeLevel,
+                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
                     usePrestigeStyling: config.profile_usePrestigeStyling,
                     latestAchievementName: this.mostRecentAchievementName,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
@@ -361,7 +362,7 @@ class SPTLeaderboard {
                     isTransition: isTransition,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     discFromRaid: discFromRaid,
-                    prestige: profile.Info.PrestigeLevel,
+                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
                     usePrestigeStyling: config.profile_usePrestigeStyling,
                     latestAchievementName: this.mostRecentAchievementName,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
