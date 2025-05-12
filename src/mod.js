@@ -4,12 +4,12 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { debug } = require('console');
 
 class SPTLeaderboard {
     constructor() {
         this.retriesCount = 0;
         this.connectivity = 1;
-        this.allMods = [];
         this.key_size = 0;
         this.TOKEN_FILE = path.join(__dirname, 'secret.token');
         this.uniqueToken = this.loadOrCreateToken();
@@ -19,6 +19,7 @@ class SPTLeaderboard {
         this.raidResult = "Died";
         this.playTime = 0;
         this.staticProfile;
+        this.serverMods;
         this.transitionMap;
         this.mostRecentAchievementTimestamp = 0;
         this.mostRecentAchievementImageUrl = null;
@@ -30,7 +31,7 @@ class SPTLeaderboard {
         try {
             // If token exists
             if (fs.existsSync(this.TOKEN_FILE)) {
-                console.log(`[SPT Leaderboard] Your secret token was initialized. Remember to never show it to anyone!`);
+                console.log(`[SPT Leaderboard] Your secret token was initialized by the mod. Remember to never show it to anyone!`);
                 return fs.readFileSync(this.TOKEN_FILE, 'utf8').trim();
             } else {
                 // If it doesn't
@@ -51,6 +52,24 @@ class SPTLeaderboard {
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
         const config = this.CFG;
+
+        if(config.debug){
+            logger.log("[SPT Leaderboard] Present Token: " + this.uniqueToken, "blue")
+        }
+
+        logger.log(" ", "cyan");
+        logger.log("=============================================", "cyan");
+        logger.log("__/\\\\\\______________/\\\\\\\\\\\\\\\\\\\\__        ", "cyan");
+        logger.log(" _\\/\\\\\\_____________\\/\\\\\\///////\\\\\\__       ", "cyan");
+        logger.log("  _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__      ", "cyan");
+        logger.log("   _\\/\\\\\\_____________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\__     ", "cyan");
+        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       RC BUILD v2.1.0", "cyan");
+        logger.log("     _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__   ", "cyan");
+        logger.log("      _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__  ", "cyan");
+        logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
+        logger.log("        _\\///////////////__\\/////////////_", "cyan");
+        logger.log("=============================================", "cyan");
+        logger.info("[SPT Leaderboard] This is a test build from developer. Support provided only at Discord development channel!", "yellow");
 
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
@@ -95,6 +114,9 @@ class SPTLeaderboard {
 
         const modData = collectModData();
 
+        logger.info(`[SPT Leaderboard] Present mod data: ` + modData);
+        logger.info(` `);
+
         // Define SPT version
         var configServer = container.resolve("ConfigServer");
         var coreConfig = configServer.getConfig("spt-core");
@@ -105,6 +127,12 @@ class SPTLeaderboard {
             action: async (url, info, sessionId, output) => {
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
+
+                this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
+
+                if(config.debug){
+                    logger.info(`Server Mods:  ` + this.serverMods);
+                }
 
                 await gatherProfileInfo(info, logger, sptVersion);
 

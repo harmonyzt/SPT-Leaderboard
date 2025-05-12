@@ -3,9 +3,9 @@ module.exports = {
     public_profile: false,
 
     // Your about me to show for public profile. Maximum - 80 characters
-    profile_aboutMe: "Change me, please!",
+    profile_aboutMe: "I didn't read configuration and enabled public profile!",
 
-    // Profile picture for your profile
+    // Profile picture
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
     // Supports: .png .gif
     // Allowed domains: i.imgur.com | tenor.com | media1.tenor.com
@@ -16,7 +16,7 @@ module.exports = {
     // Choose one - Default | Dark | Light | Gradient
     profile_profileTheme: "Default",
 
-    // Public Profile only
+    // Prestige Styling (Public Profile only)
     // If you have prestige unlocked - this can allow your profile name to change its style
     profile_usePrestigeStyling: true,
 

@@ -1,0 +1,314 @@
+		characters.pmc.Skills."Mastering": [
+					{
+						"Id": "M4",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AKM",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SKS",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AKSU",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AK74",
+						"Progress": 21.875
+					},
+					{
+						"Id": "VSS",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP443",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP133",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP153",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MR43",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PM",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PB",
+						"Progress": 21.875
+					},
+					{
+						"Id": "P226",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP5",
+						"Progress": 21.875
+					},
+					{
+						"Id": "TT",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SAIGA",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PP19",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MPX",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PP-91",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SV98",
+						"Progress": 21.875
+					},
+					{
+						"Id": "DVL",
+						"Progress": 21.875
+					},
+					{
+						"Id": "TOZ106",
+						"Progress": 21.875
+					},
+					{
+						"Id": "R11SRASS",
+						"Progress": 21.875
+					},
+					{
+						"Id": "GLOCK17",
+						"Progress": 21.875
+					},
+					{
+						"Id": "APS",
+						"Progress": 21.875
+					},
+					{
+						"Id": "M1A",
+						"Progress": 21.875
+					},
+					{
+						"Id": "M870",
+						"Progress": 21.875
+					},
+					{
+						"Id": "mosin",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SA-58",
+						"Progress": 21.875
+					},
+					{
+						"Id": "sr1mp",
+						"Progress": 21.875
+					},
+					{
+						"Id": "mp7",
+						"Progress": 21.875
+					},
+					{
+						"Id": "r700",
+						"Progress": 21.875
+					},
+					{
+						"Id": "VPO101",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SVD",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MDR",
+						"Progress": 21.875
+					},
+					{
+						"Id": "ASH12",
+						"Progress": 21.875
+					},
+					{
+						"Id": "P90",
+						"Progress": 21.875
+					},
+					{
+						"Id": "m9",
+						"Progress": 21.875
+					},
+					{
+						"Id": "KS23",
+						"Progress": 21.875
+					},
+					{
+						"Id": "57",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP9",
+						"Progress": 21.875
+					},
+					{
+						"Id": "VPO_215",
+						"Progress": 21.875
+					},
+					{
+						"Id": "T5000",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SR25",
+						"Progress": 21.875
+					},
+					{
+						"Id": "m1911",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PPSH",
+						"Progress": 21.875
+					},
+					{
+						"Id": "RFB",
+						"Progress": 21.875
+					},
+					{
+						"Id": "UMP45",
+						"Progress": 21.875
+					},
+					{
+						"Id": "M590",
+						"Progress": 21.875
+					},
+					{
+						"Id": "Mk18",
+						"Progress": 21.875
+					},
+					{
+						"Id": "VECTOR",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MCX",
+						"Progress": 21.875
+					},
+					{
+						"Id": "STM-9",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PL15",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MK47",
+						"Progress": 21.875
+					},
+					{
+						"Id": "G28",
+						"Progress": 21.875
+					},
+					{
+						"Id": "Mk17",
+						"Progress": 21.875
+					},
+					{
+						"Id": "USP",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MTS",
+						"Progress": 21.875
+					},
+					{
+						"Id": "RHINO",
+						"Progress": 21.875
+					},
+					{
+						"Id": "G36",
+						"Progress": 21.875
+					},
+					{
+						"Id": "M3S90",
+						"Progress": 21.875
+					},
+					{
+						"Id": "MP-18",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AXMC",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SR2",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AUG",
+						"Progress": 21.875
+					},
+					{
+						"Id": "RSH12",
+						"Progress": 21.875
+					},
+					{
+						"Id": "PKM",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SVT-40",
+						"Progress": 21.875
+					},
+					{
+						"Id": "RPD",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SPEAR",
+						"Progress": 21.875
+					},
+					{
+						"Id": "VSK94",
+						"Progress": 21.875
+					},
+					{
+						"Id": "UZI-PRO",
+						"Progress": 21.875
+					},
+					{
+						"Id": "DEAGLE",
+						"Progress": 21.875
+					},
+					{
+						"Id": "M60",
+						"Progress": 21.875
+					},
+					{
+						"Id": "UZI",
+						"Progress": 21.875
+					},
+					{
+						"Id": "AA12",
+						"Progress": 21.875
+					},
+					{
+						"Id": "SAKO",
+						"Progress": 21.875
+					}
+				]
