@@ -14,8 +14,8 @@ class SPTLeaderboard {
         this.TOKEN_FILE = path.join(__dirname, 'secret.token');
         this.uniqueToken = this.loadOrCreateToken();
         this.CFG = require("../config/config");
-        this.PHP_ENDPOINT = "visuals.nullcore.net";
-        this.PHP_PATH = "/hidden/SPT_Profiles_Backend.php";
+        this.PHP_ENDPOINT = this.CFG.PHP_ENDPOINT || "visuals.nullcore.net";
+        this.PHP_PATH = this.CFG.PHP_PATH || "/hidden/SPT_Profiles_Backend.php";
         this.raidResult = "Died";
         this.playTime = 0;
         this.staticProfile;
@@ -53,7 +53,7 @@ class SPTLeaderboard {
         const profileHelper = container.resolve("ProfileHelper");
         const config = this.CFG;
 
-        if(config.debug){
+        if(config.DEBUG){
             logger.log("[SPT Leaderboard] Present Token: " + this.uniqueToken, "blue")
         }
 
@@ -130,7 +130,7 @@ class SPTLeaderboard {
 
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
 
-                if(config.debug){
+                if(config.DEBUG){
                     logger.info(`Server Mods:  ` + this.serverMods);
                 }
 
@@ -194,7 +194,7 @@ class SPTLeaderboard {
                     this.mostRecentAchievementDescription = achievementDescription;
         
                 } else {
-                    if(config.debug)
+                    if(config.DEBUG)
                         logger.info("No achievements found in profile");
                 }
         
@@ -208,7 +208,7 @@ class SPTLeaderboard {
             const jsonData = JSON.parse(JSON.stringify(data));
             const fullProfile = jsonData.results.profile;
 
-            if (config.debug) {
+            if (config.DEBUG) {
                 logger.info(JSON.stringify(jsonData, null, 2));
                 logger.log("Data above was saved in server log file.", "green");
             }
@@ -247,13 +247,13 @@ class SPTLeaderboard {
             const profileData = await processProfile(profile, version);
             const config = this.CFG;
 
-            if (config.debug)
+            if (config.DEBUG)
                 logger.info(`[SPT Leaderboard] Data ready!`);
 
             try {
                 await sendProfileData(profileData);
 
-                if (config.debug)
+                if (config.DEBUG)
                     logger.info("[SPT Leaderboard] Data sent to the server successfully!");
             } catch (e) {
                 logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
