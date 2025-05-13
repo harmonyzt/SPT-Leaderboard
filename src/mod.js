@@ -324,9 +324,12 @@ class SPTLeaderboard {
             let pmcLevel = this.staticProfile.characters.pmc.Info.Level;
             let profileName = "default_name";
 
-            if (config.public_profile && !!profileName?.trim()) {
+            if (config.public_profile && config.profile_customName?.trim()) {
+                // public_profile === true
+                // profile_customName exists
                 profileName = config.profile_customName;
             } else {
+                // Во всех остальных случаях используем Nickname
                 profileName = this.staticProfile.characters.pmc.Info.Nickname;
             }
 
@@ -371,10 +374,10 @@ class SPTLeaderboard {
             const totalDamage = parseInt(modDamage.slice(0, -2), 10);
 
             // Get max PMC health
-            const totalMaxHealth = Object.values(this.staticProfile.Health.BodyParts)
+            const totalMaxHealth = Object.values(this.staticProfile.characters.pmc.Health.BodyParts)
                 .reduce((sum, bodyPart) => sum + (bodyPart.Health?.Maximum || 0), 0);
 
-            if(config.DEBUG){
+            if (config.DEBUG) {
                 console.info("Max Health Values (max 550):", totalMaxHealth);
             }
 
