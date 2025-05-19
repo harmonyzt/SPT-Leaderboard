@@ -17,15 +17,16 @@ module.exports = {
 
     // Profile theme
     // Will change the background of your profile if it's public
-    // Default | Dark | Light | Gradient
-    profile_profileTheme: "Gradient",
+    // Default | Dark | Light | Gradient | RedShade
+    profile_profileTheme: "Default",
 
     // Prestige Styling
     // Only if you have prestige unlocked
-    // Also will ignore your current background set in profile_battlepass_backgroundReward
+    // Also will ignore your current background set in bp_mainBackgroundReward
     profile_usePrestigeStyling: true,
 
     // killa | tagilla
+    // Set your background to your liking!
     bp_usePrestigeBackground: "killa",
 
     ////////////////////////////////////////
@@ -42,7 +43,7 @@ module.exports = {
     bp_backgroundReward: "streets",
 
     // Sets a background behind profile card
-    // LVL 5 - Usec | Bear | none
+    // LVL 5 - usec | bear | default
     bp_mainBackgroundReward: "default",
 
     // Add snoozing cat on your profile! :3
@@ -61,7 +62,7 @@ module.exports = {
     // 15 LVL - black
     bp_pfpBorder: "default",
 
-    // Choose a name color (both leaderboard and profile)
+    // Choose a name color
     // 5 LVL - red
     // 8 LVL - pink
     // 10 LVL - purpleshade
@@ -86,5 +87,5 @@ module.exports = {
     PHP_PATH: "/hidden/SPT_Profiles_Backend.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: true,
+    DEBUG: false,
 };

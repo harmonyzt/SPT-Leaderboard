@@ -148,24 +148,6 @@ class SPTLeaderboard {
         // Load locale file
         this.loadLocales();
 
-        if (config.DEBUG) {
-            logger.log("[SPT Leaderboard RC] Present Token: " + this.uniqueToken, "blue")
-        }
-
-        logger.log(" ", "cyan");
-        logger.log("=============================================", "cyan");
-        logger.log("__/\\\\\\______________/\\\\\\\\\\\\\\\\\\\\__        ", "cyan");
-        logger.log(" _\\/\\\\\\_____________\\/\\\\\\///////\\\\\\__       ", "cyan");
-        logger.log("  _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__      ", "cyan");
-        logger.log("   _\\/\\\\\\_____________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\__     ", "cyan");
-        logger.log("    _\\/\\\\\\_____________\\/\\\\\\/////////\\\\\\__       RC v2.2.0", "cyan");
-        logger.log("     _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__   ", "cyan");
-        logger.log("      _\\/\\\\\\_____________\\/\\\\\\_______\\/\\\\\\__  ", "cyan");
-        logger.log("       _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_\\/\\\\\\\\\\\\\\\\\\\\\\/__ ", "cyan");
-        logger.log("        _\\///////////////__\\/////////////_", "cyan");
-        logger.log("=============================================", "cyan");
-        logger.log("[SPT Leaderboard] This is a test build from developer. Only official Testers are allowed to participate. Support provided only at Discord development channel.", "yellow");
-
         function calculateFileHash(filePath) {
             const fileBuffer = fs.readFileSync(filePath);
             const hashSum = crypto.createHash('sha256');
@@ -207,9 +189,6 @@ class SPTLeaderboard {
         }
 
         const modData = collectModData();
-
-        logger.info(`[SPT Leaderboard] Present mod data: ` + modData);
-        logger.info(` `);
 
         // Define SPT version
         var configServer = container.resolve("ConfigServer");
@@ -266,10 +245,6 @@ class SPTLeaderboard {
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
-
-                if (config.DEBUG) {
-                    logger.info(`Server Mods:  ` + this.serverMods);
-                }
                 
                 await gatherProfileInfo(info, logger, sptVersion);
 
@@ -503,11 +478,6 @@ class SPTLeaderboard {
             // Get max PMC health
             const totalMaxHealth = Object.values(this.staticProfile.characters.pmc.Health.BodyParts)
                 .reduce((sum, bodyPart) => sum + (bodyPart.Health?.Maximum || 0), 0);
-
-            if (config.DEBUG) {
-                console.info("Max Health Values (max 550):", totalMaxHealth);
-                console.info("Trader Info", totalMaxHealth);
-            }
 
             // Barebones of data
             const baseData = {
