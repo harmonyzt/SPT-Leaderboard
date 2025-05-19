@@ -45,7 +45,8 @@ class SPTLeaderboard {
             "5a7c2eca46aef81a7ca2145d": "MECHANIC",
             "5ac3b934156ae10c4430e83c": "RAGMAN",
             "638f541a29ffd1183d187f57": "LIGHTKEEPER",
-            "656f0f98d80a697f855d34b1": "BTR_DRIVER"
+            "656f0f98d80a697f855d34b1": "BTR_DRIVER",
+            "5c0647fdd443bc2504c2d371": "JAEGER"
         };
 
 
@@ -136,20 +137,6 @@ class SPTLeaderboard {
                 originalId: weapons[0][0]
             }
         };
-    }
-
-    gatherDefaultWeaponMastery(profile) {
-        for (const weapon of profile.characters.pmc.Skills.Mastering) {
-            // If there was no stats recorded from hook - grab weapon progress anyways but not ID
-            if (weapon.Progress > this.latestProgress) {
-                if (this.modWeaponStats == 0 && !this.isUsingStattrack) {
-                    this.masteryWeaponProgress = weapon.Progress;
-                    this.masteryWeaponId = weapon.Id;
-                } else {
-                    this.masteryWeaponProgress = weapon.Progress;
-                }
-            }
-        }
     }
 
     preSptLoad(container) {
@@ -283,10 +270,7 @@ class SPTLeaderboard {
                 if (config.DEBUG) {
                     logger.info(`Server Mods:  ` + this.serverMods);
                 }
-
-                // Get default EFT mastery if no mod support
-                this.gatherDefaultWeaponMastery(this.staticProfile);
-
+                
                 await gatherProfileInfo(info, logger, sptVersion);
 
                 return output;
