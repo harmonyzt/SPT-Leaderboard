@@ -16,6 +16,7 @@ class SPTLeaderboard {
         this.CFG = require("../config/config");
         this.PHP_ENDPOINT = this.CFG.PHP_ENDPOINT || "visuals.nullcore.net";
         this.PHP_PATH = this.CFG.PHP_PATH || "/hidden/SPT_Profiles_Backend.php";
+        this.localeData;
         this.raidResult = "Died";
         this.playTime = 0;
         this.staticProfile;
@@ -26,8 +27,28 @@ class SPTLeaderboard {
         this.mostRecentAchievementImageUrl = null;
         this.mostRecentAchievementName = null;
         this.mostRecentAchievementDescription = null;
-        this.latestWeaponId = null;
-        this.latestProgress = 0;
+        this.masteryWeaponId = 0;
+        this.masteryWeaponProgress = 0;
+        this.isUsingStattrack = false;
+        this.modWeaponStats = 0;
+        this.hasKappa = false;
+
+        // Traders
+        this.tradersInfo = {};
+        this.traderMap = {
+            "6617beeaa9cfa777ca915b7c": "REF",
+            "54cb50c76803fa8b248b4571": "PRAPOR",
+            "54cb57776803fa99248b456e": "THERAPIST",
+            "579dc571d53a0658a154fbec": "FENCE",
+            "58330581ace78e27b8b10cee": "SKIER",
+            "5935c25fb3acc3127c3d8cd9": "PEACEKEEPER",
+            "5a7c2eca46aef81a7ca2145d": "MECHANIC",
+            "5ac3b934156ae10c4430e83c": "RAGMAN",
+            "638f541a29ffd1183d187f57": "LIGHTKEEPER",
+            "656f0f98d80a697f855d34b1": "BTR_DRIVER"
+        };
+
+
     }
 
     loadOrCreateToken() {
@@ -50,11 +71,85 @@ class SPTLeaderboard {
         }
     }
 
+    loadLocales() {
+        const localePath = path.join(__dirname, "..", "temp", "locale.json");
+        const localeFileContent = fs.readFileSync(localePath, "utf-8");
+        this.localeData = JSON.parse(localeFileContent);
+
+        if (this.CFG.DEBUG) {
+            console.info("[SPT Leaderboard] Loaded locale file successfully!");
+        }
+    }
+
+    getLocaleName(id, additionalKey) {
+        if (!this.localeData) {
+            console.warn("[SPT Leaderboard] Locale data not loaded!");
+            return "Unknown";
+        }
+
+        // if given additionalKey, try to find it
+        if (additionalKey) {
+            const combinedKey = `${id} ${additionalKey}`;
+            if (this.localeData[combinedKey]) {
+                return this.localeData[combinedKey];
+            }
+        }
+
+        // Return default Id if not found
+        return this.localeData[id] || "Unknown";
+    }
+
+    getBestWeapon(sessionId, info, locale) {
+        if (!info[sessionId]) {
+            return;
+        }
+
+        // Get the profiles most used weapons
+        const weapons = info[sessionId];
+        const maxKills = Math.max(...Object.values(weapons).map(w => w.kills));
+
+        // Get weapon with most kills
+        const bestWeapons = Object.entries(weapons)
+            .filter(([_, stats]) => stats.kills === maxKills);
+
+        if (bestWeapons.length === 0) {
+            return { bestWeapon: null };
+        }
+
+        const [bestWeaponId, bestWeaponStats] = bestWeapons[0];
+        const weaponName = this.getLocaleName(bestWeaponId, "ShortName") || 'Unknown Weapon';
+
+        return {
+            bestWeapon: {
+                name: weaponName,
+                stats: bestWeaponStats
+            }
+        };
+    }
+
+    gatherDefaultWeaponMastery(profile) {
+        for (const weapon of profile.Skills.Mastering) {
+            // If there was no stats recorded from hook - grab weapon progress anyways but not ID
+            if (weapon.Progress > this.latestProgress) {
+                if (this.modWeaponStats == 0) {
+                    this.masteryWeaponProgress = weapon.Progress;
+                    this.masteryWeaponId = weapon.Id;
+                } else {
+                    this.masteryWeaponProgress = weapon.Progress;
+                    this.masteryWeaponId = 0;
+                }
+            }
+        }
+    }
+
     preSptLoad(container) {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
         const config = this.CFG;
+
+        // Load locale file
+        this.loadLocales();
 
         if (config.DEBUG) {
             logger.log("[SPT Leaderboard RC] Present Token: " + this.uniqueToken, "blue")
@@ -81,16 +176,15 @@ class SPTLeaderboard {
             return hashSum.digest('hex');
         }
 
+        // Paths
         const modPath = path.join(__dirname, 'mod.js');
-        const packagePath = path.join(__dirname, '../package.json');
         const modBasePath = path.resolve(__dirname, '..', '..');
         const sptRoot = path.resolve(modBasePath, '..', '..');
         const userModsPath = path.join(sptRoot, 'user', 'mods');
         const bepinexPluginsPath = path.join(sptRoot, 'BepInEx', 'plugins');
 
         const modHash = calculateFileHash(modPath);
-        const packageHash = calculateFileHash(packagePath);
-        this.key_size = modHash + packageHash;
+        this.key_size = modHash;
 
         // Mod data
         function getDirectories(dirPath) {
@@ -149,16 +243,40 @@ class SPTLeaderboard {
             return mapAliases[rawMapName] || rawMapName; // returning raw if not found
         }
 
+        // STATTRACK mod support
+        const statTrackPath = path.join(sptRoot, 'user', 'mods/acidphantasm-stattrack');
+        if (config.enable_mod_support && fs.existsSync(statTrackPath)) {
+            this.isUsingStattrack = true;
+
+            RouterService.registerStaticRouter("SPTLBStattrackSupport", [{
+                url: "/stattrack/save",
+                action: async (url, info, sessionId, output) => {
+
+                    this.modWeaponStats = this.getBestWeapon(sessionId, info, this.localeData);
+
+                    return output;
+                }
+            }], "aki");
+        } else {
+            // No mod(s) detected - set to 0 
+            this.modWeaponStats = 0;
+            this.isUsingStattrack = false;
+        }
+
         RouterService.registerStaticRouter("SPTLBProfileRaidEnd", [{
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
-
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
 
                 if (config.DEBUG) {
                     logger.info(`Server Mods:  ` + this.serverMods);
+                }
+
+                // Get default EFT mastery if no mod support
+                if (!this.isUsingStattrack) {
+                    this.gatherDefaultWeaponMastery(this.staticProfile);
                 }
 
                 await gatherProfileInfo(info, logger, sptVersion);
@@ -178,24 +296,20 @@ class SPTLeaderboard {
 
                 // Finding the most recent achivement
                 if (this.staticProfile?.Achievements) {
+                    const kappaId = "664f1f8768508d74604bf556";
+
                     for (const [achievementId, timestamp] of Object.entries(this.staticProfile.Achievements)) {
+                        // Check for kappa ach id
+                        if (achievementId === kappaId) {
+                            this.hasKappa = true;
+                        }
+
                         if (timestamp > latestTimestamp) {
                             latestTimestamp = timestamp;
                             latestAchievement = achievementId;
                         }
                     }
                 }
-
-                if (this.staticProfile?.Skills.Mastering) {
-                    for (const weapon of this.staticProfile.Skills.Mastering) {
-                        if (weapon.Progress > this.latestProgress) {
-                            this.latestProgress = weapon.Progress;
-                            this.latestWeaponId = weapon.Id;
-                        }
-                    }
-                }
-
-                logger.log(`${this.latestWeaponId}`, "cyan")
 
                 // Get the image URL and name/description from locale file
                 if (latestAchievement) {
@@ -207,23 +321,14 @@ class SPTLeaderboard {
                         achievementImageUrl = achievementData.imageUrl || "";
                     }
 
-                    const localePath = path.join(__dirname, "..", "temp", "locale.json");
                     let achievementName = "";
                     let achievementDescription = "";
 
                     try {
-                        const localeFileContent = fs.readFileSync(localePath, "utf-8");
-                        const localeData = JSON.parse(localeFileContent);
-
-                        if (localeData) {
-                            const nameKey = `${latestAchievement} name`;
-                            const descKey = `${latestAchievement} description`;
-
-                            achievementName = localeData[nameKey] || "";
-                            achievementDescription = localeData[descKey] || "";
-                        }
+                        achievementName = this.getLocaleName(latestAchievement, 'name') || "";
+                        achievementDescription = this.getLocaleName(latestAchievement, 'description') || "";
                     } catch (e) {
-                        logger.error(`Failed to read locale file.`);
+                        logger.error(`Failed to assign achievement: ${e.message}`);
                     }
 
                     this.mostRecentAchievementTimestamp = latestTimestamp;
@@ -233,7 +338,41 @@ class SPTLeaderboard {
 
                 } else {
                     if (config.DEBUG)
-                        logger.info("No achievements found in profile");
+                        logger.info("No achievements found in profile. Skipping...");
+                }
+
+
+                // Trader Info
+                if (!this.staticProfile?.TradersInfo) {
+                    console.info("TradersInfo not found in profile!");
+                    return;
+                }
+
+                const tradersData = this.staticProfile.TradersInfo;
+                this.tradersInfo = {};
+
+                // create new object for traders to easily navigate on frontend
+                for (const [traderId, traderName] of Object.entries(this.traderMap)) {
+                    if (tradersData[traderId]) {
+                        this.tradersInfo[traderName] = {
+                            id: traderId,  // saving id in case we need it for later
+                            salesSum: tradersData[traderId].salesSum,
+                            unlocked: tradersData[traderId].unlocked,
+                            standing: tradersData[traderId].standing,
+                            loyaltyLevel: tradersData[traderId].loyaltyLevel,
+                            disabled: tradersData[traderId].disabled
+                        };
+                    } else {
+                        this.tradersInfo[traderName] = {
+                            id: traderId,
+                            salesSum: 0,
+                            unlocked: false,
+                            standing: 0,
+                            loyaltyLevel: 0,
+                            disabled: true,
+                            notFound: true
+                        };
+                    }
                 }
 
                 return output;
@@ -314,32 +453,27 @@ class SPTLeaderboard {
             };
 
             const config = this.CFG;
-            const isScavRaid = profile.Info.Side === "Savage";
 
-            // Combine mods into one string
-            const combinedModData = modData + this.serverMods;
-
-            // Keep names and such separate
+            // MAIN
             let scavLevel = this.staticProfile.characters.scav.Info.Level;
             let pmcLevel = this.staticProfile.characters.pmc.Info.Level;
             let profileName = "default_name";
+            const kills = getStatValue(['KilledPmc']);
+            const raidEndResult = this.raidResult;
+            const combinedModData = modData + this.serverMods;
+            const isScavRaid = profile.Info.Side === "Savage";
 
             if (config.public_profile && config.profile_customName?.trim()) {
-                // public_profile === true
+                // public profile
                 // profile_customName exists
                 profileName = config.profile_customName;
             } else {
-                // Во всех остальных случаях используем Nickname
                 profileName = this.staticProfile.characters.pmc.Info.Nickname;
             }
 
-            // Initial Profile Stats that are always used
-            const kills = getStatValue(['KilledPmc']);
-            // End of the raid (KIA/Survived/Transit)
-            const raidEndResult = this.raidResult;
-
             // If left the raid
             let discFromRaid = false;
+
             if (raidEndResult === "Left") {
                 discFromRaid = true;
             }
@@ -347,6 +481,7 @@ class SPTLeaderboard {
             // For transit
             let isTransition = false;
             let lastRaidTransitionTo = "None";
+
             if (raidEndResult === "Transit" && this.transitionMap !== "None") {
                 isTransition = true;
                 lastRaidTransitionTo = this.transitionMap;
@@ -355,13 +490,13 @@ class SPTLeaderboard {
                 lastRaidTransitionTo = "None";
             }
 
-            // If profile is public we send more profile data
+            // Secondary stats
             const damage = getStatValue(['CauseBodyDamage']);
             const curWinStreak = getGlobalStatValue(['CurrentWinStreak', 'Pmc']);
             const longestShot = getGlobalStatValue(['LongestKillShot']);
             const lootEXP = getStatValue(['ExpLooting']);
 
-            // Handling hits this way because stats wont be sent if there's 0 hits
+            // If there's 0 hits it wouldn't appear in SessionCounters
             let lastHits = getStatValue(['HitCount']);
             if (!lastHits || lastHits <= 0) {
                 lastHits = 0;
@@ -388,6 +523,7 @@ class SPTLeaderboard {
                 modINT: this.key_size,
                 mods: combinedModData,
                 pmcLevel: pmcLevel,
+                pmcHealth: totalMaxHealth,
                 name: profileName,
                 health: totalMaxHealth,
                 raidKills: kills,
@@ -427,8 +563,19 @@ class SPTLeaderboard {
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
                     latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
-                    weaponMasteryName: this.weaponMasteryName,
-                    weaponMasteryProgress: this.weaponMasteryProgress
+                    hasKappa: this.hasKappa,
+                    weaponMasteryId: this.masteryWeaponId,
+                    weaponMasteryProgress: this.masteryWeaponProgress,
+                    isUsingStattrack: this.isUsingStattrack,
+                    modWeaponStats: this.modWeaponStats,
+                    traderInfo: this.tradersInfo,
+
+                    bp_prestigebg: config.bp_usePrestigeBackground,
+                    bp_cardbg: config.bp_backgroundReward,
+                    bp_mainbg: config.bp_mainBackgroundReward,
+                    bp_cat: config.bp_catReward,
+                    bp_pfpstyle: config.bp_pfpStyle,
+                    bp_pfpbordercolor: config.bp_pfpBorder
                 }
                 // PMC Raid with public profile on
             } else if (config.public_profile && !isScavRaid) {
@@ -457,8 +604,19 @@ class SPTLeaderboard {
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
                     latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
-                    weaponMasteryName: this.weaponMasteryName,
-                    weaponMasteryProgress: this.weaponMasteryProgress
+                    hasKappa: this.hasKappa,
+                    weaponMasteryId: this.masteryWeaponId,
+                    weaponMasteryProgress: this.masteryWeaponProgress,
+                    isUsingStattrack: this.isUsingStattrack,
+                    modWeaponStats: this.modWeaponStats,
+                    traderInfo: this.tradersInfo,
+
+                    bp_prestigebg: config.bp_usePrestigeBackground,
+                    bp_cardbg: config.bp_backgroundReward,
+                    bp_mainbg: config.bp_mainBackgroundReward,
+                    bp_cat: config.bp_catReward,
+                    bp_pfpstyle: config.bp_pfpStyle,
+                    bp_pfpbordercolor: config.bp_pfpBorder
                 }
                 // Private profile raid
             } else {
