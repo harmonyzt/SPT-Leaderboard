@@ -28,7 +28,7 @@ class SPTLeaderboard {
         this.mostRecentAchievementName = null;
         this.mostRecentAchievementDescription = null;
         this.masteryWeaponId = 0;
-        this.masteryWeaponProgress = 0;
+        this.masteryWeaponProgress;
         this.isUsingStattrack = false;
         this.modWeaponStats = 0;
         this.hasKappa = false;
@@ -83,7 +83,7 @@ class SPTLeaderboard {
 
     getLocaleName(id, additionalKey) {
         if (!this.localeData) {
-            console.warn("[SPT Leaderboard] Locale data not loaded!");
+            console.info("[SPT Leaderboard] Locale data not loaded!");
             return "Unknown";
         }
 
@@ -99,44 +99,54 @@ class SPTLeaderboard {
         return this.localeData[id] || "Unknown";
     }
 
-    getBestWeapon(sessionId, info, locale) {
+    getBestWeapon(sessionId, info) {
         if (!info[sessionId]) {
-            return;
+            return null;
         }
 
-        // Get the profiles most used weapons
-        const weapons = info[sessionId];
-        const maxKills = Math.max(...Object.values(weapons).map(w => w.kills));
+        // Get all weapons sorted by kills (descending)
+        const weapons = Object.entries(info[sessionId])
+            .sort((a, b) => b[1].kills - a[1].kills);
 
-        // Get weapon with most kills
-        const bestWeapons = Object.entries(weapons)
-            .filter(([_, stats]) => stats.kills === maxKills);
-
-        if (bestWeapons.length === 0) {
+        if (weapons.length === 0) {
             return { bestWeapon: null };
         }
 
-        const [bestWeaponId, bestWeaponStats] = bestWeapons[0];
-        const weaponName = this.getLocaleName(bestWeaponId, "ShortName") || 'Unknown Weapon';
+        // Find first weapon with existing locale name
+        for (const [weaponId, weaponStats] of weapons) {
+            const weaponName = this.getLocaleName(weaponId, "ShortName");
 
+            // If we found weapon with valid name that exist in locales
+            if (weaponName !== "Unknown") {
+                return {
+                    bestWeapon: {
+                        name: weaponName,
+                        stats: weaponStats,
+                        originalId: weaponId
+                    }
+                };
+            }
+        }
+
+        // If no weapons with valid names found, return the first one with "Unknown" name
         return {
             bestWeapon: {
-                name: weaponName,
-                stats: bestWeaponStats
+                name: "Unknown Weapon",
+                stats: weapons[0][1],
+                originalId: weapons[0][0]
             }
         };
     }
 
     gatherDefaultWeaponMastery(profile) {
-        for (const weapon of profile.Skills.Mastering) {
+        for (const weapon of profile.characters.pmc.Skills.Mastering) {
             // If there was no stats recorded from hook - grab weapon progress anyways but not ID
             if (weapon.Progress > this.latestProgress) {
-                if (this.modWeaponStats == 0) {
+                if (this.modWeaponStats == 0 && !this.isUsingStattrack) {
                     this.masteryWeaponProgress = weapon.Progress;
                     this.masteryWeaponId = weapon.Id;
                 } else {
                     this.masteryWeaponProgress = weapon.Progress;
-                    this.masteryWeaponId = 0;
                 }
             }
         }
@@ -252,7 +262,7 @@ class SPTLeaderboard {
                 url: "/stattrack/save",
                 action: async (url, info, sessionId, output) => {
 
-                    this.modWeaponStats = this.getBestWeapon(sessionId, info, this.localeData);
+                    this.modWeaponStats = this.getBestWeapon(sessionId, info);
 
                     return output;
                 }
@@ -275,9 +285,7 @@ class SPTLeaderboard {
                 }
 
                 // Get default EFT mastery if no mod support
-                if (!this.isUsingStattrack) {
-                    this.gatherDefaultWeaponMastery(this.staticProfile);
-                }
+                this.gatherDefaultWeaponMastery(this.staticProfile);
 
                 await gatherProfileInfo(info, logger, sptVersion);
 
@@ -288,17 +296,18 @@ class SPTLeaderboard {
         RouterService.registerStaticRouter("SPTLBProfileAchievements", [{
             url: "/client/achievement/list",
             action: async (url, info, sessionId, output) => {
-                this.staticProfile = profileHelper.getPmcProfile(sessionId);
+                this.staticProfile = profileHelper.getFullProfile(sessionId);
+
                 const allAchievements = JSON.parse(output);
 
                 let latestAchievement = null;
                 let latestTimestamp = 0;
 
                 // Finding the most recent achivement
-                if (this.staticProfile?.Achievements) {
+                if (this.staticProfile?.characters.pmc.Achievements) {
                     const kappaId = "664f1f8768508d74604bf556";
 
-                    for (const [achievementId, timestamp] of Object.entries(this.staticProfile.Achievements)) {
+                    for (const [achievementId, timestamp] of Object.entries(this.staticProfile.characters.pmc.Achievements)) {
                         // Check for kappa ach id
                         if (achievementId === kappaId) {
                             this.hasKappa = true;
@@ -343,13 +352,12 @@ class SPTLeaderboard {
 
 
                 // Trader Info
-                if (!this.staticProfile?.TradersInfo) {
+                if (!this.staticProfile?.characters.pmc.TradersInfo) {
                     console.info("TradersInfo not found in profile!");
                     return;
                 }
 
-                const tradersData = this.staticProfile.TradersInfo;
-                this.tradersInfo = {};
+                const tradersData = this.staticProfile.characters.pmc.TradersInfo;
 
                 // create new object for traders to easily navigate on frontend
                 for (const [traderId, traderName] of Object.entries(this.traderMap)) {
@@ -514,6 +522,7 @@ class SPTLeaderboard {
 
             if (config.DEBUG) {
                 console.info("Max Health Values (max 550):", totalMaxHealth);
+                console.info("Trader Info", totalMaxHealth);
             }
 
             // Barebones of data
