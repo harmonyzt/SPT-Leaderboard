@@ -32,7 +32,7 @@ module.exports = {
     // Also will ignore your current background set in bp_mainBackgroundReward
     profile_usePrestigeStyling: true,
 
-    // none | killa | tagilla
+    // none | killa | tagilla | both
     // Set your prestige background behind your profile!
     bp_usePrestigeBackground: "killa",
 
