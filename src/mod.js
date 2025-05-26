@@ -203,13 +203,13 @@ class SPTLeaderboard {
                 "factory4_night": "Night Factory",
                 "interchange": "Interchange",
                 "laboratory": "Labs",
-                "rezervbase": "Reserve",
+                "RezervBase": "Reserve",
                 "shoreline": "Shoreline",
                 "woods": "Woods",
                 "lighthouse": "Lighthouse",
                 "tarkovstreets": "Streets of Tarkov",
-                "sandbox": "Ground Zero - Low",
-                "sandbox_high": "Ground Zero - High"
+                "Sandbox": "Ground Zero - Low",
+                "Sandbox_high": "Ground Zero - High"
             };
 
             const rawMapName = entry.split('.')[0];
@@ -245,7 +245,7 @@ class SPTLeaderboard {
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
-                
+
                 await gatherProfileInfo(info, logger, sptVersion);
 
                 return output;
@@ -397,8 +397,7 @@ class SPTLeaderboard {
             try {
                 await sendProfileData(profileData);
 
-                if (config.DEBUG)
-                    logger.info("[SPT Leaderboard] Data sent to the server successfully!");
+                logger.info("[SPT Leaderboard] Data sent to the leaderboard successfully!");
             } catch (e) {
                 logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
             }
@@ -440,7 +439,6 @@ class SPTLeaderboard {
 
             // If left the raid
             let discFromRaid = false;
-
             if (raidEndResult === "Left") {
                 discFromRaid = true;
             }
@@ -496,7 +494,8 @@ class SPTLeaderboard {
                 raidTime: this.playTime,
                 lastPlayed: profile.Stats.Eft.LastSessionDate,
                 isScav: isScavRaid,
-                accountType: profile.Info.GameVersion
+                accountType: profile.Info.GameVersion,
+                teamTag: config.profile_teamTag
             }
 
             // Public SCAV raid (can't be otherwise)
@@ -592,9 +591,9 @@ class SPTLeaderboard {
 
         // Send the data
         const sendProfileData = async (data) => {
-            // 10 seconds time-out
+            // 20 seconds time-out
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 10000);
+            const timeout = setTimeout(() => controller.abort(), config.connectionTimeout);
 
             try {
                 const response = await fetch(`https://${this.PHP_ENDPOINT}${this.PHP_PATH}`, {
@@ -620,7 +619,7 @@ class SPTLeaderboard {
             }
         }
 
-        // UTILS
+        // Util
         const isProfileValid = (profile, logger) => {
             if (!profile?.Info) {
                 logger.info("[SPT Leaderboard] Invalid profile structure.");
