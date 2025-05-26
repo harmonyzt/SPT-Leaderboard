@@ -42,12 +42,13 @@ module.exports = {
 
     // Choose a reward that'll be automatically chosen once you reach the required battlepass level (see your leaderboard profile)
     
+    // None - default
     // 4 LVL - streets 
     // 7 LVL - streets2
     // 10 LVL - streets3
     // 15 LVL - purple
     // 25 LVL - labs
-    bp_backgroundReward: "streets",
+    bp_backgroundReward: "default",
 
     // Sets a background behind profile card
     // LVL 5 - usec | bear | default
