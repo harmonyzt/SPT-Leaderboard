@@ -9,7 +9,7 @@ module.exports = {
     // Your Team Tag
     // MIN: 3 characters | MAX: 6 characters
     // You'll be assigned to a team to participate in Teams and further events
-    // Your team tag will always have [team tag] at both sides 
+    // Your team tag will always have [] at both sides 
     profile_teamTag: "",
 
     // Your about me to show for public profile. Maximum - 80 characters
@@ -35,7 +35,7 @@ module.exports = {
 
     // none | killa | tagilla | both
     // Set your prestige background behind your profile!
-    bp_usePrestigeBackground: "killa",
+    bp_usePrestigeBackground: "none",
 
     ////////////////////////////////////////
     // BATTLEPASS FEATURES
@@ -57,7 +57,7 @@ module.exports = {
 
     // Add snoozing cat on your profile! :3
     // LVL 20
-    bp_catReward: true,
+    bp_catReward: false,
 
     // Choose a profile picture display style (this will make your profile picture wider or in box)
     // 5 LVL - box
@@ -73,7 +73,7 @@ module.exports = {
 
     // Decals for your profile background
     // They're transparent and work off WEAPON MASTERY LEVELS IN YOUR LEADERBOARD PROFILE.
-    // For them to work you should have Stattrack mod installed
+    // For them to work and show you should have Stattrack mod installed
     // 5 LVL - scratches
     // 10 LVL - cult-circle
     // 15 LVL - cult-signs
@@ -99,7 +99,7 @@ module.exports = {
 
     // Path to PHP file that process incoming data from this mod
     // Example - domain.com/spt_profile_server.php <-- in this case you put "/spt_profile_server.php"
-    PHP_PATH: "/hidden/SPT_Profiles_Backend.php",
+    PHP_PATH: "/hidden/sptBackend.php",
 
     // Display debug messages in console and log them inside SPT server .log file
     DEBUG: false,
