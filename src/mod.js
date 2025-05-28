@@ -77,9 +77,8 @@ class SPTLeaderboard {
         const localeFileContent = fs.readFileSync(localePath, "utf-8");
         this.localeData = JSON.parse(localeFileContent);
 
-        if (this.CFG.DEBUG) {
+        if (this.CFG.DEBUG)
             console.info("[SPT Leaderboard] Loaded locale file successfully!");
-        }
     }
 
     getLocaleName(id, additionalKey) {
@@ -537,7 +536,8 @@ class SPTLeaderboard {
                     bp_mainbg: config.bp_mainBackgroundReward,
                     bp_cat: config.bp_catReward,
                     bp_pfpstyle: config.bp_pfpStyle,
-                    bp_pfpbordercolor: config.bp_pfpBorder
+                    bp_pfpbordercolor: config.bp_pfpBorder,
+                    bp_decal: config.bp_decal
                 }
                 // PMC Raid with public profile on
             } else if (config.public_profile && !isScavRaid) {
@@ -578,10 +578,11 @@ class SPTLeaderboard {
                     bp_mainbg: config.bp_mainBackgroundReward,
                     bp_cat: config.bp_catReward,
                     bp_pfpstyle: config.bp_pfpStyle,
-                    bp_pfpbordercolor: config.bp_pfpBorder
+                    bp_pfpbordercolor: config.bp_pfpBorder,
+                    bp_decal: config.bp_decal
                 }
-                // Private profile raid
             } else {
+                // Private profile raid
                 return {
                     publicProfile: false,
                     ...baseData

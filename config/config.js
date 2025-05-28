@@ -13,6 +13,7 @@ module.exports = {
     profile_teamTag: "",
 
     // Your about me to show for public profile. Maximum - 80 characters
+    // Your cap ends here -                                                                          ↓ Here
     profile_aboutMe: "I didn't look at the configs of this mod!",
 
     // Profile picture
@@ -23,9 +24,9 @@ module.exports = {
 
     // Profile theme
     // Will change the background of your profile if it's public
-    // Shaded themes don't support decals
-    // Default | Dark | Light | Gradient | RedShade | SteelShade
-    profile_profileTheme: "Default",
+    // Shaded/Gradient themes don't support decals
+    // default | dark | light | gradient | redshade | steelshade
+    profile_profileTheme: "default",
 
     // Prestige Styling
     // Only if you have prestige unlocked
@@ -51,11 +52,11 @@ module.exports = {
     bp_backgroundReward: "default",
 
     // Sets a background behind profile card
-    // LVL 5 - usec | bear | default
+    // LVL 10 - usec | bear | default
     bp_mainBackgroundReward: "default",
 
     // Add snoozing cat on your profile! :3
-    // LVL 15
+    // LVL 20
     bp_catReward: true,
 
     // Choose a profile picture display style (this will make your profile picture wider or in box)
@@ -67,16 +68,17 @@ module.exports = {
     // 5 LVL - red
     // 8 LVL - pink
     // 10 LVL - white
-    // 15 LVL - black
+    // 20 LVL - black
     bp_pfpBorder: "default",
 
-    // Choose a name color (last 3 are animated)
-    // 5 LVL - red
-    // 8 LVL - pink
-    // 10 LVL - purpleshade
-    // 15 LVL - redshade
-    // 20 LVL - blackshade
-    bp_pfpBorder: "default",
+    // Decals for your profile background
+    // They're transparent and work off WEAPON MASTERY LEVELS IN YOUR LEADERBOARD PROFILE.
+    // For them to work you should have Stattrack mod installed
+    // 5 LVL - scratches
+    // 10 LVL - cult-circle
+    // 15 LVL - cult-signs
+    // 20 LVL - cult-signs2
+    bp_decal: "scratches",
 
     // Enable mod support to send extra data for your profile
     // Mod automatically detects mods that it supports
