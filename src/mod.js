@@ -32,7 +32,6 @@ class SPTLeaderboard {
         this.isUsingStattrack = false;
         this.modWeaponStats = 0;
         this.hasKappa = false;
-
         // Traders
         this.tradersInfo = {};
         this.traderMap = {
@@ -48,8 +47,6 @@ class SPTLeaderboard {
             "656f0f98d80a697f855d34b1": "BTR_DRIVER",
             "5c0647fdd443bc2504c2d371": "JAEGER"
         };
-
-
     }
 
     loadOrCreateToken() {
@@ -206,7 +203,7 @@ class SPTLeaderboard {
                 "shoreline": "Shoreline",
                 "woods": "Woods",
                 "lighthouse": "Lighthouse",
-                "tarkovstreets": "Streets of Tarkov",
+                "TarkovStreets": "Streets of Tarkov",
                 "Sandbox": "Ground Zero - Low",
                 "Sandbox_high": "Ground Zero - High"
             };
@@ -346,7 +343,6 @@ class SPTLeaderboard {
         }], "aki");
 
         const gatherProfileInfo = async (data, logger, version) => {
-
             const jsonData = JSON.parse(JSON.stringify(data));
             const fullProfile = jsonData.results.profile;
 
@@ -393,12 +389,15 @@ class SPTLeaderboard {
             if (config.DEBUG)
                 logger.info(`[SPT Leaderboard] Data ready!`);
 
-            try {
-                await sendProfileData(profileData);
+            // Do not send data with SAFE DEBUG
+            if (config.SAFE_DEBUG && config.DEBUG) {
+                try {
+                    await sendProfileData(profileData);
 
-                logger.info("[SPT Leaderboard] Data sent to the leaderboard successfully!");
-            } catch (e) {
-                logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
+                    logger.info("[SPT Leaderboard] Data sent to the leaderboard successfully!");
+                } catch (e) {
+                    logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
+                }
             }
         }
 
@@ -478,114 +477,111 @@ class SPTLeaderboard {
 
             // Barebones of data
             const baseData = {
-                token: this.uniqueToken,
+                accountType: profile.Info.GameVersion,
+                health: totalMaxHealth,
                 id: this.staticProfile.info.id,
+                isScav: isScavRaid,
+                lastPlayed: profile.Stats.Eft.LastSessionDate,
                 modINT: this.key_size,
                 mods: combinedModData,
-                pmcLevel: pmcLevel,
-                pmcHealth: totalMaxHealth,
                 name: profileName,
-                health: totalMaxHealth,
+                pmcHealth: totalMaxHealth,
+                pmcLevel: pmcLevel,
                 raidKills: kills,
-                disqualified: false,
-                sptVer: versionSPT,
                 raidResult: raidEndResult,
                 raidTime: this.playTime,
-                lastPlayed: profile.Stats.Eft.LastSessionDate,
-                isScav: isScavRaid,
-                accountType: profile.Info.GameVersion,
-                teamTag: config.profile_teamTag
+                sptVer: versionSPT,
+                teamTag: config.profile_teamTag,
+                token: this.uniqueToken
             }
 
             // Public SCAV raid (can't be otherwise)
             if (config.public_profile && isScavRaid) {
                 return {
                     ...baseData,
-                    publicProfile: true,
-                    raidDamage: totalDamage,
+                    bp_cardbg: config.bp_backgroundReward,
+                    bp_cat: config.bp_catReward,
+                    bp_decal: config.bp_decal,
+                    bp_mainbg: config.bp_mainBackgroundReward,
+                    bp_pfpbordercolor: config.bp_pfpBorder,
+                    bp_pfpstyle: config.bp_pfpStyle,
+                    bp_prestigebg: config.bp_usePrestigeBackground,
+                    discFromRaid: discFromRaid,
+                    hasKappa: this.hasKappa,
+                    isTransition: isTransition,
+                    isUsingStattrack: this.isUsingStattrack,
+                    lastRaidEXP: lootEXP,
+                    lastRaidHits: lastHits,
+                    lastRaidMap: this.lastRaidMap,
+                    lastRaidTransitionTo: lastRaidTransitionTo,
+                    latestAchievementDescription: this.mostRecentAchievementDescription,
+                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
+                    latestAchievementName: this.mostRecentAchievementName,
+                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
                     longestShot: totalLongestShot,
+                    modWeaponStats: this.modWeaponStats,
                     playedAs: "SCAV",
                     pmcSide: this.staticProfile.characters.pmc.Info.Side,
-                    scavLevel: scavLevel,
-                    winRaidStreak: curWinStreak,
+                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
                     profileTheme: config.profile_profileTheme,
+                    publicProfile: true,
+                    raidDamage: totalDamage,
                     registrationDate: profile.Info.RegistrationDate,
-                    lastRaidMap: this.lastRaidMap,
-                    lastRaidEXP: lootEXP,
-                    lastRaidHits: lastHits,
-                    isTransition: isTransition,
-                    lastRaidTransitionTo: lastRaidTransitionTo,
-                    discFromRaid: discFromRaid,
-                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
+                    scavLevel: scavLevel,
+                    traderInfo: this.tradersInfo,
                     usePrestigeStyling: config.profile_usePrestigeStyling,
-                    latestAchievementName: this.mostRecentAchievementName,
-                    latestAchievementDescription: this.mostRecentAchievementDescription,
-                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
-                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
-                    hasKappa: this.hasKappa,
                     weaponMasteryId: this.masteryWeaponId,
                     weaponMasteryProgress: this.masteryWeaponProgress,
-                    isUsingStattrack: this.isUsingStattrack,
-                    modWeaponStats: this.modWeaponStats,
-                    traderInfo: this.tradersInfo,
-
-                    bp_prestigebg: config.bp_usePrestigeBackground,
-                    bp_cardbg: config.bp_backgroundReward,
-                    bp_mainbg: config.bp_mainBackgroundReward,
-                    bp_cat: config.bp_catReward,
-                    bp_pfpstyle: config.bp_pfpStyle,
-                    bp_pfpbordercolor: config.bp_pfpBorder,
-                    bp_decal: config.bp_decal
+                    winRaidStreak: curWinStreak
                 }
                 // PMC Raid with public profile on
             } else if (config.public_profile && !isScavRaid) {
                 return {
                     ...baseData,
-                    publicProfile: true,
-                    raidDamage: totalDamage,
+                    bp_cardbg: config.bp_backgroundReward,
+                    bp_cat: config.bp_catReward,
+                    bp_decal: config.bp_decal,
+                    bp_mainbg: config.bp_mainBackgroundReward,
+                    bp_pfpbordercolor: config.bp_pfpBorder,
+                    bp_pfpstyle: config.bp_pfpStyle,
+                    bp_prestigebg: config.bp_usePrestigeBackground,
+                    discFromRaid: discFromRaid,
+                    hasKappa: this.hasKappa,
+                    isTransition: isTransition,
+                    isUsingStattrack: this.isUsingStattrack,
+                    lastRaidEXP: lootEXP,
+                    lastRaidHits: lastHits,
+                    lastRaidMap: this.lastRaidMap,
+                    lastRaidTransitionTo: lastRaidTransitionTo,
+                    latestAchievementDescription: this.mostRecentAchievementDescription,
+                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
+                    latestAchievementName: this.mostRecentAchievementName,
+                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
                     longestShot: totalLongestShot,
+                    modWeaponStats: this.modWeaponStats,
                     playedAs: "PMC",
                     pmcSide: this.staticProfile.characters.pmc.Info.Side,
-                    scavLevel: scavLevel,
-                    winRaidStreak: curWinStreak,
+                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
                     profileAboutMe: config.profile_aboutMe,
                     profilePicture: config.profile_profilePicture,
                     profileTheme: config.profile_profileTheme,
+                    publicProfile: true,
+                    raidDamage: totalDamage,
                     registrationDate: profile.Info.RegistrationDate,
-                    lastRaidMap: this.lastRaidMap,
-                    lastRaidEXP: lootEXP,
-                    lastRaidHits: lastHits,
-                    isTransition: isTransition,
-                    lastRaidTransitionTo: lastRaidTransitionTo,
-                    discFromRaid: discFromRaid,
-                    prestige: this.staticProfile.characters.pmc.Info.PrestigeLevel,
+                    scavLevel: scavLevel,
+                    traderInfo: this.tradersInfo,
                     usePrestigeStyling: config.profile_usePrestigeStyling,
-                    latestAchievementName: this.mostRecentAchievementName,
-                    latestAchievementDescription: this.mostRecentAchievementDescription,
-                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
-                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
-                    hasKappa: this.hasKappa,
                     weaponMasteryId: this.masteryWeaponId,
                     weaponMasteryProgress: this.masteryWeaponProgress,
-                    isUsingStattrack: this.isUsingStattrack,
-                    modWeaponStats: this.modWeaponStats,
-                    traderInfo: this.tradersInfo,
-
-                    bp_prestigebg: config.bp_usePrestigeBackground,
-                    bp_cardbg: config.bp_backgroundReward,
-                    bp_mainbg: config.bp_mainBackgroundReward,
-                    bp_cat: config.bp_catReward,
-                    bp_pfpstyle: config.bp_pfpStyle,
-                    bp_pfpbordercolor: config.bp_pfpBorder,
-                    bp_decal: config.bp_decal
+                    winRaidStreak: curWinStreak
                 }
             } else {
                 // Private profile raid
                 return {
-                    publicProfile: false,
-                    ...baseData
+                    ...baseData,
+                    publicProfile: false
                 }
             }
         }

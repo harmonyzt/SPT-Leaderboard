@@ -7,26 +7,26 @@ module.exports = {
     profile_customName: "",
 
     // Your Team Tag
-    // MIN: 3 characters | MAX: 6 characters
+    // MIN: 3 characters | MAX: 6 characters | ONLY 0-9 a-Z characters are allowed!
     // You'll be assigned to a team to participate in Teams and further events
-    // Your team tag will always have [] at both sides 
-    profile_teamTag: "",
+    // Your team tag will always have [] at both sides.
+    profile_teamTag: "CHADS",
 
     // Your about me to show for public profile. Maximum - 80 characters
     // Your cap ends here -                                                                          ↓ Here
-    profile_aboutMe: "I didn't look at the configs of this mod!",
+    profile_aboutMe: "SPT Vanilla-Hardcore Enjoyer. Get on my level :)",
 
     // Profile picture
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
     // Supports: .png .gif
     // Allowed domains: i.imgur.com | tenor.com | media1.tenor.com
-    profile_profilePicture: "https://i.imgur.com/z15FrrK.png",
+    profile_profilePicture: "https://i.imgur.com/bS28Sh4.png",
 
     // Profile theme
     // Will change the background of your profile if it's public
     // Shaded/Gradient themes don't support decals
     // default | dark | light | gradient | redshade | steelshade
-    profile_profileTheme: "default",
+    profile_profileTheme: "light",
 
     // Prestige Styling
     // Only if you have prestige unlocked
@@ -103,4 +103,5 @@ module.exports = {
 
     // Display debug messages in console and log them inside SPT server .log file
     DEBUG: false,
+    SAFE_DEBUG: true
 };
