@@ -332,7 +332,7 @@ class SPTLeaderboard {
                         };
                     }
                 }
-                
+
                 this.DBinINV = this.staticProfile.characters.pmc.Inventory.items.some(item => item._tpl === "58ac60eb86f77401897560ff");
 
                 return output;
@@ -387,15 +387,12 @@ class SPTLeaderboard {
             if (config.DEBUG)
                 logger.info(`[SPT Leaderboard] Data ready!`);
 
-            // Do not send data with SAFE DEBUG
-            if (config.SAFE_DEBUG && config.DEBUG || !config.SAFE_DEBUG) {
-                try {
-                    await sendProfileData(profileData);
+            try {
+                await sendProfileData(profileData);
 
-                    logger.info("[SPT Leaderboard] Data sent to the leaderboard successfully!");
-                } catch (e) {
-                    logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
-                }
+                logger.info("[SPT Leaderboard] Data sent to the leaderboard successfully!");
+            } catch (e) {
+                logger.info(`[SPT Leaderboard] Could not send data to leaderboard: ${e.message}`);
             }
         }
 

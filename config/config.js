@@ -7,14 +7,14 @@ module.exports = {
     profile_customName: "",
 
     // Your Team Tag
-    // MIN: 3 characters | MAX: 6 characters | ONLY 0-9 a-Z characters are allowed!
+    // MIN: 3 characters | MAX: 7 characters | ONLY 0-9 a-Z characters are allowed!
     // You'll be assigned to a team to participate in Teams and further events
     // Your team tag will always have [] at both sides.
     profile_teamTag: "",
 
     // Your about me to show for public profile. Maximum - 80 characters
     // Your cap ends here -                                                                          ↓ Here
-    profile_aboutMe: "TESTTESTSTETSTSTSTSTSTSTTETTESTSETETSS",
+    profile_aboutMe: "I didn't read mod configuration... Again.",
 
     // Profile picture
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
@@ -26,7 +26,7 @@ module.exports = {
     // Will change the background of your profile if it's public
     // Shaded/Gradient themes don't support decals
     // default | dark | light | gradient | redshade | steelshade
-    profile_profileTheme: "light",
+    profile_profileTheme: "default",
 
     ////////////////////////////////////////
     // BATTLEPASS FEATURES
@@ -86,10 +86,10 @@ module.exports = {
     // Stattrack by AcidPhantasm (extra weapon stats at battlepass tab and weapon mastery)
     enable_mod_support: true,
 
-    // Maximum raids to retry to connect to the leaderboard if it failed for first time
+    // Maximum raids to retry to connect to the Leaderboard API if it failed for first time
     connectionRetries: 1,
 
-    // Timeout for requesting data sent to the server, in MILLISECONDS
+    // How long mod will be waiting for the response from Leaderboard API, in MILLISECONDS
     // EXAMPLE: 10000 - 10 seconds | 20000 - 20 seconds
     connectionTimeout: 15000,
 
@@ -97,11 +97,10 @@ module.exports = {
     // Domain (or both subdomain + domain) used for PHP requests
     PHP_ENDPOINT: "visuals.nullcore.net",
 
-    // Path to PHP file that process incoming data from this mod
+    // Path to PHP file or API that process incoming data from this mod
     // Example - domain.com/spt_profile_server.php <-- in this case you put "/spt_profile_server.php"
     PHP_PATH: "/SPT/api/v1/main.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: true,
-    SAFE_DEBUG: false
+    DEBUG: true
 };
