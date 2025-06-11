@@ -74,11 +74,12 @@ module.exports = {
     // Decals for your profile background
     // They're transparent and work off WEAPON MASTERY LEVELS IN YOUR LEADERBOARD PROFILE.
     // For them to work and show you should have Stattrack mod installed
+    // None - default
     // 5 LVL - scratches
     // 10 LVL - cult-circle
     // 15 LVL - cult-signs
     // 20 LVL - cult-signs2
-    bp_decal: "scratches",
+    bp_decal: "default",
 
     // Enable mod support to send extra data for your profile
     // Mod automatically detects mods that it supports
