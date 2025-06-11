@@ -10,11 +10,11 @@ module.exports = {
     // MIN: 3 characters | MAX: 6 characters | ONLY 0-9 a-Z characters are allowed!
     // You'll be assigned to a team to participate in Teams and further events
     // Your team tag will always have [] at both sides.
-    profile_teamTag: "CHADS",
+    profile_teamTag: "",
 
     // Your about me to show for public profile. Maximum - 80 characters
     // Your cap ends here -                                                                          ↓ Here
-    profile_aboutMe: "SPT Vanilla-Hardcore Enjoyer. Get on my level :)",
+    profile_aboutMe: "TESTTESTSTETSTSTSTSTSTSTTETTESTSETETSS",
 
     // Profile picture
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
@@ -28,6 +28,12 @@ module.exports = {
     // default | dark | light | gradient | redshade | steelshade
     profile_profileTheme: "light",
 
+    ////////////////////////////////////////
+    // BATTLEPASS FEATURES
+    ////////////////////////////////////////
+
+    // Choose a reward that'll be automatically chosen once you reach the required battlepass level (see your leaderboard profile)
+    
     // Prestige Styling
     // Only if you have prestige unlocked
     // Also will ignore your current background set in bp_mainBackgroundReward
@@ -37,12 +43,6 @@ module.exports = {
     // Set your prestige background behind your profile!
     bp_usePrestigeBackground: "none",
 
-    ////////////////////////////////////////
-    // BATTLEPASS FEATURES
-    ////////////////////////////////////////
-
-    // Choose a reward that'll be automatically chosen once you reach the required battlepass level (see your leaderboard profile)
-    
     // None - default
     // 4 LVL - streets 
     // 7 LVL - streets2
@@ -99,9 +99,9 @@ module.exports = {
 
     // Path to PHP file that process incoming data from this mod
     // Example - domain.com/spt_profile_server.php <-- in this case you put "/spt_profile_server.php"
-    PHP_PATH: "/hidden/sptBackend.php",
+    PHP_PATH: "/SPT/api/v1/main.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: false,
-    SAFE_DEBUG: true
+    DEBUG: true,
+    SAFE_DEBUG: false
 };

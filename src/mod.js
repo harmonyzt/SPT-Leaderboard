@@ -23,6 +23,7 @@ class SPTLeaderboard {
         this.serverMods;
         this.transitionMap;
         this.lastRaidMap;
+        this.lastRaidMapRaw;
         this.mostRecentAchievementTimestamp = 0;
         this.mostRecentAchievementImageUrl = null;
         this.mostRecentAchievementName = null;
@@ -32,6 +33,7 @@ class SPTLeaderboard {
         this.isUsingStattrack = false;
         this.modWeaponStats = 0;
         this.hasKappa = false;
+        this.DBinINV = false;
         // Traders
         this.tradersInfo = {};
         this.traderMap = {
@@ -64,7 +66,7 @@ class SPTLeaderboard {
             }
         } catch (e) {
             console.error(`[SPT Leaderboard] Error handling token file: ${e.message}`);
-            // Generating new token in case
+            // Generating new token in case of an error
             return crypto.randomBytes(32).toString('hex');
         }
     }
@@ -96,43 +98,37 @@ class SPTLeaderboard {
         return this.localeData[id] || "Unknown";
     }
 
-    getBestWeapon(sessionId, info) {
+    getAllValidWeapons(sessionId, info) {
         if (!info[sessionId]) {
             return null;
         }
 
-        // Get all weapons sorted by kills (descending)
-        const weapons = Object.entries(info[sessionId])
-            .sort((a, b) => b[1].kills - a[1].kills);
+        const result = {
+            [sessionId]: {}
+        };
 
-        if (weapons.length === 0) {
-            return { bestWeapon: null };
-        }
-
-        // Find first weapon with existing locale name
-        for (const [weaponId, weaponStats] of weapons) {
+        // Process all weapons for this session ID
+        for (const [weaponId, weaponStats] of Object.entries(info[sessionId])) {
             const weaponName = this.getLocaleName(weaponId, "ShortName");
 
-            // If we found weapon with valid name that exist in locales
-            if (weaponName !== "Unknown") {
-                return {
-                    bestWeapon: {
-                        name: weaponName,
-                        stats: weaponStats,
-                        originalId: weaponId
-                    }
-                };
+            // Skip weapons with unknown names or tpl ids
+            if (weaponName === "Unknown") {
+                continue;
             }
+
+            // Add valid weapon to the result
+            result[sessionId][weaponName] = {
+                stats: weaponStats,
+                originalId: weaponId
+            };
         }
 
-        // If no weapons with valid names found, return the first one with "Unknown" name
-        return {
-            bestWeapon: {
-                name: "Unknown Weapon",
-                stats: weapons[0][1],
-                originalId: weapons[0][0]
-            }
-        };
+        // If no valid weapons found, return null or empty object
+        if (Object.keys(result[sessionId]).length === 0) {
+            return null;
+        }
+
+        return result;
     }
 
     preSptLoad(container) {
@@ -224,7 +220,7 @@ class SPTLeaderboard {
                 url: "/stattrack/save",
                 action: async (url, info, sessionId, output) => {
 
-                    this.modWeaponStats = this.getBestWeapon(sessionId, info);
+                    this.modWeaponStats = this.getAllValidWeapons(sessionId, info);
 
                     return output;
                 }
@@ -263,7 +259,7 @@ class SPTLeaderboard {
                     const kappaId = "664f1f8768508d74604bf556";
 
                     for (const [achievementId, timestamp] of Object.entries(this.staticProfile.characters.pmc.Achievements)) {
-                        // Check for kappa ach id
+                        // Check for kappa achievement id
                         if (achievementId === kappaId) {
                             this.hasKappa = true;
                         }
@@ -305,7 +301,6 @@ class SPTLeaderboard {
                         logger.info("No achievements found in profile. Skipping...");
                 }
 
-
                 // Trader Info
                 if (!this.staticProfile?.characters.pmc.TradersInfo) {
                     console.info("TradersInfo not found in profile!");
@@ -337,6 +332,8 @@ class SPTLeaderboard {
                         };
                     }
                 }
+                
+                this.DBinINV = this.staticProfile.characters.pmc.Inventory.items.some(item => item._tpl === "58ac60eb86f77401897560ff");
 
                 return output;
             }
@@ -352,6 +349,7 @@ class SPTLeaderboard {
             }
 
             this.lastRaidMap = getPrettyMapName(jsonData.serverId);
+            this.lastRaidMapRaw = jsonData.serverId.split('.')[0];
 
             // Get the result of a raid (Died/Survived/Runner)
             this.raidResult = jsonData.results.result;
@@ -390,7 +388,7 @@ class SPTLeaderboard {
                 logger.info(`[SPT Leaderboard] Data ready!`);
 
             // Do not send data with SAFE DEBUG
-            if (config.SAFE_DEBUG && config.DEBUG) {
+            if (config.SAFE_DEBUG && config.DEBUG || !config.SAFE_DEBUG) {
                 try {
                     await sendProfileData(profileData);
 
@@ -492,7 +490,8 @@ class SPTLeaderboard {
                 raidTime: this.playTime,
                 sptVer: versionSPT,
                 teamTag: config.profile_teamTag,
-                token: this.uniqueToken
+                token: this.uniqueToken,
+                DBinINV: this.DBinINV
             }
 
             // Public SCAV raid (can't be otherwise)
@@ -513,6 +512,7 @@ class SPTLeaderboard {
                     lastRaidEXP: lootEXP,
                     lastRaidHits: lastHits,
                     lastRaidMap: this.lastRaidMap,
+                    lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
@@ -554,6 +554,7 @@ class SPTLeaderboard {
                     lastRaidEXP: lootEXP,
                     lastRaidHits: lastHits,
                     lastRaidMap: this.lastRaidMap,
+                    lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
