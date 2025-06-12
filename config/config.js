@@ -20,7 +20,7 @@ module.exports = {
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
     // Supports: .png .gif
     // Allowed domains: i.imgur.com | tenor.com | media1.tenor.com
-    profile_profilePicture: "https://i.imgur.com/bS28Sh4.png",
+    profile_profilePicture: "",
 
     // Profile theme
     // Will change the background of your profile if it's public
@@ -103,5 +103,5 @@ module.exports = {
     PHP_PATH: "/SPT/api/v1/main.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: true
+    DEBUG: false
 };
