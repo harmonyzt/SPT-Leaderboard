@@ -488,7 +488,8 @@ class SPTLeaderboard {
                 sptVer: versionSPT,
                 teamTag: config.profile_teamTag,
                 token: this.uniqueToken,
-                DBinINV: this.DBinINV
+                DBinINV: this.DBinINV,
+                isCasual: config.mod_casualMode
             }
 
             // Public SCAV raid (can't be otherwise)

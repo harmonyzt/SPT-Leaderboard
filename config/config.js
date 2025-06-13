@@ -1,4 +1,10 @@
 module.exports = {
+    // Enabling this will switch you to a Casual Mode.
+    // You will not be ranked in the leaderboard and your stats won't count towards its progress.
+    // You'll be free off any leaderboard restrictions (except reasonable ones), have access to raid history and your profile like usual.
+    // DANGER - Once you played with this ON - YOU CANT GET BACK INTO RANKING.
+    mod_casualMode: false,
+    
     // If you want to share more Profile SPT stats with anyone and the leaderboard - set to true
     public_profile: true,
 
