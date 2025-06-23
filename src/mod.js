@@ -186,21 +186,36 @@ class SPTLeaderboard {
         }
 
         async function sendHeartbeat(type, extraData = {}) {
-            // If heartbeat was sent recently
             const { sessionId } = extraData;
 
             if (sessionId && heartbeatCache.has(sessionId)) {
-                const lastSentTime = heartbeatCache.get(sessionId);
-                const timeSinceLast = Date.now() - lastSentTime;
+                const cachedData = heartbeatCache.get(sessionId);
+                const timeSinceLast = Date.now() - cachedData.lastSentTime;
 
+                // Throttle
                 if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
                     console.log(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
                     return null;
                 }
+
+                // Skipping online heartbeat
+                if (type === 'online' && cachedData.lastRaidState) {
+                    console.log(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in raid`);
+                    return null;
+                }
             }
 
+            // Clear cache
             if (sessionId) {
-                heartbeatCache.set(sessionId, Date.now());
+                const cacheData = {
+                    lastSentTime: Date.now(),
+                    lastRaidState: type === 'in_raid' || type === 'raid_start'
+                        ? true
+                        : type === 'raid_end'
+                            ? false
+                            : heartbeatCache.get(sessionId)?.lastRaidState || false
+                };
+                heartbeatCache.set(sessionId, cacheData);
             }
 
             try {
@@ -210,9 +225,9 @@ class SPTLeaderboard {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        type,                     // 'online', 'menu', 'raid_end', 'in_raid'
-                        timestamp: Date.now(),    // timestamp
-                        ...extraData              // Extra - profile id, for example
+                        type,
+                        timestamp: Date.now(),
+                        ...extraData
                     })
                 });
 
@@ -306,7 +321,7 @@ class SPTLeaderboard {
         }], "aki");
 
         RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
-            url: "/client/survey",
+            url: "/singleplayer/log",
             action: async (url, info, sessionId, output) => {
                 if (!sessionId)
                     return output
@@ -317,13 +332,13 @@ class SPTLeaderboard {
             }
         }], "aki");
 
-        RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
+        RouterService.registerStaticRouter("SPTLBHeartBeatRaidStart", [{
             url: "/client/match/local/start",
             action: async (url, info, sessionId, output) => {
                 if (!sessionId)
                     return output
 
-                sendHeartbeat('in_raid', { sessionId: sessionId });
+                sendHeartbeat('raid_start', { sessionId: sessionId });
 
                 return output;
             }
