@@ -61,7 +61,7 @@ class SPTLeaderboard {
                 // If it doesn't
                 const newToken = crypto.randomBytes(32).toString('hex');
                 fs.writeFileSync(this.TOKEN_FILE, newToken, 'utf8');
-                console.log(`[SPT Leaderboard] Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard!`);
+                console.log(`[SPT Leaderboard] Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!`);
                 return newToken;
             }
         } catch (e) {
@@ -135,6 +135,11 @@ class SPTLeaderboard {
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
+
+        // Cache for heartbeats + 5 sec time out (sessionId: timestamp)
+        const heartbeatCache = new Map();
+        const HEARTBEAT_THROTTLE_MS = 5 * 1000;
+
         const config = this.CFG;
 
         // Load locale file
@@ -178,6 +183,47 @@ class SPTLeaderboard {
                 ...getDirectories(bepinexPluginsPath),
                 ...getDllFiles(bepinexPluginsPath)
             ];
+        }
+
+        async function sendHeartbeat(type, extraData = {}) {
+            // If heartbeat was sent recently
+            const { sessionId } = extraData;
+
+            if (sessionId && heartbeatCache.has(sessionId)) {
+                const lastSentTime = heartbeatCache.get(sessionId);
+                const timeSinceLast = Date.now() - lastSentTime;
+
+                if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
+                    console.log(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
+                    return null;
+                }
+            }
+
+            if (sessionId) {
+                heartbeatCache.set(sessionId, Date.now());
+            }
+
+            try {
+                const response = await fetch('https://visuals.nullcore.net/SPT/api/heartbeat/v1.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,                     // 'online', 'menu', 'raid_end', 'in_raid'
+                        timestamp: Date.now(),    // timestamp
+                        ...extraData              // Extra - profile id, for example
+                    })
+                });
+
+                const result = await response.json();
+
+                if (config.DEBUG)
+                    console.log(`[SPT Leaderboard] Sent heartbeat ${type} to the API:`, result);
+
+            } catch (error) {
+                console.error(`[SPT Leaderboard] Error sending heartbeat ${type} to API:`, error.message);
+            }
         }
 
         const modData = collectModData();
@@ -235,10 +281,49 @@ class SPTLeaderboard {
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
 
+                sendHeartbeat('raid_end', { sessionId: sessionId });
+
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
 
                 await gatherProfileInfo(info, logger, sptVersion);
+
+                return output;
+            }
+        }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBHeartBeatOnline", [{
+            url: "/launcher/profile/info",
+            action: async (url, info, sessionId, output) => {
+
+                if (!sessionId)
+                    return output
+
+                sendHeartbeat('online', { sessionId: sessionId });
+
+                return output;
+            }
+        }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
+            url: "/client/survey",
+            action: async (url, info, sessionId, output) => {
+                if (!sessionId)
+                    return output
+
+                sendHeartbeat('in_menu', { sessionId: sessionId });
+
+                return output;
+            }
+        }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
+            url: "/client/match/local/start",
+            action: async (url, info, sessionId, output) => {
+                if (!sessionId)
+                    return output
+
+                sendHeartbeat('in_raid', { sessionId: sessionId });
 
                 return output;
             }
@@ -288,7 +373,7 @@ class SPTLeaderboard {
                         achievementName = this.getLocaleName(latestAchievement, 'name') || "";
                         achievementDescription = this.getLocaleName(latestAchievement, 'description') || "";
                     } catch (e) {
-                        logger.error(`Failed to assign achievement: ${e.message}`);
+                        logger.error(`[SPT Leaderboard] Failed to assign achievement: ${e.message}`);
                     }
 
                     this.mostRecentAchievementTimestamp = latestTimestamp;
@@ -298,12 +383,12 @@ class SPTLeaderboard {
 
                 } else {
                     if (config.DEBUG)
-                        logger.info("No achievements found in profile. Skipping...");
+                        logger.info("[SPT Leaderboard] No achievements found in profile. Skipping...");
                 }
 
                 // Trader Info
                 if (!this.staticProfile?.characters.pmc.TradersInfo) {
-                    console.info("TradersInfo not found in profile!");
+                    logger.info("[SPT Leaderboard] TradersInfo not found in profile!");
                     return;
                 }
 
@@ -345,7 +430,7 @@ class SPTLeaderboard {
 
             if (config.DEBUG) {
                 logger.info(JSON.stringify(jsonData, null, 2));
-                logger.log("Data above was saved in server log file.", "green");
+                logger.log("[SPT Leaderboard] Data above was saved in server log file.", "green");
             }
 
             this.lastRaidMap = getPrettyMapName(jsonData.serverId);
@@ -492,7 +577,7 @@ class SPTLeaderboard {
                 isCasual: config.mod_casualMode
             }
 
-            // Public SCAV raid (can't be otherwise)
+            // Public SCAV raid
             if (config.public_profile && isScavRaid) {
                 return {
                     ...baseData,
@@ -512,6 +597,7 @@ class SPTLeaderboard {
                     lastRaidMap: this.lastRaidMap,
                     lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
+                    allAchievements: this.staticProfile.characters.pmc.Achievements,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
                     latestAchievementName: this.mostRecentAchievementName,
@@ -534,7 +620,7 @@ class SPTLeaderboard {
                     weaponMasteryProgress: this.masteryWeaponProgress,
                     winRaidStreak: curWinStreak
                 }
-                // PMC Raid with public profile on
+                // Public PMC Raid
             } else if (config.public_profile && !isScavRaid) {
                 return {
                     ...baseData,
@@ -554,6 +640,7 @@ class SPTLeaderboard {
                     lastRaidMap: this.lastRaidMap,
                     lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
+                    allAchievements: this.staticProfile.characters.pmc.Achievements,
                     latestAchievementDescription: this.mostRecentAchievementDescription,
                     latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
                     latestAchievementName: this.mostRecentAchievementName,

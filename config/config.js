@@ -109,5 +109,5 @@ module.exports = {
     PHP_PATH: "/SPT/api/v1/main.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: false
+    DEBUG: true
 };
