@@ -192,28 +192,33 @@ class SPTLeaderboard {
                 const cachedData = heartbeatCache.get(sessionId);
                 const timeSinceLast = Date.now() - cachedData.lastSentTime;
 
-                // Throttle
+                // Thorttle for heartbeats
                 if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
-                    console.log(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
+                    logger.info(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
                     return null;
                 }
 
-                // Skipping online heartbeat
-                if (type === 'online' && cachedData.lastRaidState) {
-                    console.log(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in raid`);
+                // Do not send online when in raid or menu or stash
+                const statesToSkipOnline = ['in_raid', 'in_menu', 'in_stash'];
+                if (type === 'online' && statesToSkipOnline.includes(cachedData.lastState)) {
+                    logger.info(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in ${cachedData.lastState}`);
                     return null;
                 }
             }
 
-            // Clear cache
+            // Update cache
             if (sessionId) {
                 const cacheData = {
                     lastSentTime: Date.now(),
-                    lastRaidState: type === 'in_raid' || type === 'raid_start'
-                        ? true
+                    lastState: type === 'in_raid' || type === 'raid_start'
+                        ? 'in_raid'
                         : type === 'raid_end'
-                            ? false
-                            : heartbeatCache.get(sessionId)?.lastRaidState || false
+                            ? 'online'
+                            : type === 'in_menu'
+                                ? 'in_menu'
+                                : type === 'in_stash'
+                                    ? 'in_stash'
+                                    : heartbeatCache.get(sessionId)?.lastState || 'online'
                 };
                 heartbeatCache.set(sessionId, cacheData);
             }
@@ -234,7 +239,7 @@ class SPTLeaderboard {
                 const result = await response.json();
 
                 if (config.DEBUG)
-                    console.log(`[SPT Leaderboard] Sent heartbeat ${type} to the API:`, result);
+                    logger.info(`[SPT Leaderboard] Sent heartbeat ${type} to the API:`, result);
 
             } catch (error) {
                 console.error(`[SPT Leaderboard] Error sending heartbeat ${type} to API:`, error.message);
@@ -321,7 +326,7 @@ class SPTLeaderboard {
         }], "aki");
 
         RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
-            url: "/singleplayer/log",
+            url: "/client/globals",
             action: async (url, info, sessionId, output) => {
                 if (!sessionId)
                     return output
@@ -339,6 +344,18 @@ class SPTLeaderboard {
                     return output
 
                 sendHeartbeat('raid_start', { sessionId: sessionId });
+
+                return output;
+            }
+        }], "aki");
+
+        RouterService.registerStaticRouter("SPTLBHeartBeatInStash", [{
+            url: "/client/game/profile/items/moving",
+            action: async (url, info, sessionId, output) => {
+                if (!sessionId)
+                    return output
+
+                sendHeartbeat('in_stash', { sessionId: sessionId });
 
                 return output;
             }
