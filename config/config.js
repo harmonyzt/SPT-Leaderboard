@@ -6,6 +6,7 @@ module.exports = {
     mod_casualMode: false,
     
     // If you want to share more Profile SPT stats with anyone and the leaderboard - set to true
+    // This also allows your server to send heartbeats to API
     public_profile: true,
 
     // If you want to display other name rather than your SPT profile name, put it here, or leave blank
@@ -20,7 +21,7 @@ module.exports = {
 
     // Your about me to show for public profile. Maximum - 80 characters
     // Your cap ends here -                                                                          ↓ Here
-    profile_aboutMe: "I didn't read mod configuration... Again.",
+    profile_aboutMe: "Hello! I am using SPT Leaderboard!",
 
     // Profile picture
     // Optimal aspect ratio: 1:1 (500x500, 250x250 etc)
@@ -109,5 +110,5 @@ module.exports = {
     PHP_PATH: "/SPT/api/v1/main.php",
 
     // Display debug messages in console and log them inside SPT server .log file
-    DEBUG: true
+    DEBUG: false
 };

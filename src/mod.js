@@ -15,7 +15,7 @@ class SPTLeaderboard {
         this.uniqueToken = this.loadOrCreateToken();
         this.CFG = require("../config/config");
         this.PHP_ENDPOINT = this.CFG.PHP_ENDPOINT || "visuals.nullcore.net";
-        this.PHP_PATH = this.CFG.PHP_PATH || "/hidden/SPT_Profiles_Backend.php";
+        this.PHP_PATH = this.CFG.PHP_PATH || "/SPT/api/v1/main.php";
         this.localeData;
         this.raidResult = "Died";
         this.playTime = 0;
@@ -194,14 +194,18 @@ class SPTLeaderboard {
 
                 // Thorttle for heartbeats
                 if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
-                    logger.info(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
+                    if (config.DEBUG)
+                        logger.info(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
+
                     return null;
                 }
 
                 // Do not send online when in raid or menu or stash
                 const statesToSkipOnline = ['in_raid', 'in_menu', 'in_stash'];
                 if (type === 'online' && statesToSkipOnline.includes(cachedData.lastState)) {
-                    logger.info(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in ${cachedData.lastState}`);
+                    if (config.DEBUG)
+                        logger.info(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in ${cachedData.lastState}`);
+
                     return null;
                 }
             }
@@ -232,6 +236,7 @@ class SPTLeaderboard {
                     body: JSON.stringify({
                         type,
                         timestamp: Date.now(),
+                        ver: '2.5.0',
                         ...extraData
                     })
                 });
@@ -301,7 +306,12 @@ class SPTLeaderboard {
             url: "/client/match/local/end",
             action: async (url, info, sessionId, output) => {
 
-                sendHeartbeat('raid_end', { sessionId: sessionId });
+                if (!sessionId)
+                    return output
+
+                if (config.public_profile) {
+                    sendHeartbeat('raid_end', { sessionId: sessionId });
+                }
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
                 this.serverMods = this.staticProfile.spt.mods.map(mod => mod.name).join(', ');
@@ -319,7 +329,9 @@ class SPTLeaderboard {
                 if (!sessionId)
                     return output
 
-                sendHeartbeat('online', { sessionId: sessionId });
+                if (config.public_profile) {
+                    sendHeartbeat('online', { sessionId: sessionId });
+                }
 
                 return output;
             }
@@ -331,7 +343,9 @@ class SPTLeaderboard {
                 if (!sessionId)
                     return output
 
-                sendHeartbeat('in_menu', { sessionId: sessionId });
+                if (config.public_profile) {
+                    sendHeartbeat('in_menu', { sessionId: sessionId });
+                }
 
                 return output;
             }
@@ -343,7 +357,9 @@ class SPTLeaderboard {
                 if (!sessionId)
                     return output
 
-                sendHeartbeat('raid_start', { sessionId: sessionId });
+                if (config.public_profile) {
+                    sendHeartbeat('raid_start', { sessionId: sessionId });
+                }
 
                 return output;
             }
@@ -355,7 +371,9 @@ class SPTLeaderboard {
                 if (!sessionId)
                     return output
 
-                sendHeartbeat('in_stash', { sessionId: sessionId });
+                if (config.public_profile) {
+                    sendHeartbeat('in_stash', { sessionId: sessionId });
+                }
 
                 return output;
             }
