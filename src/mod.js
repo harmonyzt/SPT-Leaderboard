@@ -136,9 +136,16 @@ class SPTLeaderboard {
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
 
-        // Cache for heartbeats + 5 sec time out (sessionId: timestamp)
+        // Cache for heartbeats + 10 sec time out (sessionId: timestamp)
+        const PlayerState = {
+            ONLINE: 'online',
+            IN_MENU: 'in_menu',
+            IN_RAID: 'in_raid',
+            IN_STASH: 'in_stash'
+        };
+
         const heartbeatCache = new Map();
-        const HEARTBEAT_THROTTLE_MS = 5 * 1000;
+        const HEARTBEAT_THROTTLE_MS = 10 * 1000;
 
         const config = this.CFG;
 
@@ -178,76 +185,54 @@ class SPTLeaderboard {
         }
 
         function collectModData() {
-            return [
-                ...getDirectories(userModsPath),
-                ...getDirectories(bepinexPluginsPath),
-                ...getDllFiles(bepinexPluginsPath)
-            ];
+            return {
+                userMods: getDirectories(userModsPath),
+                bepinexMods: getDirectories(bepinexPluginsPath),
+                bepinexDlls: getDllFiles(bepinexPluginsPath)
+            };
         }
 
-        async function sendHeartbeat(type, extraData = {}) {
-            const { sessionId } = extraData;
+        async function sendHeartbeat(sessionId, output) {
+            if (!stateCache.has(sessionId)) return;
 
-            if (sessionId && heartbeatCache.has(sessionId)) {
-                const cachedData = heartbeatCache.get(sessionId);
-                const timeSinceLast = Date.now() - cachedData.lastSentTime;
+            const cachedData = stateCache.get(sessionId);
+            const timeSinceLast = Date.now() - cachedData.lastSentTime;
 
-                // Thorttle for heartbeats
-                if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
-                    if (config.DEBUG)
-                        logger.info(`[SPT Leaderboard] Skipping Heartbeat (${type}): heartbeat for sessionId ${sessionId} was already sent ${timeSinceLast} ms ago`);
-
-                    return null;
+            // Throttle for heartbeats
+            if (timeSinceLast < HEARTBEAT_THROTTLE_MS) {
+                if (config.DEBUG) {
+                    logger.info(`[SPT Leaderboard] Skipping Heartbeat: session ${sessionId} was updated ${timeSinceLast} ms ago`);
                 }
-
-                // Do not send online when in raid or menu or stash
-                const statesToSkipOnline = ['in_raid', 'in_menu', 'in_stash'];
-                if (type === 'online' && statesToSkipOnline.includes(cachedData.lastState)) {
-                    if (config.DEBUG)
-                        logger.info(`[SPT Leaderboard] Skipping Online Heartbeat: player ${sessionId} is in ${cachedData.lastState}`);
-
-                    return null;
-                }
-            }
-
-            // Update cache
-            if (sessionId) {
-                const cacheData = {
-                    lastSentTime: Date.now(),
-                    lastState: type === 'in_raid' || type === 'raid_start'
-                        ? 'in_raid'
-                        : type === 'raid_end'
-                            ? 'online'
-                            : type === 'in_menu'
-                                ? 'in_menu'
-                                : type === 'in_stash'
-                                    ? 'in_stash'
-                                    : heartbeatCache.get(sessionId)?.lastState || 'online'
-                };
-                heartbeatCache.set(sessionId, cacheData);
+                return;
             }
 
             try {
                 const response = await fetch('https://visuals.nullcore.net/SPT/api/heartbeat/v1.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type,
+                        type: cachedData.state,
                         timestamp: Date.now(),
                         ver: '2.5.0',
-                        ...extraData
+                        sessionId
                     })
                 });
 
                 const result = await response.json();
 
-                if (config.DEBUG)
-                    logger.info(`[SPT Leaderboard] Sent heartbeat ${type} to the API:`, result);
+                if (config.DEBUG) {
+                    logger.info(`[SPT Leaderboard] Sent ${cachedData.state} heartbeat:`, result);
+                }
+
+                // Update last time sent
+                stateCache.set(sessionId, {
+                    ...cachedData,
+                    lastSentTime: Date.now()
+                });
 
             } catch (error) {
-                console.error(`[SPT Leaderboard] Error sending heartbeat ${type} to API:`, error.message);
+                console.error(`[SPT Leaderboard] Error sending heartbeat:`, error.message);
+                return output;
             }
         }
 
@@ -297,7 +282,7 @@ class SPTLeaderboard {
                 }
             }], "aki");
         } else {
-            // No mod(s) detected - set to 0 
+            // No mod detected - set to 0 
             this.modWeaponStats = 0;
             this.isUsingStattrack = false;
         }
@@ -310,7 +295,7 @@ class SPTLeaderboard {
                     return output
 
                 if (config.public_profile) {
-                    sendHeartbeat('raid_end', { sessionId: sessionId });
+                    sendHeartbeat('raid_end', { sessionId: sessionId }, output);
                 }
 
                 this.staticProfile = profileHelper.getFullProfile(sessionId);
@@ -324,14 +309,21 @@ class SPTLeaderboard {
 
         RouterService.registerStaticRouter("SPTLBHeartBeatOnline", [{
             url: "/launcher/profile/info",
-            action: async (url, info, sessionId, output) => {
+            action: (url, info, sessionId, output) => {
+                if (!sessionId || !config.public_profile) return output;
 
-                if (!sessionId)
-                    return output
+                const currentState = stateCache.get(sessionId);
 
-                if (config.public_profile) {
-                    sendHeartbeat('online', { sessionId: sessionId });
+                // No state for profile at all - send ONLINE
+                if (!currentState) {
+                    stateCache.set(sessionId, {
+                        state: PlayerState.ONLINE,
+                        lastSentTime: 0
+                    });
                 }
+
+                // Always send the heartbeat
+                sendHeartbeat(sessionId, output);
 
                 return output;
             }
@@ -339,28 +331,27 @@ class SPTLeaderboard {
 
         RouterService.registerStaticRouter("SPTLBHeartBeatInMenu", [{
             url: "/client/globals",
-            action: async (url, info, sessionId, output) => {
-                if (!sessionId)
-                    return output
-
-                if (config.public_profile) {
-                    sendHeartbeat('in_menu', { sessionId: sessionId });
+            action: (url, info, sessionId, output) => {
+                if (sessionId && config.public_profile) {
+                    stateCache.set(sessionId, {
+                        state: PlayerState.IN_MENU,
+                        lastSentTime: stateCache.get(sessionId)?.lastSentTime || 0
+                    });
                 }
-
                 return output;
             }
         }], "aki");
 
         RouterService.registerStaticRouter("SPTLBHeartBeatRaidStart", [{
             url: "/client/match/local/start",
-            action: async (url, info, sessionId, output) => {
-                if (!sessionId)
-                    return output
-
-                if (config.public_profile) {
-                    sendHeartbeat('raid_start', { sessionId: sessionId });
+            action: (url, info, sessionId, output) => {
+                if (sessionId && config.public_profile) {
+                    stateCache.set(sessionId, {
+                        state: PlayerState.IN_RAID,
+                        lastSentTime: stateCache.get(sessionId)?.lastSentTime || 0
+                    });
+                    sendHeartbeat(sessionId, output); // Send instantly when entering raid
                 }
-
                 return output;
             }
         }], "aki");
@@ -368,13 +359,25 @@ class SPTLeaderboard {
         RouterService.registerStaticRouter("SPTLBHeartBeatInStash", [{
             url: "/client/game/profile/items/moving",
             action: async (url, info, sessionId, output) => {
-                if (!sessionId)
-                    return output
-
-                if (config.public_profile) {
-                    sendHeartbeat('in_stash', { sessionId: sessionId });
+                if (sessionId && config.public_profile) {
+                    stateCache.set(sessionId, {
+                        state: PlayerState.IN_STASH,
+                        lastSentTime: stateCache.get(sessionId)?.lastSentTime || 0
+                    });
                 }
+                return output;
+            }
+        }], "aki");
 
+        RouterService.registerStaticRouter("SPTLBHeartBeatLogout", [{
+            url: "/client/game/logout",
+            action: async (url, info, sessionId, output) => {
+                if (sessionId && config.public_profile) {
+                    stateCache.set(sessionId, {
+                        state: PlayerState.IN_STASH,
+                        lastSentTime: stateCache.get(sessionId)?.lastSentTime || 0
+                    });
+                }
                 return output;
             }
         }], "aki");
