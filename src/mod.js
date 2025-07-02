@@ -24,12 +24,6 @@ class SPTLeaderboard {
         this.transitionMap;
         this.lastRaidMap;
         this.lastRaidMapRaw;
-        this.mostRecentAchievementTimestamp = 0;
-        this.mostRecentAchievementImageUrl = null;
-        this.mostRecentAchievementName = null;
-        this.mostRecentAchievementDescription = null;
-        this.masteryWeaponId = 0;
-        this.masteryWeaponProgress;
         this.isUsingStattrack = false;
         this.modWeaponStats = 0;
         this.hasKappa = false;
@@ -144,7 +138,7 @@ class SPTLeaderboard {
             IN_STASH: 'in_stash'
         };
 
-        const heartbeatCache = new Map();
+        const stateCache = new Map();
         const HEARTBEAT_THROTTLE_MS = 10 * 1000;
 
         const config = this.CFG;
@@ -243,7 +237,7 @@ class SPTLeaderboard {
         var coreConfig = configServer.getConfig("spt-core");
         var sptVersion = coreConfig.sptVersion;
 
-        // Find map name from serverId
+        // Get nice map name from serverId
         function getPrettyMapName(entry) {
             const mapAliases = {
                 "bigmap": "Customs",
@@ -267,7 +261,7 @@ class SPTLeaderboard {
             return mapAliases[rawMapName] || rawMapName; // returning raw if not found
         }
 
-        // STATTRACK mod support
+        // Stattrack Mod Support
         const statTrackPath = path.join(sptRoot, 'user', 'mods/acidphantasm-stattrack');
         if (config.enable_mod_support && fs.existsSync(statTrackPath)) {
             this.isUsingStattrack = true;
@@ -382,100 +376,7 @@ class SPTLeaderboard {
             }
         }], "aki");
 
-        RouterService.registerStaticRouter("SPTLBProfileAchievements", [{
-            url: "/client/achievement/list",
-            action: async (url, info, sessionId, output) => {
-                this.staticProfile = profileHelper.getFullProfile(sessionId);
-
-                const allAchievements = JSON.parse(output);
-
-                let latestAchievement = null;
-                let latestTimestamp = 0;
-
-                // Finding the most recent achivement
-                if (this.staticProfile?.characters.pmc.Achievements) {
-                    const kappaId = "664f1f8768508d74604bf556";
-
-                    for (const [achievementId, timestamp] of Object.entries(this.staticProfile.characters.pmc.Achievements)) {
-                        // Check for kappa achievement id
-                        if (achievementId === kappaId) {
-                            this.hasKappa = true;
-                        }
-
-                        if (timestamp > latestTimestamp) {
-                            latestTimestamp = timestamp;
-                            latestAchievement = achievementId;
-                        }
-                    }
-                }
-
-                // Get the image URL and name/description from locale file
-                if (latestAchievement) {
-                    let achievementImageUrl = "";
-                    const achievementElements = allAchievements?.data?.elements || [];
-                    const achievementData = achievementElements.find(el => el?.id === latestAchievement);
-
-                    if (achievementData) {
-                        achievementImageUrl = achievementData.imageUrl || "";
-                    }
-
-                    let achievementName = "";
-                    let achievementDescription = "";
-
-                    try {
-                        achievementName = this.getLocaleName(latestAchievement, 'name') || "";
-                        achievementDescription = this.getLocaleName(latestAchievement, 'description') || "";
-                    } catch (e) {
-                        logger.error(`[SPT Leaderboard] Failed to assign achievement: ${e.message}`);
-                    }
-
-                    this.mostRecentAchievementTimestamp = latestTimestamp;
-                    this.mostRecentAchievementImageUrl = achievementImageUrl;
-                    this.mostRecentAchievementName = achievementName;
-                    this.mostRecentAchievementDescription = achievementDescription;
-
-                } else {
-                    if (config.DEBUG)
-                        logger.info("[SPT Leaderboard] No achievements found in profile. Skipping...");
-                }
-
-                // Trader Info
-                if (!this.staticProfile?.characters.pmc.TradersInfo) {
-                    logger.info("[SPT Leaderboard] TradersInfo not found in profile!");
-                    return;
-                }
-
-                const tradersData = this.staticProfile.characters.pmc.TradersInfo;
-
-                // create new object for traders to easily navigate on frontend
-                for (const [traderId, traderName] of Object.entries(this.traderMap)) {
-                    if (tradersData[traderId]) {
-                        this.tradersInfo[traderName] = {
-                            id: traderId,  // saving id in case we need it for later
-                            salesSum: tradersData[traderId].salesSum,
-                            unlocked: tradersData[traderId].unlocked,
-                            standing: tradersData[traderId].standing,
-                            loyaltyLevel: tradersData[traderId].loyaltyLevel,
-                            disabled: tradersData[traderId].disabled
-                        };
-                    } else {
-                        this.tradersInfo[traderName] = {
-                            id: traderId,
-                            salesSum: 0,
-                            unlocked: false,
-                            standing: 0,
-                            loyaltyLevel: 0,
-                            disabled: true,
-                            notFound: true
-                        };
-                    }
-                }
-
-                this.DBinINV = this.staticProfile.characters.pmc.Inventory.items.some(item => item._tpl === "58ac60eb86f77401897560ff");
-
-                return output;
-            }
-        }], "aki");
+        //const kappaId = "664f1f8768508d74604bf556";
 
         const gatherProfileInfo = async (data, logger, version) => {
             const jsonData = JSON.parse(JSON.stringify(data));
@@ -588,7 +489,6 @@ class SPTLeaderboard {
 
             // Secondary stats
             const damage = getStatValue(['CauseBodyDamage']);
-            const curWinStreak = getGlobalStatValue(['CurrentWinStreak', 'Pmc']);
             const longestShot = getGlobalStatValue(['LongestKillShot']);
             const lootEXP = getStatValue(['ExpLooting']);
 
@@ -634,15 +534,7 @@ class SPTLeaderboard {
             if (config.public_profile && isScavRaid) {
                 return {
                     ...baseData,
-                    bp_cardbg: config.bp_backgroundReward,
-                    bp_cat: config.bp_catReward,
-                    bp_decal: config.bp_decal,
-                    bp_mainbg: config.bp_mainBackgroundReward,
-                    bp_pfpbordercolor: config.bp_pfpBorder,
-                    bp_pfpstyle: config.bp_pfpStyle,
-                    bp_prestigebg: config.bp_usePrestigeBackground,
                     discFromRaid: discFromRaid,
-                    hasKappa: this.hasKappa,
                     isTransition: isTransition,
                     isUsingStattrack: this.isUsingStattrack,
                     lastRaidEXP: lootEXP,
@@ -651,10 +543,6 @@ class SPTLeaderboard {
                     lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     allAchievements: this.staticProfile.characters.pmc.Achievements,
-                    latestAchievementDescription: this.mostRecentAchievementDescription,
-                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
-                    latestAchievementName: this.mostRecentAchievementName,
-                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
                     longestShot: totalLongestShot,
                     modWeaponStats: this.modWeaponStats,
                     playedAs: "SCAV",
@@ -667,25 +555,13 @@ class SPTLeaderboard {
                     raidDamage: totalDamage,
                     registrationDate: profile.Info.RegistrationDate,
                     scavLevel: scavLevel,
-                    traderInfo: this.tradersInfo,
-                    usePrestigeStyling: config.profile_usePrestigeStyling,
-                    weaponMasteryId: this.masteryWeaponId,
-                    weaponMasteryProgress: this.masteryWeaponProgress,
-                    winRaidStreak: curWinStreak
+                    traderInfo: this.tradersInfo
                 }
                 // Public PMC Raid
             } else if (config.public_profile && !isScavRaid) {
                 return {
                     ...baseData,
-                    bp_cardbg: config.bp_backgroundReward,
-                    bp_cat: config.bp_catReward,
-                    bp_decal: config.bp_decal,
-                    bp_mainbg: config.bp_mainBackgroundReward,
-                    bp_pfpbordercolor: config.bp_pfpBorder,
-                    bp_pfpstyle: config.bp_pfpStyle,
-                    bp_prestigebg: config.bp_usePrestigeBackground,
                     discFromRaid: discFromRaid,
-                    hasKappa: this.hasKappa,
                     isTransition: isTransition,
                     isUsingStattrack: this.isUsingStattrack,
                     lastRaidEXP: lootEXP,
@@ -694,10 +570,6 @@ class SPTLeaderboard {
                     lastRaidMapRaw: this.lastRaidMapRaw,
                     lastRaidTransitionTo: lastRaidTransitionTo,
                     allAchievements: this.staticProfile.characters.pmc.Achievements,
-                    latestAchievementDescription: this.mostRecentAchievementDescription,
-                    latestAchievementImageUrl: this.mostRecentAchievementImageUrl,
-                    latestAchievementName: this.mostRecentAchievementName,
-                    latestAchievementTimestamp: this.mostRecentAchievementTimestamp,
                     longestShot: totalLongestShot,
                     modWeaponStats: this.modWeaponStats,
                     playedAs: "PMC",
@@ -710,11 +582,7 @@ class SPTLeaderboard {
                     raidDamage: totalDamage,
                     registrationDate: profile.Info.RegistrationDate,
                     scavLevel: scavLevel,
-                    traderInfo: this.tradersInfo,
-                    usePrestigeStyling: config.profile_usePrestigeStyling,
-                    weaponMasteryId: this.masteryWeaponId,
-                    weaponMasteryProgress: this.masteryWeaponProgress,
-                    winRaidStreak: curWinStreak
+                    traderInfo: this.tradersInfo
                 }
             } else {
                 // Private profile raid
