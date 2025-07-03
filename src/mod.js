@@ -126,9 +126,11 @@ class SPTLeaderboard {
     }
 
     preSptLoad(container) {
+        const config = this.CFG;
         const logger = container.resolve("WinstonLogger");
         const RouterService = container.resolve("StaticRouterModService");
         const profileHelper = container.resolve("ProfileHelper");
+        const mailService = container.resolve("MailSendService");
 
         // Cache for heartbeats + 10 sec time out (sessionId: timestamp)
         const PlayerState = {
@@ -137,11 +139,8 @@ class SPTLeaderboard {
             IN_RAID: 'in_raid',
             IN_STASH: 'in_stash'
         };
-
         const stateCache = new Map();
         const HEARTBEAT_THROTTLE_MS = 10 * 1000;
-
-        const config = this.CFG;
 
         // Load locale file
         this.loadLocales();
@@ -207,7 +206,7 @@ class SPTLeaderboard {
                     body: JSON.stringify({
                         type: cachedData.state,
                         timestamp: Date.now(),
-                        ver: '2.5.0',
+                        ver: '2.6.0',
                         sessionId
                     })
                 });
@@ -227,6 +226,24 @@ class SPTLeaderboard {
             } catch (error) {
                 console.error(`[SPT Leaderboard] Error sending heartbeat:`, error.message);
                 return output;
+            }
+        }
+
+        async function checkInbox(sessionId) {
+            try {
+                const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    mailService.sendUserMessageToPlayer(
+                        sessionId,
+                        data.senderDetails,
+                        data.messageText,
+                        data.messageType
+                    );
+                }
+            } catch (error) {
+                console.error('Inbox check failed:', error);
             }
         }
 
@@ -332,6 +349,11 @@ class SPTLeaderboard {
                         lastSentTime: stateCache.get(sessionId)?.lastSentTime || 0
                     });
                 }
+
+                if (sessionId) {
+                    checkInbox(sessionId);
+                }
+
                 return output;
             }
         }], "aki");
