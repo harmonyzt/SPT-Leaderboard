@@ -107,9 +107,11 @@ export class RouteManager {
                         this.sptLeaderboard.staticProfile = profile;
                         this.sptLeaderboard.serverMods = profile.spt.mods.map(mod => mod.name).join(', ');
 
-                        const tradersData = this.sptLeaderboard.staticProfile.characters.pmc.TradersInfo;
+                        const tradersData = profile.characters.pmc.TradersInfo;
 
                         // Create new object for traders to easily navigate on frontend
+                        // This gives us output if trader id is found
+                        // "Trader name": {trader_stats}, "Trader name 2": {trader_stats}
                         for (const [traderId, traderName] of Object.entries(TradersMap)) {
                             if (tradersData[traderId]) {
                                 this.sptLeaderboard.tradersInfo[traderName] = {
