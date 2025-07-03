@@ -4,7 +4,7 @@ import fs from "node:fs";
 import type { InstanceManager } from "./InstanceManager";
 import { SPTLeaderboard } from "./mod";
 import { PlayerState } from "./enums/PlayerState";
-import { TradersMap } from "./enums/TradersMap";
+
 
 import * as config from "../config/config"
 import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
@@ -112,7 +112,7 @@ export class RouteManager {
                         // Create new object for traders to easily navigate on frontend
                         // This gives us output if trader id is found
                         // "Trader name": {trader_stats}, "Trader name 2": {trader_stats}
-                        for (const [traderId, traderName] of Object.entries(TradersMap)) {
+                        for (const [traderId, traderName] of Object.entries(this.sptLeaderboard.traderMap)) {
                             if (tradersData[traderId]) {
                                 this.sptLeaderboard.tradersInfo[traderName] = {
                                     id: traderId,  // saving id in case we need it for later
