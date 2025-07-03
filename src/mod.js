@@ -455,19 +455,11 @@ class SPTLeaderboard {
             // MAIN
             let scavLevel = this.staticProfile.characters.scav.Info.Level;
             let pmcLevel = this.staticProfile.characters.pmc.Info.Level;
-            let profileName = "default_name";
+            let profileName = this.staticProfile.characters.pmc.Info.Nickname;
             const kills = getStatValue(['KilledPmc']);
             const raidEndResult = this.raidResult;
             const combinedModData = modData + this.serverMods;
             const isScavRaid = profile.Info.Side === "Savage";
-
-            if (config.public_profile && config.profile_customName?.trim()) {
-                // public profile
-                // profile_customName exists
-                profileName = config.profile_customName;
-            } else {
-                profileName = this.staticProfile.characters.pmc.Info.Nickname;
-            }
 
             // If left the raid
             let discFromRaid = false;

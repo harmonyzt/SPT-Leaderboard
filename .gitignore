@@ -1,2 +1,4 @@
 secret.token
 *vscode
+*dist
+*node_modules
