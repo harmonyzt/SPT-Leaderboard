@@ -4,6 +4,7 @@ import fs from "node:fs";
 import type { InstanceManager } from "./InstanceManager";
 import { SPTLeaderboard } from "./mod";
 import { PlayerState } from "./enums/PlayerState";
+import { TradersMap } from "./enums/TradersMap";
 
 import * as config from "../config/config"
 import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
@@ -105,6 +106,32 @@ export class RouteManager {
                         const profile = profileHelper.getFullProfile(sessionId);
                         this.sptLeaderboard.staticProfile = profile;
                         this.sptLeaderboard.serverMods = profile.spt.mods.map(mod => mod.name).join(', ');
+
+                        const tradersData = this.sptLeaderboard.staticProfile.characters.pmc.TradersInfo;
+
+                        // Create new object for traders to easily navigate on frontend
+                        for (const [traderId, traderName] of Object.entries(TradersMap)) {
+                            if (tradersData[traderId]) {
+                                this.sptLeaderboard.tradersInfo[traderName] = {
+                                    id: traderId,  // saving id in case we need it for later
+                                    salesSum: tradersData[traderId].salesSum,
+                                    unlocked: tradersData[traderId].unlocked,
+                                    standing: tradersData[traderId].standing,
+                                    loyaltyLevel: tradersData[traderId].loyaltyLevel,
+                                    disabled: tradersData[traderId].disabled
+                                };
+                            } else {
+                                this.sptLeaderboard.tradersInfo[traderName] = {
+                                    id: traderId,
+                                    salesSum: 0,
+                                    unlocked: false,
+                                    standing: 0,
+                                    loyaltyLevel: 0,
+                                    disabled: true,
+                                    notFound: true
+                                };
+                            }
+                        }
 
                         await this.gatherProfileInfo(info);
 
