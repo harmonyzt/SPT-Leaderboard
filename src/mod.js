@@ -229,26 +229,6 @@ class SPTLeaderboard {
             }
         }
 
-        // Check inbox for a player
-        // Fetching any incoming messages or items from server by sessionId (ie for top-3 winners)
-        async function checkInbox(sessionId) {
-            try {
-                const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    mailService.sendUserMessageToPlayer(
-                        sessionId,
-                        data.senderDetails,
-                        data.messageText,
-                        data.messageType
-                    );
-                }
-            } catch (error) {
-                console.error('Inbox check failed:', error);
-            }
-        }
-
         const modData = collectModData();
 
         // Define SPT version
@@ -548,7 +528,6 @@ class SPTLeaderboard {
                 raidResult: raidEndResult,
                 raidTime: this.playTime,
                 sptVer: versionSPT,
-                teamTag: config.profile_teamTag,
                 token: this.uniqueToken,
                 DBinINV: this.DBinINV,
                 isCasual: config.mod_casualMode
