@@ -132,7 +132,7 @@ class SPTLeaderboard {
         const profileHelper = container.resolve("ProfileHelper");
         const mailService = container.resolve("MailSendService");
 
-        // Cache for heartbeats + 10 sec time out (sessionId: timestamp)
+        // Store cache for heartbeats + throttling (sessionId: timestamp)
         const PlayerState = {
             ONLINE: 'online',
             IN_MENU: 'in_menu',
@@ -224,11 +224,13 @@ class SPTLeaderboard {
                 });
 
             } catch (error) {
-                console.error(`[SPT Leaderboard] Error sending heartbeat:`, error.message);
+                console.error(`[SPT Leaderboard] Error sending ${cachedData.state} heartbeat:`, error.message);
                 return output;
             }
         }
 
+        // Check inbox for a player
+        // Fetching any incoming messages or items from server by sessionId (ie for top-3 winners)
         async function checkInbox(sessionId) {
             try {
                 const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
