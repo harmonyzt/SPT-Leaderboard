@@ -332,10 +332,6 @@ class SPTLeaderboard {
                     });
                 }
 
-                if (sessionId) {
-                    checkInbox(sessionId);
-                }
-
                 return output;
             }
         }], "aki");
