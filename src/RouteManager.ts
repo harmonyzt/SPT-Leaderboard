@@ -238,7 +238,7 @@ export class RouteManager {
 
                         // We want to check it only once
                         const wasInboxChecked = this.inboxChecked.get(sessionId);
-                        if (sessionId && !wasInboxChecked.state) {
+                        if (sessionId && !wasInboxChecked?.state || true) {
                             this.inboxChecked.set(sessionId, {
                                 state: true
                             });
@@ -262,14 +262,7 @@ export class RouteManager {
                 {
                     url: "/client/game/logout",
                     action: async (url, info, sessionId, output) => {
-                        if (sessionId && config.public_profile) {
-                            this.stateCache.set(sessionId, {
-                                state: PlayerState.OFFLINE,
-                                lastSentTime: this.stateCache.get(sessionId)?.lastSentTime || 0
-                            });
-                        }
-                        
-                        // Player can check for inbox once again if left the game
+                        // Player can check for inbox once again if left the game or in raid
                         this.inboxChecked.set(sessionId, {
                             state: false
                         });
@@ -307,7 +300,7 @@ export class RouteManager {
                 body: JSON.stringify({
                     type: cachedData.state,
                     timestamp: Date.now(),
-                    ver: '2.5.0',
+                    ver: '2.6.0',
                     sessionId
                 })
             });
@@ -420,7 +413,7 @@ export class RouteManager {
 
     private async processProfile(profile: any): Promise<any> {
 
-        // Would recommend turning this into a method - CJ
+        // TODO: #5 Turn these into a method - CJ
         const getStatValue = (keys) => {
             const item = profile.Stats.Eft.SessionCounters.Items?.find(item =>
                 item.Key && keys.every((k, i) => item.Key[i] === k)
@@ -428,7 +421,6 @@ export class RouteManager {
             return item?.Value || 0;
         };
 
-        // Would recommend turning this into a method - CJ
         const getGlobalStatValue = (keys) => {
             const item = profile.Stats.Eft.OverallCounters.Items?.find(item =>
                 item.Key && keys.every((k, i) => item.Key[i] === k)
@@ -444,7 +436,11 @@ export class RouteManager {
         let profileName = staticProfile.characters.pmc.Info.Nickname;
         const kills = getStatValue(['KilledPmc']);
         const raidEndResult = this.sptLeaderboard.raidResult;
-        const combinedModData = this.sptLeaderboard.collectModData() + this.sptLeaderboard.serverMods;
+        const combinedModData = [...this.sptLeaderboard.collectModData().userMods, 
+                        ...this.sptLeaderboard.collectModData().bepinexMods,
+                        ...this.sptLeaderboard.collectModData().bepinexDlls,
+                        ...this.sptLeaderboard.serverMods];
+        
         const isScavRaid = profile.Info.Side === "Savage";
 
         // If left the raid

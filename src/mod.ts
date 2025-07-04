@@ -171,8 +171,8 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
         return result;
     }
 
-    public isProfileValid(profile: ISptProfile): boolean  {
-        if (!profile?.info) {
+    public isProfileValid(profile: { Info: any; }): boolean  {
+        if (!profile?.Info) {
             this.instanceManager.logger.info("[SPT Leaderboard] Invalid profile structure.");
             return false;
         }
