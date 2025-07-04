@@ -38,7 +38,9 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
         public isUsingStattrack: boolean = false;
         public hasKappa: boolean = false;
         public DBinINV: boolean = false;
-        // Make a type for this - Cj
+        public isInboxChecked: boolean = false;
+
+        // TODO: #4 Make a type for this - Cj
         public tradersInfo: any = {};
         public traderMap: Record<string, string> = {
             "6617beeaa9cfa777ca915b7c": "REF",
@@ -125,11 +127,9 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
             const data = await response.json();
 
             if (data.status === 'success') {
-                this.instanceManager.mailSendService.sendUserMessageToPlayer(
+                this.instanceManager.mailSendService.sendSystemMessageToPlayer(
                     sessionId,
-                    data.senderDetails,
-                    data.messageText,
-                    data.messageType
+                    data.messageText
                 );
             }
         } catch (error) {

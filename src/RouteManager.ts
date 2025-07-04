@@ -22,7 +22,7 @@ export class RouteManager {
     private retriesCount: number = 0;
     private connectivity: number = 1;
 
-    // Cache for heartbeats + 10 sec time out (sessionId: timestamp)
+    // Cache for heartbeats + 10 sec throttle (sessionId: timestamp)
     private stateCache: Map<string, any> = new Map();
 
     // -------------------------- Public members --------------------------
@@ -97,8 +97,8 @@ export class RouteManager {
                             return output
                         }
 
+                        // Send heartbeat on raid end - it will overwritten on front-end by "Finished Raid" anyways
                         if (config.public_profile) {
-                            // Removed `raid_end` here, not sure what that was even doing - CJ
                             this.sendHeartbeat(sessionId, output);
                         }
 
@@ -191,10 +191,6 @@ export class RouteManager {
                             });
                         }
 
-                        if (sessionId) {
-                            this.sptLeaderboard.checkInbox(sessionId);
-                        }
-
                         return output;
                     }
                 }
@@ -239,6 +235,14 @@ export class RouteManager {
                                 lastSentTime: this.stateCache.get(sessionId)?.lastSentTime || 0
                             });
                         }
+
+                        if (sessionId && this.sptLeaderboard.isInboxChecked) {
+                            // We want to check it only once
+                            this.sptLeaderboard.isInboxChecked = true;
+
+                            this.sptLeaderboard.checkInbox(sessionId);
+                        }
+                        
                         return output;
                     }
                 }
@@ -257,7 +261,7 @@ export class RouteManager {
                     action: async (url, info, sessionId, output) => {
                         if (sessionId && config.public_profile) {
                             this.stateCache.set(sessionId, {
-                                state: PlayerState.IN_STASH,
+                                state: PlayerState.OFFLINE,
                                 lastSentTime: this.stateCache.get(sessionId)?.lastSentTime || 0
                             });
                         }
@@ -295,7 +299,7 @@ export class RouteManager {
                 body: JSON.stringify({
                     type: cachedData.state,
                     timestamp: Date.now(),
-                    ver: '2.6.0',
+                    ver: '2.5.0',
                     sessionId
                 })
             });
