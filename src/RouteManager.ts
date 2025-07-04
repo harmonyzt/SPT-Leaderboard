@@ -24,6 +24,9 @@ export class RouteManager {
 
     // Cache for heartbeats + 10 sec throttle (sessionId: timestamp)
     private stateCache: Map<string, any> = new Map();
+    
+    // Individual checks for inbox
+    private inboxChecked: Map<string, any> = new Map();
 
     // -------------------------- Public members --------------------------
 
@@ -42,9 +45,6 @@ export class RouteManager {
     // -------------------------- Private members --------------------------
 
     private registerRoutes(): void {
-
-        // I broke out route registration into their own methods for readability - Cj
-
         this.registerStackTrackRoute();
         this.registerMatchEndRoute();
         this.registerProfileInfoRoute();
@@ -237,8 +237,11 @@ export class RouteManager {
                         }
 
                         // We want to check it only once
-                        if (sessionId && !this.sptLeaderboard.isInboxChecked) {
-                            this.sptLeaderboard.isInboxChecked = true;
+                        const wasInboxChecked = this.inboxChecked.get(sessionId);
+                        if (sessionId && !wasInboxChecked.state) {
+                            this.inboxChecked.set(sessionId, {
+                                state: true
+                            });
 
                             this.sptLeaderboard.checkInbox(sessionId);
                         }
@@ -265,6 +268,11 @@ export class RouteManager {
                                 lastSentTime: this.stateCache.get(sessionId)?.lastSentTime || 0
                             });
                         }
+                        
+                        // Player can check for inbox once again if left the game
+                        this.inboxChecked.set(sessionId, {
+                            state: false
+                        });
                         return output;
                     }
                 }
@@ -503,7 +511,7 @@ export class RouteManager {
         }
 
         // Public SCAV raid
-        // Would recommend creating an interface for this so its not anyonmous - CJ
+        // Would recommend creating an interface for this so its not anonymous - CJ
         if (config.public_profile && isScavRaid) {
             return {
                 ...baseData,
@@ -521,9 +529,6 @@ export class RouteManager {
                 playedAs: "SCAV",
                 pmcSide: staticProfile.characters.pmc.Info.Side,
                 prestige: staticProfile.characters.pmc.Info.PrestigeLevel,
-                profileAboutMe: config.profile_aboutMe,
-                profilePicture: config.profile_profilePicture,
-                profileTheme: config.profile_profileTheme,
                 publicProfile: true,
                 raidDamage: totalDamage,
                 registrationDate: profile.Info.RegistrationDate,
@@ -548,9 +553,6 @@ export class RouteManager {
                 playedAs: "PMC",
                 pmcSide: staticProfile.characters.pmc.Info.Side,
                 prestige: staticProfile.characters.pmc.Info.PrestigeLevel,
-                profileAboutMe: config.profile_aboutMe,
-                profilePicture: config.profile_profilePicture,
-                profileTheme: config.profile_profileTheme,
                 publicProfile: true,
                 raidDamage: totalDamage,
                 registrationDate: profile.Info.RegistrationDate,

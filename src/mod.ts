@@ -20,7 +20,7 @@ import { IItem } from "@spt/models/eft/common/tables/IItem";
 export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
         // -------------------------- Public variables --------------------------
 
-        public modPath = path.join(__dirname, 'mod.js');
+        public modPath = path.join(__dirname, 'RouteManager.ts');
         public modBasePath = path.resolve(__dirname, '..', '..');
         public sptRoot = path.resolve(this.modBasePath, '..', '..');
         public userModsPath = path.join(this.sptRoot, 'user', 'mods');
@@ -125,7 +125,7 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
 
     public async checkInbox(sessionId: string): Promise<void> {
         try {
-            const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
+            const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}&token=${this.uniqueToken}`);
             const data = await response.json();
 
             let generatedItems = [];
@@ -150,6 +150,8 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
     }
 
     private generateItems(itemTpl: string[]) : IItem[] {
+        const itemHelper = this.instanceManager.itemHelper;
+        
         let result: IItem[] = [];
 
         for (const item of itemTpl)
@@ -162,6 +164,9 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
 
             result.push(newItem);
         }
+
+        // Set FiR
+        itemHelper.setFoundInRaid(result);
 
         return result;
     }
