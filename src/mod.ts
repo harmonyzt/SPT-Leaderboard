@@ -3,17 +3,19 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 
 // Unused? Leaving this here so you know how to import them - Cj
-import connect from "node:http2"
+import connect from "node:http2";
 import https from "node:https";
 
 import type { DependencyContainer } from "tsyringe";
 import { InstanceManager } from "./InstanceManager";
 
-import * as config from "../config/config"
+import * as config from "../config/config";
 import { ISptProfile } from "@spt/models/eft/profile/ISptProfile";
 import { RouteManager } from "./RouteManager";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
+import { MessageType } from "@spt/models/enums/MessageType";
+import { IItem } from "@spt/models/eft/common/tables/IItem";
 
 export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
         // -------------------------- Public variables --------------------------
@@ -126,15 +128,42 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
             const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
             const data = await response.json();
 
+            let generatedItems = [];
+
+            if(data.rewardTpls){
+                generatedItems = this.generateItems(data.rewardTpls);
+            }
+
             if (data.status === 'success') {
-                this.instanceManager.mailSendService.sendSystemMessageToPlayer(
+                this.instanceManager.mailSendService.sendDirectNpcMessageToPlayer(
                     sessionId,
-                    data.messageText
+                    this.instanceManager.traderHelper.getTraderById("6617beeaa9cfa777ca915b7c"),
+                    MessageType.MESSAGE_WITH_ITEMS,
+                    data.messageText,
+                    generatedItems,
+                    72000
                 );
             }
         } catch (error) {
             console.error('Inbox check failed:', error);
         }
+    }
+
+    private generateItems(itemTpl: string[]) : IItem[] {
+        let result: IItem[] = [];
+
+        for (const item of itemTpl)
+        {
+            const newItem: IItem = 
+            {
+                _tpl: item,
+                _id: this.instanceManager.hashUtil.generate()
+            }
+
+            result.push(newItem);
+        }
+
+        return result;
     }
 
     public isProfileValid(profile: ISptProfile): boolean  {

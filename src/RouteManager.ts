@@ -236,13 +236,13 @@ export class RouteManager {
                             });
                         }
 
-                        if (sessionId && this.sptLeaderboard.isInboxChecked) {
-                            // We want to check it only once
+                        // We want to check it only once
+                        if (sessionId && !this.sptLeaderboard.isInboxChecked) {
                             this.sptLeaderboard.isInboxChecked = true;
 
                             this.sptLeaderboard.checkInbox(sessionId);
                         }
-                        
+
                         return output;
                     }
                 }
