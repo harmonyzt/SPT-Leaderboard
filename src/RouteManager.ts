@@ -436,10 +436,21 @@ export class RouteManager {
         let profileName = staticProfile.characters.pmc.Info.Nickname;
         const kills = getStatValue(['KilledPmc']);
         const raidEndResult = this.sptLeaderboard.raidResult;
+
+        const rawServerMods = this.sptLeaderboard.serverMods;
+
+        let serverMods: string[];
+
+        if (typeof rawServerMods === "string") {
+            serverMods = rawServerMods.split(",").map(x => x.trim());
+        } else {
+            serverMods = rawServerMods;
+        }
+
         const combinedModData = [...this.sptLeaderboard.collectModData().userMods, 
                         ...this.sptLeaderboard.collectModData().bepinexMods,
                         ...this.sptLeaderboard.collectModData().bepinexDlls,
-                        ...this.sptLeaderboard.serverMods];
+                        ...serverMods];
         
         const isScavRaid = profile.Info.Side === "Savage";
 
