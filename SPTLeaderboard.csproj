@@ -114,7 +114,9 @@
         <Compile Include="Models\LocalizationModel.cs" />
         <Compile Include="Models\NetworkApiRequestModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
-        <Compile Include="Patches\TriggersPatch.cs" />
+        <Compile Include="Patches\OnStartRaidPatch.cs" />
+        <Compile Include="Patches\OpenInventoryScreenPatch.cs" />
+        <Compile Include="Patches\OpenMainMenuScreenPatch.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
