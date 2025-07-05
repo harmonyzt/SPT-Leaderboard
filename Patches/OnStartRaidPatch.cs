@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Timers;
 using EFT;
 using EFT.UI;
 using SPT.Reflection.Patching;
@@ -16,7 +17,7 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_RAID);
+            LeaderboardPlugin.Instance.StartInRaidHeartbeat();
             LeaderboardPlugin.logger.LogWarning("Player started raid");
             return true;
         }

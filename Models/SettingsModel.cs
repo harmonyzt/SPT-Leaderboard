@@ -20,6 +20,7 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<string> PhpEndpoint;
 		public ConfigEntry<string> PhpPath;
 		public ConfigEntry<bool> Debug;
+		public ConfigEntry<int> SupportInRaidConnectionTimer;
 
 		private SettingsModel(ConfigFile configFile)
 		{
@@ -49,7 +50,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 7
+						Order = 8
 					}));
 			
 			PublicProfile = configFile.Bind(
@@ -61,7 +62,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 6
+						Order = 7
 					}));
 			
 			EnableModSupport = configFile.Bind(
@@ -73,7 +74,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 5
+						Order = 6
 					}));
 			
 			ConnectionRetries = configFile.Bind(
@@ -85,7 +86,8 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 4
+						Order = 5,
+						IsAdvanced = true
 					}));
 			
 			ConnectionTimeout = configFile.Bind(
@@ -97,7 +99,8 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 3
+						Order = 4,
+						IsAdvanced = true
 					}));
 			
 			PhpEndpoint = configFile.Bind(
@@ -109,7 +112,8 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 2
+						Order = 3,
+						IsAdvanced = true
 					}));
 			
 			PhpPath = configFile.Bind(
@@ -121,7 +125,8 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 1
+						Order = 2,
+						IsAdvanced = true
 					}));
 			
 			Debug = configFile.Bind(
@@ -133,7 +138,19 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 0
+						Order = 1
+					}));
+			SupportInRaidConnectionTimer = configFile.Bind(
+				"Settings", 
+				"Support In Raid Connection Timer", 
+				20, 
+				new ConfigDescription(
+					"Timer for requests in server for support status IN_RAID",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 0,
+						IsAdvanced = true
 					}));
 		}
 		

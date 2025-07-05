@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Timers;
+using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT.UI;
@@ -15,8 +16,11 @@ namespace SPTLeaderboard
     [BepInPlugin("harmonyzt.SPTLeaderboard", "SPTLeaderboard", "1.0.0")]
     public class LeaderboardPlugin : BaseUnityPlugin
     {
+        public static LeaderboardPlugin Instance { get; private set; }
+        
         private SettingsModel _settings;
         private EncryptionModel _encrypt;
+        private Timer _inRaidHeartbeatTimer;
         
         public static string _sessionID;
 
@@ -35,20 +39,8 @@ namespace SPTLeaderboard
             new OpenInventoryScreenPatch().Enable();
             new OnStartRaidPatch().Enable();
             new OnEndRaidPatch().Enable();
-        }
-
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                SendHeartbeat(PlayerState.ONLINE);
-            }
             
-            if (_settings.KeyBindTwo.Value.IsDown())
-            {
-                logger.LogWarning($"Токен {_encrypt.Token}");
-                // SendExampleProfileData();
-            }
+            Instance = this;
         }
 
         public void SendExampleProfileData()
@@ -115,7 +107,7 @@ namespace SPTLeaderboard
                     logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
 
                     request.SetData(jsonBody);
-                    request.Start();
+                    request.Send();
                 }
             }
         }
@@ -138,7 +130,38 @@ namespace SPTLeaderboard
             logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
             
             request.SetData(jsonBody);
-            request.Start();
+            request.Send();
+        }
+        
+        public void StartInRaidHeartbeat()
+        {
+            StopInRaidHeartbeat();
+            SendHeartbeat(PlayerState.IN_RAID);
+        
+            _inRaidHeartbeatTimer = new Timer(_settings.SupportInRaidConnectionTimer.Value * 1000);
+            _inRaidHeartbeatTimer.Elapsed += (_, __) =>
+            {
+                if (DataUtils.HasRaidStarted())
+                {
+                    SendHeartbeat(PlayerState.IN_RAID);
+                }
+            };
+            _inRaidHeartbeatTimer.AutoReset = true;
+            _inRaidHeartbeatTimer.Start();
+        
+            logger.LogWarning("[SPT Leaderboard] InRaid timer started");
+        }
+
+        public void StopInRaidHeartbeat()
+        {
+            if (_inRaidHeartbeatTimer != null)
+            {
+                _inRaidHeartbeatTimer.Stop();
+                _inRaidHeartbeatTimer.Dispose();
+                _inRaidHeartbeatTimer = null;
+            
+                logger.LogWarning("[SPT Leaderboard] InRaid timer stopped");
+            }
         }
     }
 }

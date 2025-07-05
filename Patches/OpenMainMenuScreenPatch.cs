@@ -3,6 +3,7 @@ using EFT;
 using EFT.UI;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
+using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Patches
 {
@@ -25,8 +26,12 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_MENU);
-            LeaderboardPlugin.logger.LogWarning("Player opened MainMenu screen");
+            if (!DataUtils.HasRaidStarted())
+            {
+                LeaderboardPlugin.SendHeartbeat(PlayerState.IN_MENU);
+                LeaderboardPlugin.logger.LogWarning("Player opened MainMenu screen");
+                return true;
+            }
             return true;
         }
     }

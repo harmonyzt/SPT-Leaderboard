@@ -40,13 +40,19 @@ namespace SPTLeaderboard.Models
         /// <summary>
         /// Starting request start
         /// </summary>
-        public void Start()
+        public void Send()
         {
             StartCoroutine(RunBaseRequest());
         }
 
         private IEnumerator RunBaseRequest()
         {
+            if (string.IsNullOrEmpty(_jsonBody))
+            {
+                LeaderboardPlugin.logger.LogWarning("[SPT Leaderboard] _jsonBody is null or empty, skipping request.");
+                yield break;
+            }
+            
             if (_isComplete)
             {
                 yield break;
@@ -62,7 +68,7 @@ namespace SPTLeaderboard.Models
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
 
             var reqId = Guid.NewGuid().ToString();
-            // LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
+            LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
             request.timeout = SettingsModel.Instance.ConnectionTimeout.Value;
 
             yield return request.SendWebRequest();

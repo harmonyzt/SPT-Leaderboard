@@ -52,7 +52,6 @@ public static class DataUtils
         return Enum.GetName(typeof(PlayerState), state)?.ToLower();
     }
     
-
     /// <summary>
     /// Parsing version SPT from string
     /// </summary>

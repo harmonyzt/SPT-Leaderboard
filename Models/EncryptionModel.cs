@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace SPTLeaderboard.Models
 {
@@ -12,6 +11,7 @@ namespace SPTLeaderboard.Models
         private string _token = "";
         
         public string Token => _token;
+        
         private string PathToken => Path.Combine(BepInEx.Paths.PluginPath, "SPT-Leaderboard", "secret.token");
 
         private EncryptionModel()
@@ -41,7 +41,6 @@ namespace SPTLeaderboard.Models
             }
         }
         
-
         private void LoadToken()
         {
             _token = File.ReadAllText(PathToken);
@@ -71,7 +70,5 @@ namespace SPTLeaderboard.Models
             }
             return Instance = new EncryptionModel();
         }
-
-        
     }
 }
