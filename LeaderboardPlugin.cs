@@ -14,6 +14,7 @@ using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
+using SPTLeaderboard.Patches;
 using UnityEngine;
 
 namespace SPTLeaderboard
@@ -68,6 +69,8 @@ namespace SPTLeaderboard
             _sessionID = Guid.NewGuid().ToString("N");
             _settings = SettingsModel.Create(Config);
             _localization = LocalizationModel.Create();
+            
+            new TriggersPatch().Enable();
             
             logger = Logger;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
