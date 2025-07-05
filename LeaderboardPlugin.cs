@@ -11,6 +11,7 @@ using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
 using SPTLeaderboard.Patches;
+using SPTLeaderboard.Utils;
 using UnityEngine;
 
 namespace SPTLeaderboard
@@ -19,49 +20,25 @@ namespace SPTLeaderboard
     public class LeaderboardPlugin : BaseUnityPlugin
     {
         private SettingsModel _settings;
-        private LocalizationModel _localization;
         public static string _sessionID;
 
         public static ManualLogSource logger;
         
-        public static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
-        
-        public static ISession GetSession(bool throwIfNull = false)
-        {
-            var session = ClientAppUtils.GetClientApp().Session;
-
-            if (throwIfNull && session is null)
-            {
-                logger.LogWarning("Trying to access the Session when it's null");
-            }
-
-            return session;
-        }
-        
         public static Profile GetProfile(bool throwIfNull = false)
         {
-            var profile = GetSession()?.Profile;
+            var profile = DataUtils.GetSession()?.Profile;
 
             if (throwIfNull && profile is null)
             {
                 logger.LogWarning("Trying to access the Profile when it's null");
             }
         
-            return GetSession()?.Profile;
-        }
-        
-        public static long CurrentTimestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-        public static bool HasRaidStarted()
-        {
-            bool? inRaid = Singleton<AbstractGame>.Instance?.InRaid;
-            return inRaid.HasValue && inRaid.Value;
+            return DataUtils.GetSession()?.Profile;
         }
 
         private void Awake()
         {
             _settings = SettingsModel.Create(Config);
-            _localization = LocalizationModel.Create();
             
             new OpenMainMenuScreenPatch().Enable();
             new OpenInventoryScreenPatch().Enable();
@@ -89,7 +66,7 @@ namespace SPTLeaderboard
         {
             if (Singleton<PreloaderUI>.Instantiated)
             {
-                var session = GetSession();
+                var session = DataUtils.GetSession();
                 if (session.Profile != null)
                 {
                     var exampleData = new BaseData
@@ -98,7 +75,7 @@ namespace SPTLeaderboard
                         Health = 440,
                         Id = session.Profile.Id,
                         IsScav = false,
-                        LastPlayed = CurrentTimestamp,
+                        LastPlayed = DataUtils.CurrentTimestamp,
                         ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f",
                         Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],
                         Name = session.Profile.Nickname,
@@ -107,8 +84,8 @@ namespace SPTLeaderboard
                         RaidKills = 3,
                         RaidResult = "Survived",
                         RaidTime = 621,
-                        SptVersion = ParseVersion(PlayerPrefs.GetString("SPT_Version")),
-                        Token = "",
+                        SptVersion = DataUtils.ParseVersion(PlayerPrefs.GetString("SPT_Version")),
+                        Token = "20eb4274c9b66efca21d622d45680aeedcc19762e7d7b898f9cf0bf88c9e4518",
                         DBinInv = false,
                         IsCasual = _settings.ModCasualMode.Value
                     };
@@ -117,24 +94,12 @@ namespace SPTLeaderboard
                 }
             }
         }
-
-        public string ParseVersion(string rawString)
-        {
-            var match = Regex.Match(rawString, @"SPT\s+([0-9\.]+)\s+-");
-            if (match.Success)
-            {
-                string version = match.Groups[1].Value;
-                return version;
-            }
-
-            return GlobalData.BaseSPTVersion;
-        }
         
         public static void SendHeartbeat(PlayerState playerState)
         {
             if (Singleton<PreloaderUI>.Instantiated)
             {
-                var session = GetSession();
+                var session = DataUtils.GetSession();
                 if (session.Profile != null)
                 {
                     var request = NetworkApiRequestModel.Create(GlobalData.HeartbeatUrl);
@@ -151,8 +116,8 @@ namespace SPTLeaderboard
 
                     var data = new PlayerHeartbeatData
                     {
-                        Type = GetPlayerState(playerState),
-                        Timestamp = CurrentTimestamp,
+                        Type = DataUtils.GetPlayerState(playerState),
+                        Timestamp = DataUtils.CurrentTimestamp,
                         Version = GlobalData.Version,
                         SessionId = session.Profile.Id
                     };
@@ -185,11 +150,6 @@ namespace SPTLeaderboard
             
             request.SetData(jsonBody);
             request.Start();
-        }
-        
-        public static string GetPlayerState(PlayerState state)
-        {
-            return Enum.GetName(typeof(PlayerState), state)?.ToLower();
         }
     }
 }

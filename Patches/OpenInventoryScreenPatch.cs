@@ -4,6 +4,7 @@ using EFT.InventoryLogic;
 using EFT.UI;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
+using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Patches
 {
@@ -33,7 +34,7 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            if (!LeaderboardPlugin.HasRaidStarted())
+            if (!DataUtils.HasRaidStarted())
             {
                 LeaderboardPlugin.SendHeartbeat(PlayerState.IN_STASH);
                 LeaderboardPlugin.logger.LogWarning("Player opened Inventory screen");
