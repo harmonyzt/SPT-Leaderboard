@@ -16,7 +16,7 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_MENU);
+            LeaderboardPlugin.SendHeartbeat(PlayerState.RAID_END);
             LeaderboardPlugin.logger.LogWarning("Player ended raid");
             return true;
         }

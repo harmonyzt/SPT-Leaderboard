@@ -4,7 +4,8 @@
     {
         ONLINE,
         IN_MENU,
+        IN_STASH,
         IN_RAID,
-        IN_STASH
+        RAID_END
     }
 }
