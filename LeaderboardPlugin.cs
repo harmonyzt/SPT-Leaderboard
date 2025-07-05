@@ -1,12 +1,8 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
-using EFT;
 using EFT.UI;
 using Newtonsoft.Json;
-using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
@@ -20,33 +16,25 @@ namespace SPTLeaderboard
     public class LeaderboardPlugin : BaseUnityPlugin
     {
         private SettingsModel _settings;
+        private EncryptionModel _encrypt;
+        
         public static string _sessionID;
 
         public static ManualLogSource logger;
-        
-        public static Profile GetProfile(bool throwIfNull = false)
-        {
-            var profile = DataUtils.GetSession()?.Profile;
-
-            if (throwIfNull && profile is null)
-            {
-                logger.LogWarning("Trying to access the Profile when it's null");
-            }
-        
-            return DataUtils.GetSession()?.Profile;
-        }
 
         private void Awake()
         {
+            logger = Logger;
+            logger.LogInfo("[SPT Leaderboard] successful loaded!");
+            
+            
             _settings = SettingsModel.Create(Config);
+            _encrypt = EncryptionModel.Create();
             
             new OpenMainMenuScreenPatch().Enable();
             new OpenInventoryScreenPatch().Enable();
             new OnStartRaidPatch().Enable();
             new OnEndRaidPatch().Enable();
-            
-            logger = Logger;
-            logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
 
         private void Update()
@@ -58,7 +46,8 @@ namespace SPTLeaderboard
             
             if (_settings.KeyBindTwo.Value.IsDown())
             {
-                SendExampleProfileData();
+                logger.LogWarning($"Токен {_encrypt.Token}");
+                // SendExampleProfileData();
             }
         }
 
@@ -85,7 +74,7 @@ namespace SPTLeaderboard
                         RaidResult = "Survived",
                         RaidTime = 621,
                         SptVersion = DataUtils.ParseVersion(PlayerPrefs.GetString("SPT_Version")),
-                        Token = "20eb4274c9b66efca21d622d45680aeedcc19762e7d7b898f9cf0bf88c9e4518",
+                        Token = _encrypt.Token,
                         DBinInv = false,
                         IsCasual = _settings.ModCasualMode.Value
                     };

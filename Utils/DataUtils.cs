@@ -22,6 +22,18 @@ public static class DataUtils
         return session;
     }
     
+    public static Profile GetProfile(bool throwIfNull = false)
+    {
+        var profile = DataUtils.GetSession()?.Profile;
+
+        if (throwIfNull && profile is null)
+        {
+            LeaderboardPlugin.logger.LogWarning("Trying to access the Profile when it's null");
+        }
+        
+        return DataUtils.GetSession()?.Profile;
+    }
+    
     public static bool HasRaidStarted()
     {
         bool? inRaid = Singleton<AbstractGame>.Instance?.InRaid;

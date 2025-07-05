@@ -62,7 +62,7 @@ namespace SPTLeaderboard.Models
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
 
             var reqId = Guid.NewGuid().ToString();
-            LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
+            // LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
             request.timeout = SettingsModel.Instance.ConnectionTimeout.Value;
 
             yield return request.SendWebRequest();
