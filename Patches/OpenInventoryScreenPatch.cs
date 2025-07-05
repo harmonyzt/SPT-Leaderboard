@@ -33,8 +33,13 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_STASH);
-            LeaderboardPlugin.logger.LogWarning("Player opened Inventory screen");
+            if (!LeaderboardPlugin.HasRaidStarted())
+            {
+                LeaderboardPlugin.SendHeartbeat(PlayerState.IN_STASH);
+                LeaderboardPlugin.logger.LogWarning("Player opened Inventory screen");
+                return true;
+            }
+
             return true;
         }
     }
