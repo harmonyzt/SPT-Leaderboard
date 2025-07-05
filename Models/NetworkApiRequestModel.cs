@@ -1,54 +1,73 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Text;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace SPTLeaderboard.Models
 {
-    public class NetworkApiRequestModel
+    public class NetworkApiRequestModel : MonoBehaviour
     {
-        public static NetworkApiRequestModel Instance { get; private set; }
-        
-        // public string url = "https://visuals.nullcore.net/SPT/testEnv/api/v1/main.php";
-        public string url = "https://visuals.nullcore.net/SPT/testEnv/api/heartbeat/v1.php";
-        public string body = """{"type":"online","timestamp":1751658790369,"ver":"2.6.0","sessionId":"6862c9040004a645b8febe48"}""";
-    
-        public IEnumerator SendPostRequest()
-        {
-            string url = "https://visuals.nullcore.net/SPT/testEnv/api/heartbeat/v1.php";
+        private string _url;
+        private string _jsonBody;
 
-            // Твой JSON тело
-            string jsonBody = "{\"type\":\"online\",\"timestamp\":1751658790369,\"ver\":\"2.6.0\",\"sessionId\":\"6862c9040004a645b8febe48\"}";
+        public Action<string, long> OnSuccess;
+        public Action<string, long> OnFail;
+
+        /// <summary>
+        /// Factory create request
+        /// </summary>
+        public static NetworkApiRequestModel Create(string url)
+        {
+            var obj = new GameObject("[SPTLeaderboard] NetworkRequest");
+            DontDestroyOnLoad(obj);
+            var request = obj.AddComponent<NetworkApiRequestModel>();
+            request._url = url;
+            return request;
+        }
+
+        /// <summary>
+        /// Set body data request
+        /// </summary>
+        public NetworkApiRequestModel SetData(string jsonBody)
+        {
+            _jsonBody = jsonBody;
+            return this;
+        }
+
+        /// <summary>
+        /// Starting request start
+        /// </summary>
+        public void Start()
+        {
+            StartCoroutine(RunBaseRequest());
+        }
+
+        private IEnumerator RunBaseRequest()
+        {
+            using var request = new UnityWebRequest(_url, UnityWebRequest.kHttpVerbPOST);
+            var bodyRaw = Encoding.UTF8.GetBytes(_jsonBody);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
+
+            request.timeout = 10;
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                OnSuccess?.Invoke(request.downloadHandler.text, request.responseCode);
+            }
+            else
+            {
+                OnFail?.Invoke(request.error, request.responseCode);
+            }
             
-            using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
-            {
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                
-                request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
-
-                yield return request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    LeaderboardPlugin.ManualLogger.LogWarning("Response: " + request.downloadHandler.text);
-                    LeaderboardPlugin.ManualLogger.LogWarning("Response Code: " + request.responseCode);
-                }
-                else
-                {
-                    LeaderboardPlugin.ManualLogger.LogWarning("Error: " + request.error + ", Response Code: " + request.responseCode);
-                }
-            }
+            Destroy(gameObject);
         }
         
-        public static NetworkApiRequestModel Create()
-        {
-            if (Instance != null)
-            {
-                return Instance;
-            }
-            return Instance = new NetworkApiRequestModel();
-        }
     }
 }

@@ -3,7 +3,6 @@ using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
-using Newtonsoft.Json.Linq;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Models;
 using UnityEngine;
@@ -15,9 +14,8 @@ namespace SPTLeaderboard
     {
         private SettingsModel _settings;
         private LocalizationModel _localization;
-        private NetworkApiRequestModel _network;
 
-        public static ManualLogSource ManualLogger;
+        public static ManualLogSource logger;
         
         public static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
 
@@ -31,18 +29,48 @@ namespace SPTLeaderboard
         {
             _settings = SettingsModel.Create(Config);
             _localization = LocalizationModel.Create();
-            _network = NetworkApiRequestModel.Create();
             
-            ManualLogger = Logger;
-            ManualLogger.LogInfo("[SPT Leaderboard] successful loaded!");
+            logger = Logger;
+            logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
 
         private void Update()
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                StartCoroutine(NetworkApiRequestModel.Instance.SendPostRequest());
+                TestMethod();
             }
         }
+
+        private void TestMethod()
+        {
+            var request = NetworkApiRequestModel.Create("https://visuals.nullcore.net/SPT/testEnv/api/heartbeat/v1.php");
+
+            request.OnSuccess = (response, code) =>
+            {
+                logger.LogWarning($"[SPT Leaderboard] Request OnSuccess {response}:{code}");
+            };
+
+            request.OnFail = (error, code) =>
+            {
+                logger.LogError($"[SPT Leaderboard] Request OnFail {error}:{code}");
+            };
+                
+            request.SetData("""{"type":"online","timestamp":1751658790369,"ver":"2.6.0","sessionId":"6862c9040004a645b8febe48"}""");
+            request.Start();
+        }
+        
+        public string GetPlayerState(PlayerState state)
+        {
+            return Enum.GetName(typeof(PlayerState), state)?.ToLower();
+        }
+    }
+
+    public enum PlayerState
+    {
+        ONLINE,
+        IN_MENU,
+        IN_RAID,
+        IN_STASH
     }
 }
