@@ -145,6 +145,10 @@ namespace SPTLeaderboard
                 {
                     SendHeartbeat(PlayerState.IN_RAID);
                 }
+                else
+                {
+                    StopInRaidHeartbeat();
+                }
             };
             _inRaidHeartbeatTimer.AutoReset = true;
             _inRaidHeartbeatTimer.Start();
