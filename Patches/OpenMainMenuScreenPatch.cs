@@ -13,7 +13,12 @@ namespace SPTLeaderboard.Patches
                 "Show",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                new[] { typeof(Profile), typeof(MatchmakerPlayerControllerClass), typeof(ESessionMode) },
+                new[]
+                {
+                    typeof(Profile), 
+                    typeof(MatchmakerPlayerControllerClass),
+                    typeof(ESessionMode)
+                },
                 null
             );
 

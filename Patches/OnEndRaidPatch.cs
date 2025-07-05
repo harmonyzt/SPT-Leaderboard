@@ -6,18 +6,18 @@ using SPTLeaderboard.Enums;
 
 namespace SPTLeaderboard.Patches
 {
-    internal class OnStartRaidPatch : ModulePatch
+    internal class OnEndRaidPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod() =>
             typeof(Class303).GetMethod(
-                "LocalRaidStarted",
+                "LocalRaidEnded",
                 BindingFlags.Instance | BindingFlags.Public);
 
         [PatchPrefix]
         static bool Prefix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_RAID);
-            LeaderboardPlugin.logger.LogWarning("Player started raid");
+            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_MENU);
+            LeaderboardPlugin.logger.LogWarning("Player ended raid");
             return true;
         }
     }
