@@ -1,4 +1,5 @@
-dist
-node_modules
-secret.token
-*vscode
+bin/
+obj/
+.idea
+.vs
+Dependencies
