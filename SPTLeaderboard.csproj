@@ -114,6 +114,7 @@
         <Compile Include="Models\LocalizationModel.cs" />
         <Compile Include="Models\NetworkApiRequestModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
+        <Compile Include="Patches\OnEndRaidPatch.cs" />
         <Compile Include="Patches\OnStartRaidPatch.cs" />
         <Compile Include="Patches\OpenInventoryScreenPatch.cs" />
         <Compile Include="Patches\OpenMainMenuScreenPatch.cs" />

@@ -66,6 +66,7 @@ namespace SPTLeaderboard
             new OpenMainMenuScreenPatch().Enable();
             new OpenInventoryScreenPatch().Enable();
             new OnStartRaidPatch().Enable();
+            new OnEndRaidPatch().Enable();
             
             logger = Logger;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
@@ -107,9 +108,9 @@ namespace SPTLeaderboard
                         RaidResult = "Survived",
                         RaidTime = 621,
                         SptVersion = ParseVersion(PlayerPrefs.GetString("SPT_Version")),
-                        Token = "20eb4274c9b66efca21d622d45680aeedcc19762e7d7b898f9cf0bf88c9e4518",
+                        Token = "",
                         DBinInv = false,
-                        IsCasual = GlobalData.IsCasual
+                        IsCasual = _settings.ModCasualMode.Value
                     };
                 
                     SendProfileData(exampleData);

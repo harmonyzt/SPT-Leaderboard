@@ -14,7 +14,7 @@ namespace SPTLeaderboard.Models
         public Action<string, long> OnSuccess;
         public Action<string, long> OnFail;
         
-        private bool _isComplete = false;
+        private bool _isComplete;
 
         /// <summary>
         /// Factory create request
@@ -63,7 +63,7 @@ namespace SPTLeaderboard.Models
 
             var reqId = Guid.NewGuid().ToString();
             LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
-            request.timeout = 10;
+            request.timeout = SettingsModel.Instance.ConnectionTimeout.Value;
 
             yield return request.SendWebRequest();
 
