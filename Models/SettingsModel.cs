@@ -11,6 +11,7 @@ namespace SPTLeaderboard.Models
 		public static SettingsModel Instance { get; private set; }
 		
 		public ConfigEntry<KeyboardShortcut> KeyBind;
+		public ConfigEntry<KeyboardShortcut> KeyBindTwo;
 
 		private SettingsModel(ConfigFile configFile)
 		{
@@ -25,6 +26,18 @@ namespace SPTLeaderboard.Models
 					{
 						Order = 0
 					})); 
+			
+			KeyBindTwo = configFile.Bind(
+				"Settings", 
+				"Test key bind2", 
+				new KeyboardShortcut(KeyCode.UpArrow), 
+				new ConfigDescription(
+					"Just keybind for test requests",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 1
+					}));
 		}
 		
 		/// <summary>

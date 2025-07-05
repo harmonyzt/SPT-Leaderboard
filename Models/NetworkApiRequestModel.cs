@@ -73,6 +73,7 @@ namespace SPTLeaderboard.Models
             }
             else
             {
+                LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] OnFail responce {request.downloadHandler.text}");
                 OnFail?.Invoke(request.error, request.responseCode);
             }
             

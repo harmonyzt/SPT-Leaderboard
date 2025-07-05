@@ -44,6 +44,9 @@
         <Reference Include="spt-common">
             <HintPath>Dependencies\spt-common.dll</HintPath>
         </Reference>
+        <Reference Include="spt-custom">
+          <HintPath>Dependencies\spt-custom.dll</HintPath>
+        </Reference>
         <Reference Include="spt-reflection">
             <HintPath>Dependencies\spt-reflection.dll</HintPath>
         </Reference>
@@ -102,12 +105,19 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Data\BaseData.cs" />
+        <Compile Include="Data\GlobalData.cs" />
+        <Compile Include="Data\PlayerHeartbeatData.cs" />
+        <Compile Include="Enums\PlayerState.cs" />
         <Compile Include="LeaderboardPlugin.cs" />
         <Compile Include="Models\ConfigurationManagerAttributes.cs" />
         <Compile Include="Models\LocalizationModel.cs" />
         <Compile Include="Models\NetworkApiRequestModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Patches\" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
 </Project>
