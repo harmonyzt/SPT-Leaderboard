@@ -13,6 +13,8 @@ namespace SPTLeaderboard.Models
 
         public Action<string, long> OnSuccess;
         public Action<string, long> OnFail;
+        
+        private bool _isComplete = false;
 
         /// <summary>
         /// Factory create request
@@ -45,6 +47,12 @@ namespace SPTLeaderboard.Models
 
         private IEnumerator RunBaseRequest()
         {
+            if (_isComplete)
+            {
+                yield break;
+            }
+            _isComplete = true;
+            
             using var request = new UnityWebRequest(_url, UnityWebRequest.kHttpVerbPOST);
             var bodyRaw = Encoding.UTF8.GetBytes(_jsonBody);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -53,6 +61,8 @@ namespace SPTLeaderboard.Models
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
 
+            var reqId = Guid.NewGuid().ToString();
+            LeaderboardPlugin.logger.LogWarning($"[SPT Leaderboard] Request ID = {reqId}");
             request.timeout = 10;
 
             yield return request.SendWebRequest();
