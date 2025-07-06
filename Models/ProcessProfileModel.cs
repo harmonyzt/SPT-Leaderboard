@@ -39,7 +39,7 @@ public class ProcessProfileModel
                 }
                 catch (Exception e)
                 {
-                    LeaderboardPlugin.logger.LogError("Cant parse data profile");
+                    LeaderboardPlugin.logger.LogError($"Cant parse data profile {e.Message}");
                 }
                 
                 bool isScavRaid = session.Profile.Side == EPlayerSide.Savage;
@@ -61,10 +61,9 @@ public class ProcessProfileModel
                     if (transitController.localRaidSettings_0.location != "None")
                     {
                         isTransition = true;
-                        lastRaidTransitionTo = transitController.localRaidSettings_0.location;
                         var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
-                        LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP {lastRaidTransitionTo}");
-                        LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP 2 {locationTransit.location}");
+                        lastRaidTransitionTo = locationTransit.location;
+                        LeaderboardPlugin.logger.LogWarning($"Player transit to map {lastRaidTransitionTo}");
                     }
                 }
 
@@ -82,9 +81,14 @@ public class ProcessProfileModel
                     bodyPart => bodyPart.Value?.Health != null
                 ).Sum(
                     bodyPart => bodyPart.Value.Health.Current);
-                
-                // var checkDBinINV = PmcData.Inventory.
-                
+
+                bool godBalaclava = profileData!.Inventory.Items.Any(inventoryItem => inventoryItem.Tpl == "58ac60eb86f77401897560ff");
+                if (godBalaclava)
+                {
+                    LeaderboardPlugin.logger.LogWarning("Player has balaclava of a god");
+                    godBalaclava = false;
+                }
+
                 var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
@@ -133,7 +137,7 @@ public class ProcessProfileModel
                     RaidTime = resultRaid.playTime,
                     SptVersion = DataUtils.GetSptVersion(),
                     Token = EncryptionModel.Instance.Token,
-                    DBinInv = false,
+                    DBinInv = godBalaclava,
                     IsCasual = SettingsModel.Instance.ModCasualMode.Value
                 };
 

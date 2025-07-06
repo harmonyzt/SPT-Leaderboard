@@ -6,13 +6,15 @@ namespace SPTLeaderboard.Data
 {
     public class ProfileData
     {
-        [JsonProperty("_id")] public string _id { get; set; }
+        [JsonProperty("_id")] public string _ID { get; set; }
 
-        [JsonProperty("aid")] public string aid { get; set; }
+        [JsonProperty("aid")] public string aID { get; set; }
 
-        [JsonProperty("savage")] public string savage { get; set; }
+        [JsonProperty("savage")] public string Savage { get; set; }
 
         [JsonProperty("Info")] public Info Info { get; set; }
+        
+        [JsonProperty("Inventory")] public Inventory Inventory { get; set; }
 
         // [JsonProperty("Health")] public Health Health { get; set; }
 
@@ -41,26 +43,7 @@ namespace SPTLeaderboard.Data
         
         [JsonProperty("notFound", NullValueHandling = NullValueHandling.Ignore)] public bool? NotFound { get; set; }
     }
-
-    public class Area
-    {
-        [JsonProperty("active")] public bool active { get; set; }
-
-        [JsonProperty("type")] public int type { get; set; }
-
-        [JsonProperty("level")] public int level { get; set; }
-
-        [JsonProperty("completeTime")] public int completeTime { get; set; }
-
-        [JsonProperty("constructing")] public bool constructing { get; set; }
-
-        [JsonProperty("passiveBonusesEnabled")]
-        public bool passiveBonusesEnabled { get; set; }
-
-        [JsonProperty("lastRecipe")] public string lastRecipe { get; set; }
-
-        [JsonProperty("slots")] public List<Slot> slots { get; set; }
-    }
+    
 
     public class BodyParts
     {
@@ -77,57 +60,6 @@ namespace SPTLeaderboard.Data
         [JsonProperty("RightLeg")] public RightLeg RightLeg { get; set; }
 
         [JsonProperty("Stomach")] public Stomach Stomach { get; set; }
-    }
-
-    public class Bonuse
-    {
-        [JsonProperty("type")] public string type { get; set; }
-
-        [JsonProperty("id")] public string id { get; set; }
-
-        [JsonProperty("value")] public int value { get; set; }
-
-        [JsonProperty("visible")] public bool visible { get; set; }
-
-        [JsonProperty("passive")] public bool passive { get; set; }
-
-        [JsonProperty("production")] public bool production { get; set; }
-
-        [JsonProperty("icon")] public string icon { get; set; }
-
-        [JsonProperty("templateId")] public string templateId { get; set; }
-
-        [JsonProperty("filter")] public List<string> filter { get; set; }
-    }
-
-    public class CheckedMagazines
-    {
-        [JsonProperty("686a655c0f0d616a1403bc6d")]
-        public int _686a655c0f0d616a1403bc6d { get; set; }
-
-        [JsonProperty("686a7b610f0d616a140b1dc2")]
-        public int _686a7b610f0d616a140b1dc2 { get; set; }
-
-        [JsonProperty("686a92e20fe45f57000464cc")]
-        public int _686a92e20fe45f57000464cc { get; set; }
-
-        [JsonProperty("686a655c0f0d616a1403bc6e")]
-        public int _686a655c0f0d616a1403bc6e { get; set; }
-
-        [JsonProperty("686a92e20fe45f57000464ce")]
-        public int _686a92e20fe45f57000464ce { get; set; }
-
-        [JsonProperty("686a655c0f0d616a1403bc6c")]
-        public int _686a655c0f0d616a1403bc6c { get; set; }
-
-        [JsonProperty("686a655c0f0d616a1403bc70")]
-        public int _686a655c0f0d616a1403bc70 { get; set; }
-
-        [JsonProperty("686a65df0f0d616a1403d7e4")]
-        public int _686a65df0f0d616a1403d7e4 { get; set; }
-
-        [JsonProperty("686a65df0f0d616a1403d7e5")]
-        public int _686a65df0f0d616a1403d7e5 { get; set; }
     }
 
     public class Chest
@@ -231,9 +163,7 @@ namespace SPTLeaderboard.Data
         [JsonProperty("CarriedByGroupMember")] public bool CarriedByGroupMember { get; set; }
     }
 
-    public class Effects
-    {
-    }
+    public class Effects;
 
     public class Eft
     {
@@ -268,10 +198,6 @@ namespace SPTLeaderboard.Data
         [JsonProperty("SurvivorClass")] public string SurvivorClass { get; set; }
     }
 
-    public class Encyclopedia
-    {
-    }
-
     public class Energy
     {
         [JsonProperty("Current")] public double Current { get; set; }
@@ -294,9 +220,7 @@ namespace SPTLeaderboard.Data
         [JsonProperty("Hits")] public int Hits { get; set; }
     }
 
-    public class FastPanel
-    {
-    }
+    public class FastPanel;
 
     public class Foldable
     {
@@ -352,8 +276,6 @@ namespace SPTLeaderboard.Data
     public class Hideout
     {
         [JsonProperty("Production")] public Production Production { get; set; }
-
-        [JsonProperty("Areas")] public List<Area> Areas { get; set; }
 
         [JsonProperty("Seed")] public string Seed { get; set; }
 
@@ -420,26 +342,9 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("Voice")] public string Voice { get; set; }
 
-        [JsonProperty("IsStreamerModeAvailable")]
-        public bool IsStreamerModeAvailable { get; set; }
-
-        [JsonProperty("SquadInviteRestriction")]
-        public bool SquadInviteRestriction { get; set; }
-
-        [JsonProperty("Bans")] public List<object> Bans { get; set; }
-
-        [JsonProperty("Settings")] public Settings Settings { get; set; }
-
-        [JsonProperty("MemberCategory")] public string MemberCategory { get; set; }
-
-        [JsonProperty("SelectedMemberCategory")]
-        public string SelectedMemberCategory { get; set; }
-
         [JsonProperty("Experience")] public int Experience { get; set; }
 
         [JsonProperty("Level")] public int Level { get; set; }
-
-        [JsonProperty("lockedMoveCommands")] public bool lockedMoveCommands { get; set; }
     }
 
     public class InsuredItem
@@ -451,37 +356,14 @@ namespace SPTLeaderboard.Data
 
     public class Inventory
     {
-        [JsonProperty("items")] public List<Item> items { get; set; }
-
-        [JsonProperty("equipment")] public string equipment { get; set; }
-
-        [JsonProperty("questRaidItems")] public string questRaidItems { get; set; }
-
-        [JsonProperty("sortingTable")] public string sortingTable { get; set; }
-
-        [JsonProperty("hideoutAreaStashes")] public HideoutAreaStashes hideoutAreaStashes { get; set; }
-
-        [JsonProperty("fastPanel")] public FastPanel fastPanel { get; set; }
-
-        [JsonProperty("favoriteItems")] public List<object> favoriteItems { get; set; }
-
-        [JsonProperty("hideoutCustomizationStashId")]
-        public string hideoutCustomizationStashId { get; set; }
+        [JsonProperty("items")] public List<InventoryItem> Items { get; set; }
     }
 
-    public class Item
+    public class InventoryItem
     {
-        [JsonProperty("_id")] public string _id { get; set; }
+        [JsonProperty("_id")] public string ID { get; set; }
 
-        [JsonProperty("_tpl")] public string _tpl { get; set; }
-
-        [JsonProperty("slotId")] public string slotId { get; set; }
-
-        [JsonProperty("upd")] public Upd upd { get; set; }
-
-        [JsonProperty("parentId")] public string parentId { get; set; }
-
-        [JsonProperty("location")] public Location location { get; set; }
+        [JsonProperty("_tpl")] public string Tpl { get; set; }
     }
 
     public class Item2
@@ -562,7 +444,7 @@ namespace SPTLeaderboard.Data
 
     public class OverallCounters
     {
-        [JsonProperty("Items")] public List<Item> Items { get; set; }
+        [JsonProperty("Items")] public List<InventoryItem> Items { get; set; }
     }
 
     public class Poison
@@ -647,7 +529,7 @@ namespace SPTLeaderboard.Data
 
     public class SessionCounters
     {
-        [JsonProperty("Items")] public List<Item> Items { get; set; }
+        [JsonProperty("Items")] public List<InventoryItem> Items { get; set; }
     }
 
     public class Settings

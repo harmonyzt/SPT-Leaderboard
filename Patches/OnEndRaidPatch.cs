@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using EFT;
-using EFT.UI;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
