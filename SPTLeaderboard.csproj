@@ -113,6 +113,7 @@
         <Compile Include="Models\ConfigurationManagerAttributes.cs" />
         <Compile Include="Models\EncryptionModel.cs" />
         <Compile Include="Models\NetworkApiRequestModel.cs" />
+        <Compile Include="Models\ProcessProfileModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
         <Compile Include="Patches\OnEndRaidPatch.cs" />
         <Compile Include="Patches\OnStartRaidPatch.cs" />

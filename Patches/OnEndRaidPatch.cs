@@ -3,6 +3,7 @@ using EFT;
 using EFT.UI;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
+using SPTLeaderboard.Models;
 
 namespace SPTLeaderboard.Patches
 {
@@ -14,9 +15,10 @@ namespace SPTLeaderboard.Patches
                 BindingFlags.Instance | BindingFlags.Public);
 
         [PatchPrefix]
-        static bool Prefix()
+        static bool Prefix(GClass1959 results)
         {
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
+            ProcessProfileModel.Create().ProcessProfile(results);
             LeaderboardPlugin.SendHeartbeat(PlayerState.RAID_END);
             LeaderboardPlugin.logger.LogWarning("Player ended raid");
             return true;
