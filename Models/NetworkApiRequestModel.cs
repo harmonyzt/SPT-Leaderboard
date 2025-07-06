@@ -31,10 +31,9 @@ namespace SPTLeaderboard.Models
         /// <summary>
         /// Set body data request
         /// </summary>
-        public NetworkApiRequestModel SetData(string jsonBody)
+        public void SetData(string jsonBody)
         {
             _jsonBody = jsonBody;
-            return this;
         }
 
         /// <summary>
