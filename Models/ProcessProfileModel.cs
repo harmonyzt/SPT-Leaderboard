@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Comfort.Common;
 using EFT;
@@ -6,7 +7,7 @@ using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
-using UnityEngine;
+using TraderData = SPTLeaderboard.Data.TraderData;
 
 namespace SPTLeaderboard.Models;
 
@@ -14,7 +15,7 @@ public class ProcessProfileModel
 {
     public static ProcessProfileModel Instance { get; private set; }
 
-    public void ProcessAndSendProfile(GClass1959 resultRaid)
+    public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings)
     {
         if (Singleton<PreloaderUI>.Instantiated)
         {
@@ -24,11 +25,29 @@ public class ProcessProfileModel
                 var profileID = session.Profile.Id;
                 
                 var gameVersion = session.Profile.Info.GameVersion;
+                var lastRaidLocationRaw = localRaidSettings.location;
+                var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
                 
-                var dataPmc = session.GetProfileBySide(ESideType.Pmc);
-                var dataScav = session.GetProfileBySide(ESideType.Savage);
+                var PmcData = session.GetProfileBySide(ESideType.Pmc);
+                var ScavData = session.GetProfileBySide(ESideType.Savage);
 
+
+                ProfileData profileData = null;
+                try
+                {
+                    profileData = JsonConvert.DeserializeObject<ProfileData>(resultRaid.profile.JObject.ToString());
+                }
+                catch (Exception e)
+                {
+                    LeaderboardPlugin.logger.LogError("Cant parse data profile");
+                }
+                
                 bool isScavRaid = session.Profile.Side == EPlayerSide.Savage;
+                if (profileData != null)
+                {
+                    isScavRaid = profileData.Info.Side == "Savage";
+                }
+                
                 
                 bool discFromRaid = resultRaid.result == ExitStatus.Left;
                 
@@ -47,23 +66,24 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP {lastRaidTransitionTo}");
                         LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP 2 {locationTransit.location}");
                     }
-                    else
-                    {
-                        isTransition = false;
-                        lastRaidTransitionTo = "None";
-                    }
                 }
 
-                var MaxHealth = dataPmc.Health.BodyParts.Where(
+                var allAchievementsDict = PmcData.AchievementsData.ToDictionary(
+                    pair => pair.Key.ToString(),
+                    pair => pair.Value
+                );
+                
+                var MaxHealth = PmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null
                     ).Sum(
                     bodyPart => bodyPart.Value.Health.Maximum);
                 
-                var CurrentHealth = dataPmc.Health.BodyParts.Where(
+                var CurrentHealth = PmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null
                 ).Sum(
                     bodyPart => bodyPart.Value.Health.Current);
                 
+                // var checkDBinINV = PmcData.Inventory.
                 
                 var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
@@ -71,12 +91,19 @@ public class ProcessProfileModel
                 var KilledBear = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBear);
                 var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
                 var HeadShots = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HeadShots);
-                var LongestShot = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestShot);
-                var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillShot);
+                var LongestShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
+                var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestKillShot);
                 var LongestKillStreak = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillStreak);
+                var TotalDamage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+                var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
+                var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                 
+                if (HitCount <= 0) {
+                    HitCount = 0;
+                }
                 
-                LeaderboardPlugin.logger.LogWarning($"\n[Session Counter] Kills {Kills}");
+                LeaderboardPlugin.logger.LogWarning($"\n");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
@@ -84,7 +111,10 @@ public class ProcessProfileModel
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}\n");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
 
                 var baseData = new BaseData
                 {
@@ -97,7 +127,7 @@ public class ProcessProfileModel
                     Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
-                    PmcLevel = dataPmc.Info.Level,
+                    PmcLevel = PmcData.Info.Level,
                     RaidKills = Kills,
                     RaidResult = resultRaid.result.ToString(),
                     RaidTime = resultRaid.playTime,
@@ -109,29 +139,69 @@ public class ProcessProfileModel
 
                 if (!SettingsModel.Instance.PublicProfile.Value)
                 {
-                    var privateProfileData = new PrivateProfileData()
-                    {
-                        AccountType = baseData.AccountType,
-                        Health = baseData.Health,
-                        Id = baseData.Id,
-                        IsScav = baseData.IsScav,
-                        LastPlayed = baseData.LastPlayed,
-                        ModInt = baseData.ModInt,
-                        Mods = baseData.Mods,
-                        Name = baseData.Name,
-                        PmcHealth = baseData.PmcHealth,
-                        PmcLevel = baseData.PmcLevel,
-                        RaidKills = baseData.RaidKills,
-                        RaidResult = baseData.RaidResult,
-                        RaidTime = baseData.RaidTime,
-                        SptVersion = baseData.SptVersion,
-                        Token = baseData.Token,
-                        DBinInv = baseData.DBinInv,
-                        IsCasual = baseData.IsCasual,
-                        IsPublicProfile = false
-                    };
+                    var privateProfileData = new PrivateProfileData(baseData);
+                    
+                    LeaderboardPlugin.logger.LogWarning($"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
                     
                     LeaderboardPlugin.SendProfileData(privateProfileData);
+                }
+                else if (SettingsModel.Instance.PublicProfile.Value && !isScavRaid)
+                {
+                    var traderInfoData = GetTraderInfo(PmcData);
+                    
+                    var pmcProfileData = new AdditiveProfileData(baseData)
+                    {
+                        DiscFromRaid = discFromRaid,
+                        IsTransition = isTransition,
+                        IsUsingStattrack = false, //TODO: Add support mod Sttattrack
+                        LastRaidEXP = ExpLooting,
+                        LastRaidHits = HitCount,
+                        LastRaidMap = lastRaidLocation,
+                        LastRaidMapRaw = lastRaidLocationRaw,
+                        LastRaidTransitionTo = lastRaidTransitionTo,
+                        AllAchievements = allAchievementsDict,
+                        LongestShot = LongestShot,
+                        ModWeaponStats = null,
+                        PlayedAs = "PMC",
+                        PmcSide = PmcData.Side.ToString(),
+                        Prestige = PmcData.Info.PrestigeLevel,
+                        PublicProfile = true,
+                        RaidDamage = TotalDamage,
+                        RegistrationDate = session.Profile.Info.RegistrationDate,
+                        TraderInfo = traderInfoData
+                    };
+                    LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
+
+                    LeaderboardPlugin.SendProfileData(pmcProfileData);
+                }
+                else if (SettingsModel.Instance.PublicProfile.Value && isScavRaid)
+                {
+                    var traderInfoData = GetTraderInfo(PmcData);
+                    
+                    var scavProfileData = new AdditiveProfileData(baseData)
+                    {
+                        DiscFromRaid = discFromRaid,
+                        IsTransition = isTransition,
+                        IsUsingStattrack = false, //TODO: Add support mod Sttattrack
+                        LastRaidEXP = ExpLooting,
+                        LastRaidHits = HitCount,
+                        LastRaidMap = lastRaidLocation,
+                        LastRaidMapRaw = lastRaidLocationRaw,
+                        LastRaidTransitionTo = lastRaidTransitionTo,
+                        AllAchievements = allAchievementsDict,
+                        LongestShot = LongestShot,
+                        ModWeaponStats = null,
+                        PlayedAs = "SCAV",
+                        PmcSide = PmcData.Side.ToString(),
+                        Prestige = PmcData.Info.PrestigeLevel,
+                        PublicProfile = true,
+                        RaidDamage = TotalDamage,
+                        RegistrationDate = session.Profile.Info.RegistrationDate,
+                        TraderInfo = traderInfoData
+                    };
+                    LeaderboardPlugin.logger.LogWarning($"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
+
+                    LeaderboardPlugin.SendProfileData(scavProfileData);
                 }
             }
         }
@@ -145,4 +215,74 @@ public class ProcessProfileModel
         }
         return Instance = new ProcessProfileModel();
     }
+
+    private string GetPrettyMapName(string entry)
+    {
+        return entry switch
+        {
+            "bigmap" => "Customs",
+            "factory4_day" => "Factory",
+            "factory4_night" => "Night Factory",
+            "interchange" => "Interchange",
+            "laboratory" => "Labs",
+            "shoreline" => "Shoreline",
+            "woods" => "Woods",
+            "lighthouse" => "Lighthouse",
+            "TarkovStreets" => "Streets of Tarkov",
+            "Sandbox" => "Ground Zero - Low",
+            "Sandbox_high" => "Ground Zero - High",
+            _ => "UNKNOWN"
+        };
+    }
+
+    private Dictionary<string, TraderData> GetTraderInfo(Profile pmcData)
+    {
+        var traderInfoPmc = pmcData.TradersInfo;
+        
+        Dictionary<string, TraderData> tradersData = new Dictionary<string, TraderData>();
+        foreach (var trader in TraderMap)
+        {
+            if (traderInfoPmc.ContainsKey(trader.Key))
+            {
+                tradersData[trader.Value] = new TraderData
+                {
+                    ID = trader.Key,
+                    SalesSum = traderInfoPmc[trader.Key].SalesSum,
+                    Unlocked = traderInfoPmc[trader.Key].Unlocked,
+                    Standing = traderInfoPmc[trader.Key].Standing,
+                    LoyaltyLevel = traderInfoPmc[trader.Key].LoyaltyLevel,
+                    Disabled = traderInfoPmc[trader.Key].Disabled
+                };
+            }
+            else
+            {
+                tradersData[trader.Value] = new TraderData
+                {
+                    ID = trader.Key,
+                    SalesSum = 0,
+                    Unlocked = false,
+                    Standing = 0,
+                    LoyaltyLevel = 0,
+                    Disabled = true,
+                    NotFound = true
+                };
+            }
+        }
+
+        return tradersData;
+    }
+
+    private Dictionary<string, string> TraderMap = new() {
+        { "6617beeaa9cfa777ca915b7c", "REF" },
+        { "54cb50c76803fa8b248b4571", "PRAPOR" },
+        { "54cb57776803fa99248b456e", "THERAPIST" },
+        { "579dc571d53a0658a154fbec", "FENCE" },
+        { "58330581ace78e27b8b10cee", "SKIER" },
+        { "5935c25fb3acc3127c3d8cd9", "PEACEKEEPER" },
+        { "5a7c2eca46aef81a7ca2145d", "MECHANIC" },
+        { "5ac3b934156ae10c4430e83c", "RAGMAN" },
+        { "638f541a29ffd1183d187f57", "LIGHTKEEPER" },
+        { "656f0f98d80a697f855d34b1", "BTR_DRIVER" },
+        { "5c0647fdd443bc2504c2d371", "JAEGER" }
+    };
 }

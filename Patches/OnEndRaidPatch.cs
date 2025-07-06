@@ -15,10 +15,10 @@ namespace SPTLeaderboard.Patches
                 BindingFlags.Instance | BindingFlags.Public);
 
         [PatchPrefix]
-        static bool Prefix(GClass1959 results)
+        static bool Prefix(LocalRaidSettings settings, GClass1959 results)
         {
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
-            ProcessProfileModel.Create().ProcessAndSendProfile(results);
+            ProcessProfileModel.Create().ProcessAndSendProfile(results, settings);
             LeaderboardPlugin.SendHeartbeat(PlayerState.RAID_END);
             LeaderboardPlugin.logger.LogWarning("Player ended raid");
             return true;
