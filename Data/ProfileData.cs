@@ -43,7 +43,6 @@ namespace SPTLeaderboard.Data
         
         [JsonProperty("notFound", NullValueHandling = NullValueHandling.Ignore)] public bool? NotFound { get; set; }
     }
-    
 
     public class BodyParts
     {
@@ -312,39 +311,7 @@ namespace SPTLeaderboard.Data
 
     public class Info
     {
-        [JsonProperty("Nickname")] public string Nickname { get; set; }
-
-        [JsonProperty("MainProfileNickname")] public string MainProfileNickname { get; set; }
-
         [JsonProperty("Side")] public string Side { get; set; }
-
-        [JsonProperty("PrestigeLevel")] public int PrestigeLevel { get; set; }
-
-        [JsonProperty("RegistrationDate")] public int RegistrationDate { get; set; }
-
-        [JsonProperty("SavageLockTime")] public double SavageLockTime { get; set; }
-
-        [JsonProperty("GroupId")] public object GroupId { get; set; }
-
-        [JsonProperty("TeamId")] public object TeamId { get; set; }
-
-        [JsonProperty("EntryPoint")] public string EntryPoint { get; set; }
-
-        [JsonProperty("NicknameChangeDate")] public int NicknameChangeDate { get; set; }
-
-        [JsonProperty("GameVersion")] public string GameVersion { get; set; }
-
-        [JsonProperty("Type")] public string Type { get; set; }
-
-        [JsonProperty("HasCoopExtension")] public bool HasCoopExtension { get; set; }
-
-        [JsonProperty("HasPveGame")] public bool HasPveGame { get; set; }
-
-        [JsonProperty("Voice")] public string Voice { get; set; }
-
-        [JsonProperty("Experience")] public int Experience { get; set; }
-
-        [JsonProperty("Level")] public int Level { get; set; }
     }
 
     public class InsuredItem

@@ -2,6 +2,8 @@
 using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
+using EFT;
+using EFT.InventoryLogic;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
@@ -44,7 +46,7 @@ namespace SPTLeaderboard
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                logger.LogWarning($"[SPT Leaderboard] hash dll mod {_encrypt.GetHashMod()}");
+                
             }
         }
 

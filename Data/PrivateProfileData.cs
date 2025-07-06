@@ -17,9 +17,6 @@ namespace SPTLeaderboard.Data
         [JsonProperty("isScav")]
         public bool IsScav { get; set; } = baseData.IsScav;
 
-        [JsonProperty("lastPlayed")]
-        public long LastPlayed { get; set; } = baseData.LastPlayed;
-
         [JsonProperty("modINT")]
         public string ModInt { get; set; } = baseData.ModInt;
 
@@ -46,9 +43,6 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("sptVer")]
         public string SptVersion { get; set; } = baseData.SptVersion;
-
-        // [JsonProperty("teamTag")]
-        // public string TeamTag { get; set; }
 
         [JsonProperty("token")]
         public string Token { get; set; } = baseData.Token;
