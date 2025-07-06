@@ -50,7 +50,7 @@ namespace SPTLeaderboard
 
         public static void SendHeartbeat(PlayerState playerState)
         {
-            if (!SettingsModel.Instance.PublicProfile.Value)
+            if (SettingsModel.Instance.PublicProfile.Value)
             {
                 if (Singleton<PreloaderUI>.Instantiated)
                 {
@@ -61,12 +61,12 @@ namespace SPTLeaderboard
 
                         request.OnSuccess = (response, code) =>
                         {
-                            logger.LogWarning($"[SPT Leaderboard] Request OnSuccess {response}:{code}");
+                            logger.LogWarning($"Request OnSuccess {response}:{code}");
                         };
 
                         request.OnFail = (error, code) =>
                         {
-                            logger.LogError($"[SPT Leaderboard] Request OnFail {error}:{code}");
+                            logger.LogError($"Request OnFail {error}:{code}");
                         };
 
                         var data = new PlayerHeartbeatData
@@ -78,7 +78,7 @@ namespace SPTLeaderboard
                         };
 
                         string jsonBody = JsonConvert.SerializeObject(data);
-                        logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
+                        logger.LogWarning($"Request Data {jsonBody}");
 
                         request.SetData(jsonBody);
                         request.Send();
@@ -93,16 +93,16 @@ namespace SPTLeaderboard
 
             request.OnSuccess = (response, code) =>
             {
-                logger.LogWarning($"[SPT Leaderboard] Request OnSuccess {response}:{code}");
+                logger.LogWarning($"Request OnSuccess {response}:{code}");
             };
 
             request.OnFail = (error, code) =>
             {
-                logger.LogError($"[SPT Leaderboard] Request OnFail {error}:{code}");
+                logger.LogError($"Request OnFail {error}:{code}");
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
-            logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
+            logger.LogWarning($"Request Data {jsonBody}");
             
             request.SetData(jsonBody);
             request.Send();
@@ -128,7 +128,7 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer.AutoReset = true;
             _inRaidHeartbeatTimer.Start();
         
-            logger.LogWarning("[SPT Leaderboard] InRaid timer started");
+            logger.LogWarning("InRaid timer started");
         }
 
         public void StopInRaidHeartbeat()
@@ -139,7 +139,7 @@ namespace SPTLeaderboard
                 _inRaidHeartbeatTimer.Dispose();
                 _inRaidHeartbeatTimer = null;
             
-                logger.LogWarning("[SPT Leaderboard] InRaid timer stopped");
+                logger.LogWarning("InRaid timer stopped");
             }
         }
     }

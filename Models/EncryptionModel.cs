@@ -25,12 +25,12 @@ namespace SPTLeaderboard.Models
                     WriteTokenToFile(_token);
 
                     LeaderboardPlugin.logger.LogWarning(
-                        $"[SPT Leaderboard] Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!");
+                        $"Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!");
                 }
                 else
                 {
                     LeaderboardPlugin.logger.LogWarning(
-                        $"[SPT Leaderboard] Your secret token was initialized by the mod. Remember to never show it to anyone!");
+                        $"Your secret token was initialized by the mod. Remember to never show it to anyone!");
                     LoadToken();
                 }
             }
