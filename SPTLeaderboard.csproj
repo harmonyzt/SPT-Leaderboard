@@ -108,6 +108,7 @@
         <Compile Include="Data\BaseData.cs" />
         <Compile Include="Data\GlobalData.cs" />
         <Compile Include="Data\PlayerHeartbeatData.cs" />
+        <Compile Include="Data\PrivateProfileData.cs" />
         <Compile Include="Enums\PlayerState.cs" />
         <Compile Include="LeaderboardPlugin.cs" />
         <Compile Include="Models\ConfigurationManagerAttributes.cs" />

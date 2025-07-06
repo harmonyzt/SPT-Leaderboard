@@ -14,7 +14,7 @@ public class ProcessProfileModel
 {
     public static ProcessProfileModel Instance { get; private set; }
 
-    public void ProcessProfile(GClass1959 resultRaid)
+    public void ProcessAndSendProfile(GClass1959 resultRaid)
     {
         if (Singleton<PreloaderUI>.Instantiated)
         {
@@ -27,6 +27,8 @@ public class ProcessProfileModel
                 
                 var dataPmc = session.GetProfileBySide(ESideType.Pmc);
                 var dataScav = session.GetProfileBySide(ESideType.Savage);
+
+                bool isScavRaid = session.Profile.Side == EPlayerSide.Savage;
                 
                 bool discFromRaid = resultRaid.result == ExitStatus.Left;
                 
@@ -57,27 +59,39 @@ public class ProcessProfileModel
                     ).Sum(
                     bodyPart => bodyPart.Value.Health.Maximum);
                 
+                var CurrentHealth = dataPmc.Health.BodyParts.Where(
+                    bodyPart => bodyPart.Value?.Health != null
+                ).Sum(
+                    bodyPart => bodyPart.Value.Health.Current);
+                
+                
                 var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
                 var KilledBear = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBear);
                 var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
                 var HeadShots = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HeadShots);
+                var LongestShot = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestShot);
+                var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillShot);
+                var LongestKillStreak = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillStreak);
                 
                 
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
+                LeaderboardPlugin.logger.LogWarning($"\n[Session Counter] Kills {Kills}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}\n");
 
                 var baseData = new BaseData
                 {
                     AccountType = gameVersion,
-                    Health = MaxHealth,
+                    Health = MaxHealth, //Maybe use current health?
                     Id = profileID,
-                    IsScav = session.Profile.Side == EPlayerSide.Savage,
+                    IsScav = isScavRaid, //Doubt that it is working
                     LastPlayed = DataUtils.CurrentTimestamp,
                     ModInt = EncryptionModel.Instance.GetHashMod(),
                     Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],
@@ -92,8 +106,33 @@ public class ProcessProfileModel
                     DBinInv = false,
                     IsCasual = SettingsModel.Instance.ModCasualMode.Value
                 };
-                
-                LeaderboardPlugin.logger.LogWarning($"DATA AFTER RAID: {JsonConvert.SerializeObject(baseData)}");
+
+                if (!SettingsModel.Instance.PublicProfile.Value)
+                {
+                    var privateProfileData = new PrivateProfileData()
+                    {
+                        AccountType = baseData.AccountType,
+                        Health = baseData.Health,
+                        Id = baseData.Id,
+                        IsScav = baseData.IsScav,
+                        LastPlayed = baseData.LastPlayed,
+                        ModInt = baseData.ModInt,
+                        Mods = baseData.Mods,
+                        Name = baseData.Name,
+                        PmcHealth = baseData.PmcHealth,
+                        PmcLevel = baseData.PmcLevel,
+                        RaidKills = baseData.RaidKills,
+                        RaidResult = baseData.RaidResult,
+                        RaidTime = baseData.RaidTime,
+                        SptVersion = baseData.SptVersion,
+                        Token = baseData.Token,
+                        DBinInv = baseData.DBinInv,
+                        IsCasual = baseData.IsCasual,
+                        IsPublicProfile = false
+                    };
+                    
+                    LeaderboardPlugin.SendProfileData(privateProfileData);
+                }
             }
         }
     }

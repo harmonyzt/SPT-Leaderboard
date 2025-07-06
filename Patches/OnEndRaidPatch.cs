@@ -18,7 +18,7 @@ namespace SPTLeaderboard.Patches
         static bool Prefix(GClass1959 results)
         {
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
-            ProcessProfileModel.Create().ProcessProfile(results);
+            ProcessProfileModel.Create().ProcessAndSendProfile(results);
             LeaderboardPlugin.SendHeartbeat(PlayerState.RAID_END);
             LeaderboardPlugin.logger.LogWarning("Player ended raid");
             return true;

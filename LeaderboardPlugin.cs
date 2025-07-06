@@ -84,7 +84,7 @@ namespace SPTLeaderboard
             }
         }
         
-        public void SendProfileData(BaseData data)
+        public static void SendProfileData(object data)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.ProfileUrl);
 
