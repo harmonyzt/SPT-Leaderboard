@@ -47,6 +47,9 @@ namespace SPTLeaderboard.Data
         [JsonProperty("sptVer")]
         public string SptVersion { get; set; } = baseData.SptVersion;
 
+        // [JsonProperty("teamTag")]
+        // public string TeamTag { get; set; }
+
         [JsonProperty("token")]
         public string Token { get; set; } = baseData.Token;
 

@@ -119,7 +119,7 @@ namespace SPTLeaderboard.Models
 			PhpPath = configFile.Bind(
 				"Settings", 
 				"PHP Path", 
-				"/SPT/testEnv/api/v1/main.php", 
+				"/SPT/testEnv/api/", 
 				new ConfigDescription(
 					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
 					null, 
