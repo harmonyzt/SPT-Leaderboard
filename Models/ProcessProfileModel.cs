@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Comfort.Common;
 using EFT;
+using EFT.InventoryLogic;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
@@ -29,9 +30,7 @@ public class ProcessProfileModel
                 var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
                 
                 var PmcData = session.GetProfileBySide(ESideType.Pmc);
-                var ScavData = session.GetProfileBySide(ESideType.Savage);
-
-
+                
                 ProfileData profileData = null;
                 try
                 {
@@ -72,23 +71,40 @@ public class ProcessProfileModel
                     pair => pair.Value
                 );
                 
+                #region CheckGodBalaclava
+
+                bool godBalaclava = false;
+                
+                var allItems = PmcData.Inventory.GetPlayerItems();
+                foreach (var item in allItems)
+                {
+                    if (item.TemplateId == "58ac60eb86f77401897560ff")
+                    {
+                        godBalaclava = true;
+                    }
+                }
+                
+                
+                if (godBalaclava)
+                {
+                    LeaderboardPlugin.logger.LogWarning("Player has balaclava of a god, SUKA BLYAT!");
+                    godBalaclava = false; //Debug line
+                }
+                
+                #endregion
+
+                #region Stats
+                
                 var MaxHealth = PmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null
-                    ).Sum(
+                ).Sum(
                     bodyPart => bodyPart.Value.Health.Maximum);
                 
                 var CurrentHealth = PmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null
                 ).Sum(
-                    bodyPart => bodyPart.Value.Health.Current);
-
-                bool godBalaclava = profileData!.Inventory.Items.Any(inventoryItem => inventoryItem.Tpl == "58ac60eb86f77401897560ff");
-                if (godBalaclava)
-                {
-                    LeaderboardPlugin.logger.LogWarning("Player has balaclava of a god");
-                    godBalaclava = false;
-                }
-
+                    bodyPart => bodyPart.Value.Health.Current);                
+                
                 var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
@@ -119,16 +135,17 @@ public class ProcessProfileModel
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
                 LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
+                
+                #endregion
 
                 var baseData = new BaseData
                 {
                     AccountType = gameVersion,
-                    Health = MaxHealth, //Maybe use current health?
+                    Health = CurrentHealth,
                     Id = profileID,
-                    IsScav = isScavRaid, //Doubt that it is working
-                    LastPlayed = DataUtils.CurrentTimestamp,
+                    IsScav = isScavRaid,
                     ModInt = EncryptionModel.Instance.GetHashMod(),
-                    Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],
+                    Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],//TODO
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
                     PmcLevel = PmcData.Info.Level,
