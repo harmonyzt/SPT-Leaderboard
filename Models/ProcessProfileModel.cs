@@ -24,6 +24,31 @@ public class ProcessProfileModel
             if (session.Profile != null)
             {
                 var profileID = session.Profile.Id;
+
+                GClass767 agressorData = session.Profile.EftStats.Aggressor;
+                if (agressorData != null && resultRaid.result == ExitStatus.Killed)
+                {
+                    string nameKiller = string.Empty;
+                    if (((GInterface187)agressorData).ProfileId != session.Profile.Id)
+                    {
+                        if (((GInterface187)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
+                        {
+                            nameKiller = agressorData.Name.Localized(null);
+                        }
+                        else
+                        {
+                            nameKiller = agressorData.GetCorrectedNickname();
+                        }
+                    }
+                    
+                    LeaderboardPlugin.logger.LogWarning($"AgressorData.Name {nameKiller}");
+                }
+                else
+                {
+                    LeaderboardPlugin.logger.LogWarning($"AgressorData.Name Null:c ");
+                }
+                
+                
                 
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
