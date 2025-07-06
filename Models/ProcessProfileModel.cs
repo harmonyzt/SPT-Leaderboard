@@ -1,6 +1,9 @@
-﻿using Comfort.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Comfort.Common;
 using EFT;
 using EFT.UI;
+using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
 using UnityEngine;
@@ -18,6 +21,13 @@ public class ProcessProfileModel
             var session = DataUtils.GetSession();
             if (session.Profile != null)
             {
+                var profileID = session.Profile.Id;
+                
+                var gameVersion = session.Profile.Info.GameVersion;
+                
+                var dataPmc = session.GetProfileBySide(ESideType.Pmc);
+                var dataScav = session.GetProfileBySide(ESideType.Savage);
+                
                 bool discFromRaid = resultRaid.result == ExitStatus.Left;
                 
                 var isTransition = false;
@@ -31,7 +41,9 @@ public class ProcessProfileModel
                     {
                         isTransition = true;
                         lastRaidTransitionTo = transitController.localRaidSettings_0.location;
+                        var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
                         LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP {lastRaidTransitionTo}");
+                        LeaderboardPlugin.logger.LogWarning($"TRANSITION MAP 2 {locationTransit.location}");
                     }
                     else
                     {
@@ -40,27 +52,48 @@ public class ProcessProfileModel
                     }
                 }
 
+                var MaxHealth = dataPmc.Health.BodyParts.Where(
+                    bodyPart => bodyPart.Value?.Health != null
+                    ).Sum(
+                    bodyPart => bodyPart.Value.Health.Maximum);
                 
+                var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
+                var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
+                var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
+                var KilledBear = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBear);
+                var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
+                var HeadShots = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HeadShots);
+                
+                
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
+                LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
+
                 var baseData = new BaseData
                 {
-                    AccountType = session.Profile.Info.GameVersion,
-                    Health = 440,
-                    Id = session.Profile.Id,
+                    AccountType = gameVersion,
+                    Health = MaxHealth,
+                    Id = profileID,
                     IsScav = session.Profile.Side == EPlayerSide.Savage,
                     LastPlayed = DataUtils.CurrentTimestamp,
-                    ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f",
+                    ModInt = EncryptionModel.Instance.GetHashMod(),
                     Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],
                     Name = session.Profile.Nickname,
-                    PmcHealth = 440,
-                    PmcLevel = session.GetProfileBySide(ESideType.Pmc).Info.Level,
-                    RaidKills = 1,
+                    PmcHealth = MaxHealth,
+                    PmcLevel = dataPmc.Info.Level,
+                    RaidKills = Kills,
                     RaidResult = resultRaid.result.ToString(),
                     RaidTime = resultRaid.playTime,
-                    SptVersion = DataUtils.ParseVersion(PlayerPrefs.GetString("SPT_Version")),
+                    SptVersion = DataUtils.GetSptVersion(),
                     Token = EncryptionModel.Instance.Token,
                     DBinInv = false,
                     IsCasual = SettingsModel.Instance.ModCasualMode.Value
                 };
+                
+                LeaderboardPlugin.logger.LogWarning($"DATA AFTER RAID: {JsonConvert.SerializeObject(baseData)}");
             }
         }
     }

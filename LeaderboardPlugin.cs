@@ -2,7 +2,6 @@
 using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
-using EFT;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
@@ -10,7 +9,6 @@ using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
 using SPTLeaderboard.Patches;
 using SPTLeaderboard.Utils;
-using UnityEngine;
 
 namespace SPTLeaderboard
 {
@@ -22,8 +20,6 @@ namespace SPTLeaderboard
         private SettingsModel _settings;
         private EncryptionModel _encrypt;
         private Timer _inRaidHeartbeatTimer;
-        
-        public static string _sessionID;
 
         public static ManualLogSource logger;
 
@@ -43,7 +39,15 @@ namespace SPTLeaderboard
             
             Instance = this;
         }
-        
+
+        private void Update()
+        {
+            if (_settings.KeyBind.Value.IsDown())
+            {
+                logger.LogWarning($"[SPT Leaderboard] hash dll mod {_encrypt.GetHashMod()}");
+            }
+        }
+
         public static void SendHeartbeat(PlayerState playerState)
         {
             if (Singleton<PreloaderUI>.Instantiated)
