@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 
 namespace SPTLeaderboard.Models
@@ -69,6 +70,24 @@ namespace SPTLeaderboard.Models
                 return Instance;
             }
             return Instance = new EncryptionModel();
+        }
+        
+        public string GetHashMod()
+        {
+            try
+            {
+                var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+                byte[] dllBytes = File.ReadAllBytes(assemblyLocation);
+                using var sha256 = SHA256.Create();
+                var hash = sha256.ComputeHash(dllBytes);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }
+            catch (Exception e)
+            {
+                LeaderboardPlugin.logger.LogError($"[SPT Leaderboard] Error check integrity mod");
+                return "ERROR CHECK INTEGRITY";
+            }
+            
         }
     }
 }
