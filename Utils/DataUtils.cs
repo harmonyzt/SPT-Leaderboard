@@ -5,6 +5,7 @@ using EFT;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
+using UnityEngine;
 
 namespace SPTLeaderboard.Utils;
 
@@ -53,12 +54,12 @@ public static class DataUtils
     }
     
     /// <summary>
-    /// Parsing version SPT from string
+    /// Parsing version SPT from PlayerPrefs
     /// </summary>
-    /// <param name="rawString"></param>
     /// <returns></returns>
-    public static string ParseVersion(string rawString)
+    public static string GetSptVersion()
     {
+        var rawString = PlayerPrefs.GetString("SPT_Version");
         var match = Regex.Match(rawString, @"SPT\s+([0-9\.]+)\s+-");
         if (match.Success)
         {
