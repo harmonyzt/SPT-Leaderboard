@@ -38,6 +38,7 @@ namespace SPTLeaderboard
             new OpenInventoryScreenPatch().Enable();
             new OnStartRaidPatch().Enable();
             new OnEndRaidPatch().Enable();
+            new HideoutAwakePatch().Enable();
             
             Instance = this;
         }

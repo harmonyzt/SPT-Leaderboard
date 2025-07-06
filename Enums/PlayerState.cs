@@ -6,6 +6,7 @@
         IN_MENU,
         IN_STASH,
         IN_RAID,
-        RAID_END
+        RAID_END,
+        IN_HIDEOUT
     }
 }
