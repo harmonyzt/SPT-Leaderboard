@@ -50,36 +50,39 @@ namespace SPTLeaderboard
 
         public static void SendHeartbeat(PlayerState playerState)
         {
-            if (Singleton<PreloaderUI>.Instantiated)
+            if (!SettingsModel.Instance.PublicProfile.Value)
             {
-                var session = DataUtils.GetSession();
-                if (session.Profile != null)
+                if (Singleton<PreloaderUI>.Instantiated)
                 {
-                    var request = NetworkApiRequestModel.Create(GlobalData.HeartbeatUrl);
-
-                    request.OnSuccess = (response, code) =>
+                    var session = DataUtils.GetSession();
+                    if (session.Profile != null)
                     {
-                        logger.LogWarning($"[SPT Leaderboard] Request OnSuccess {response}:{code}");
-                    };
+                        var request = NetworkApiRequestModel.Create(GlobalData.HeartbeatUrl);
 
-                    request.OnFail = (error, code) =>
-                    {
-                        logger.LogError($"[SPT Leaderboard] Request OnFail {error}:{code}");
-                    };
+                        request.OnSuccess = (response, code) =>
+                        {
+                            logger.LogWarning($"[SPT Leaderboard] Request OnSuccess {response}:{code}");
+                        };
 
-                    var data = new PlayerHeartbeatData
-                    {
-                        Type = DataUtils.GetPlayerState(playerState),
-                        Timestamp = DataUtils.CurrentTimestamp,
-                        Version = GlobalData.Version,
-                        SessionId = session.Profile.Id
-                    };
+                        request.OnFail = (error, code) =>
+                        {
+                            logger.LogError($"[SPT Leaderboard] Request OnFail {error}:{code}");
+                        };
 
-                    string jsonBody = JsonConvert.SerializeObject(data);
-                    logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
+                        var data = new PlayerHeartbeatData
+                        {
+                            Type = DataUtils.GetPlayerState(playerState),
+                            Timestamp = DataUtils.CurrentTimestamp,
+                            Version = GlobalData.Version,
+                            SessionId = session.Profile.Id
+                        };
 
-                    request.SetData(jsonBody);
-                    request.Send();
+                        string jsonBody = JsonConvert.SerializeObject(data);
+                        logger.LogWarning($"[SPT Leaderboard] Request Data {jsonBody}");
+
+                        request.SetData(jsonBody);
+                        request.Send();
+                    }
                 }
             }
         }
