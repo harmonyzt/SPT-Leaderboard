@@ -47,7 +47,6 @@ public class ProcessProfileModel
                     isScavRaid = profileData.Info.Side == "Savage";
                 }
                 
-                
                 bool discFromRaid = resultRaid.result == ExitStatus.Left;
                 
                 var isTransition = false;
@@ -61,8 +60,8 @@ public class ProcessProfileModel
                     {
                         isTransition = true;
                         var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
-                        lastRaidTransitionTo = locationTransit.location;
-                        LeaderboardPlugin.logger.LogWarning($"Player transit to map {lastRaidTransitionTo}");
+                        lastRaidTransitionTo = GetPrettyMapName(locationTransit.location);
+                        LeaderboardPlugin.logger.LogWarning($"Player transit to map {GetPrettyMapName(lastRaidTransitionTo)}");
                     }
                 }
 
