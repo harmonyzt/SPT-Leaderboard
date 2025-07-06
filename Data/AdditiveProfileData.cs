@@ -19,6 +19,9 @@ namespace SPTLeaderboard.Data
         [JsonProperty("isScav")]
         public bool IsScav { get; set; } = baseData.IsScav;
 
+        [JsonProperty("lastPlayed")]
+        public long LastPlayed { get; set; } = baseData.LastPlayed;
+
         [JsonProperty("modINT")]
         public string ModInt { get; set; } = baseData.ModInt;
 
