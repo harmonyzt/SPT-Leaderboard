@@ -171,7 +171,7 @@ public class ProcessProfileModel
                     Id = profileID,
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
-                    ModInt = EncryptionModel.Instance.GetHashMod(),
+                    ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f",
                     Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],//TODO
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
