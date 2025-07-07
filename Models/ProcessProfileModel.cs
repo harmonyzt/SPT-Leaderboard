@@ -48,8 +48,6 @@ public class ProcessProfileModel
                     LeaderboardPlugin.logger.LogWarning($"AgressorData.Name Null:c ");
                 }
                 
-                
-                
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
                 var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
@@ -178,7 +176,7 @@ public class ProcessProfileModel
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
                     PmcLevel = PmcData.Info.Level,
-                    RaidKills = Kills,
+                    RaidKills = KilledPmc,
                     RaidResult = resultRaid.result.ToString(),
                     RaidTime = resultRaid.playTime,
                     SptVersion = DataUtils.GetSptVersion(),
