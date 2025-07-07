@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
 using EFT.UI;
 using Newtonsoft.Json;
+using SPT.Common.Http;
+using SPT.Common.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
 using TraderData = SPTLeaderboard.Data.TraderData;
@@ -53,6 +56,7 @@ public class ProcessProfileModel
                 var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
                 
                 var PmcData = session.GetProfileBySide(ESideType.Pmc);
+                var ScavData = session.GetProfileBySide(ESideType.Savage);
                 
                 ProfileData profileData = null;
                 try
@@ -117,16 +121,16 @@ public class ProcessProfileModel
 
                 #region Stats
                 
+                #region PMCStats
+                
                 var MaxHealth = PmcData.Health.BodyParts.Where(
-                    bodyPart => bodyPart.Value?.Health != null
-                ).Sum(
-                    bodyPart => bodyPart.Value.Health.Maximum);
-                
+                    bodyPart => bodyPart.Value?.Health != null).
+                    Sum(bodyPart => bodyPart.Value.Health.Maximum);
+                                
                 var CurrentHealth = PmcData.Health.BodyParts.Where(
-                    bodyPart => bodyPart.Value?.Health != null
-                ).Sum(
-                    bodyPart => bodyPart.Value.Health.Current);                
-                
+                    bodyPart => bodyPart.Value?.Health != null).
+                    Sum(bodyPart => bodyPart.Value.Health.Current);
+                                
                 var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
@@ -136,34 +140,61 @@ public class ProcessProfileModel
                 var LongestShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
                 var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestKillShot);
                 var LongestKillStreak = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillStreak);
-                var TotalDamage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
+                var TotalDamage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+
+                if (!isScavRaid)
+                {
+                    LeaderboardPlugin.logger.LogWarning($"\n");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
+                }
+
+                #endregion
                 
-                string TotalDamageString = TotalDamage.ToString();
-                string trimmedDamage = TotalDamageString.Substring(0, TotalDamageString.Length - 2);
+                #region ScavStats
+                
+                if (isScavRaid)
+                {
+                    KilledPmc = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
+                    LongestShot = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
+                    HitCount = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
+                    TotalDamage = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+                    
+                    
+                    LeaderboardPlugin.logger.LogWarning($"\n");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
+                }
+                
+                #endregion
+                
+                string totalDamageString = TotalDamage.ToString();
+                
+                string trimmedDamage;
+                trimmedDamage = totalDamageString.Length > 2 ? totalDamageString.Substring(0, totalDamageString.Length - 2) : "0";
+
                 int NewDamageBody = int.Parse(trimmedDamage);
                 
                 if (HitCount <= 0) {
                     HitCount = 0;
                 }
                 
-                LeaderboardPlugin.logger.LogWarning($"\n");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
-                LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
-                
                 #endregion
-
+                
                 var baseData = new BaseData
                 {
                     AccountType = gameVersion,
@@ -231,7 +262,7 @@ public class ProcessProfileModel
                         DiscFromRaid = discFromRaid,
                         IsTransition = isTransition,
                         IsUsingStattrack = false, //TODO: Add support mod Sttattrack
-                        LastRaidEXP = ExpLooting,
+                        LastRaidEXP = 0,
                         LastRaidHits = HitCount,
                         LastRaidMap = lastRaidLocation,
                         LastRaidMapRaw = lastRaidLocationRaw,
