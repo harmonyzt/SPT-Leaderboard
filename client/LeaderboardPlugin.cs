@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System.Linq;
+using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
@@ -103,7 +104,7 @@ namespace SPTLeaderboard
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
-            logger.LogWarning($"Request Data {jsonBody}");
+            // logger.LogWarning($"Request Data {jsonBody}");
             
             request.SetData(jsonBody);
             request.Send();

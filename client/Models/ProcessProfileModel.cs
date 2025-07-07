@@ -195,6 +195,12 @@ public class ProcessProfileModel
                 
                 #endregion
                 
+                var listModsPlayer = GetServerMods()
+                    .Concat(GetDirectories(GlobalData.UserModsPath))
+                    .Concat(GetDirectories(BepInEx.Paths.PluginPath))
+                    .Concat(GetDirectories(BepInEx.Paths.PluginPath))
+                    .ToList();
+                
                 var baseData = new BaseData
                 {
                     AccountType = gameVersion,
@@ -203,7 +209,7 @@ public class ProcessProfileModel
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
                     ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f",
-                    Mods = ["IhanaMies-LootValueBackend", "SpecialSlots"],//TODO
+                    Mods = listModsPlayer,
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
                     PmcLevel = PmcData.Info.Level,
@@ -365,4 +371,69 @@ public class ProcessProfileModel
         { "656f0f98d80a697f855d34b1", "BTR_DRIVER" },
         { "5c0647fdd443bc2504c2d371", "JAEGER" }
     };
+    
+    private List<string> GetServerMods()
+    {
+        List<string> listServerMods = new List<string>();
+
+        try
+        {
+            string json = RequestHandler.GetJson(SettingsModel.Instance.DebugString.Value);
+
+            if (string.IsNullOrWhiteSpace(json))
+                return listServerMods;
+
+            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
+
+            if (serverProfileInfo?.sptData?.Mods != null)
+            {
+                foreach (var serverMod in serverProfileInfo.sptData.Mods)
+                {
+                    if (serverMod?.Name != null)
+                        listServerMods.Add(serverMod.Name);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
+        }
+
+        return listServerMods;
+    }
+
+    private List<string> GetUserMods()
+    {
+        return GetDirectories(GlobalData.UserModsPath);
+    }
+    
+    private List<string> GetBepinexMods()
+    {
+        return GetDirectories(BepInEx.Paths.PluginPath);
+    }
+    
+    private List<string> GetBepinexDll()
+    {
+        return GetDllFiles(BepInEx.Paths.PluginPath);
+    }
+    
+    private List<string> GetDirectories(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+            return new List<string>();
+
+        return Directory.GetDirectories(dirPath)
+            .Select(path => Path.GetFileName(path))
+            .ToList();
+    }
+    
+    private List<string> GetDllFiles(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+            return new List<string>();
+
+        return Directory.GetFiles(dirPath, "*.dll", SearchOption.TopDirectoryOnly)
+            .Select(file => Path.GetFileName(file))
+            .ToList();
+    }
 }

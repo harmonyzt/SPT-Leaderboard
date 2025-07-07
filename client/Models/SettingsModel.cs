@@ -21,6 +21,7 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<string> PhpPath;
 		public ConfigEntry<bool> Debug;
 		public ConfigEntry<int> SupportInRaidConnectionTimer;
+		public ConfigEntry<string> DebugString;
 
 		private SettingsModel(ConfigFile configFile)
 		{
@@ -32,6 +33,13 @@ namespace SPTLeaderboard.Models
 				new KeyboardShortcut(KeyCode.LeftArrow), 
 				new ConfigDescription(
 					"Just keybind for test requests")); 
+			
+			DebugString = configFile.Bind(
+				"Settings", 
+				"TEST STRING", 
+				"/launcher/profile/info", 
+				new ConfigDescription(
+					"Just string for test requests")); 
 			
 			KeyBindTwo = configFile.Bind(
 				"Settings", 
