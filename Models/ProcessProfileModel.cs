@@ -271,6 +271,7 @@ public class ProcessProfileModel
             "factory4_night" => "Night Factory",
             "interchange" => "Interchange",
             "laboratory" => "Labs",
+            "RezervBase" => "Reserve",
             "shoreline" => "Shoreline",
             "woods" => "Woods",
             "lighthouse" => "Lighthouse",
