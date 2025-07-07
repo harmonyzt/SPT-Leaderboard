@@ -46,17 +46,13 @@ public class ProcessProfileModel
                     
                     LeaderboardPlugin.logger.LogWarning($"AgressorData.Name {nameKiller}");
                 }
-                else
-                {
-                    LeaderboardPlugin.logger.LogWarning($"AgressorData.Name Null:c ");
-                }
                 
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
                 var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
                 
-                var PmcData = session.GetProfileBySide(ESideType.Pmc);
-                var ScavData = session.GetProfileBySide(ESideType.Savage);
+                var pmcData = session.GetProfileBySide(ESideType.Pmc);
+                var scavData = session.GetProfileBySide(ESideType.Savage);
                 
                 ProfileData profileData = null;
                 try
@@ -79,20 +75,21 @@ public class ProcessProfileModel
                 var isTransition = false;
                 var lastRaidTransitionTo = "None";
 
-                GClass1676 transitController;
-                if (resultRaid.result == ExitStatus.Transit &&
-                    TransitControllerAbstractClass.Exist<GClass1676>(out transitController))
+                if (resultRaid.result == ExitStatus.Transit
+                    && TransitControllerAbstractClass.Exist<GClass1676>(out var transitController))
                 {
                     if (transitController.localRaidSettings_0.location != "None")
                     {
                         isTransition = true;
                         var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
                         lastRaidTransitionTo = GetPrettyMapName(locationTransit.location);
-                        LeaderboardPlugin.logger.LogWarning($"Player transit to map {GetPrettyMapName(lastRaidTransitionTo)}");
+                        
+                        LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {GetPrettyMapName(lastRaidTransitionTo)}");
+                        LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
                     }
                 }
 
-                var allAchievementsDict = PmcData.AchievementsData.ToDictionary(
+                var allAchievementsDict = pmcData.AchievementsData.ToDictionary(
                     pair => pair.Key.ToString(),
                     pair => pair.Value
                 );
@@ -101,7 +98,7 @@ public class ProcessProfileModel
 
                 bool godBalaclava = false;
                 
-                var allItems = PmcData.Inventory.GetPlayerItems();
+                var allItems = pmcData.Inventory.GetPlayerItems();
                 foreach (var item in allItems)
                 {
                     if (item.TemplateId == "58ac60eb86f77401897560ff")
@@ -123,11 +120,11 @@ public class ProcessProfileModel
                 
                 #region PMCStats
                 
-                var MaxHealth = PmcData.Health.BodyParts.Where(
+                var MaxHealth = pmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null).
                     Sum(bodyPart => bodyPart.Value.Health.Maximum);
                                 
-                var CurrentHealth = PmcData.Health.BodyParts.Where(
+                var CurrentHealth = pmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null).
                     Sum(bodyPart => bodyPart.Value.Health.Current);
                                 
@@ -217,7 +214,7 @@ public class ProcessProfileModel
                     Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : listModsPlayer, //TODO: Delete debug. BEFORE PROD
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
-                    PmcLevel = PmcData.Info.Level,
+                    PmcLevel = pmcData.Info.Level,
                     RaidKills = KilledPmc,
                     RaidResult = resultRaid.result.ToString(),
                     RaidTime = resultRaid.playTime,
@@ -241,7 +238,7 @@ public class ProcessProfileModel
                 }
                 else if (SettingsModel.Instance.PublicProfile.Value && !isScavRaid)
                 {
-                    var traderInfoData = GetTraderInfo(PmcData);
+                    var traderInfoData = GetTraderInfo(pmcData);
                     
                     var pmcProfileData = new AdditiveProfileData(baseData)
                     {
@@ -257,8 +254,8 @@ public class ProcessProfileModel
                         LongestShot = LongestShot,
                         ModWeaponStats = null,
                         PlayedAs = "PMC",
-                        PmcSide = PmcData.Side.ToString(),
-                        Prestige = PmcData.Info.PrestigeLevel,
+                        PmcSide = pmcData.Side.ToString(),
+                        Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
                         RaidDamage = NewDamageBody,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
@@ -274,7 +271,7 @@ public class ProcessProfileModel
                 }
                 else if (SettingsModel.Instance.PublicProfile.Value && isScavRaid)
                 {
-                    var traderInfoData = GetTraderInfo(PmcData);
+                    var traderInfoData = GetTraderInfo(pmcData);
                     
                     var scavProfileData = new AdditiveProfileData(baseData)
                     {
@@ -290,8 +287,8 @@ public class ProcessProfileModel
                         LongestShot = LongestShot,
                         ModWeaponStats = null,
                         PlayedAs = "SCAV",
-                        PmcSide = PmcData.Side.ToString(),
-                        Prestige = PmcData.Info.PrestigeLevel,
+                        PmcSide = pmcData.Side.ToString(),
+                        Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
                         RaidDamage = NewDamageBody,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
