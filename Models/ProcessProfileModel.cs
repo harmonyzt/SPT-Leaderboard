@@ -142,6 +142,10 @@ public class ProcessProfileModel
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                 
+                string TotalDamageString = TotalDamage.ToString();
+                string trimmedDamage = TotalDamageString.Substring(0, TotalDamageString.Length - 2);
+                int NewDamageBody = int.Parse(trimmedDamage);
+                
                 if (HitCount <= 0) {
                     HitCount = 0;
                 }
@@ -212,7 +216,7 @@ public class ProcessProfileModel
                         PmcSide = PmcData.Side.ToString(),
                         Prestige = PmcData.Info.PrestigeLevel,
                         PublicProfile = true,
-                        RaidDamage = TotalDamage,
+                        RaidDamage = NewDamageBody,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
@@ -241,7 +245,7 @@ public class ProcessProfileModel
                         PmcSide = PmcData.Side.ToString(),
                         Prestige = PmcData.Info.PrestigeLevel,
                         PublicProfile = true,
-                        RaidDamage = TotalDamage,
+                        RaidDamage = NewDamageBody,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
