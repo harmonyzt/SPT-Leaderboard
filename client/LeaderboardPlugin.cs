@@ -2,8 +2,6 @@
 using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
-using EFT;
-using EFT.InventoryLogic;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;

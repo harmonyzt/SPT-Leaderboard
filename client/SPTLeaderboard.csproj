@@ -35,7 +35,7 @@
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
     <PropertyGroup>
-        <PostBuildEvent>copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"</PostBuildEvent>
+        <PostBuildEvent>copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"</PostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony">
