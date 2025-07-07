@@ -17,7 +17,7 @@ namespace SPTLeaderboard.Patches
         private static void Postfix()
         {
             LeaderboardPlugin.SendHeartbeat(PlayerState.IN_HIDEOUT);
-            LeaderboardPlugin.logger.LogWarning("Player entered in hideout");
+            LeaderboardPlugin.logger.LogWarning("[State] Player entered in hideout");
         }
     }
 }

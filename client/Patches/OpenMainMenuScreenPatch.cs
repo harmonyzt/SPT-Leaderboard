@@ -29,7 +29,7 @@ namespace SPTLeaderboard.Patches
             if (!DataUtils.HasRaidStarted())
             {
                 LeaderboardPlugin.SendHeartbeat(PlayerState.IN_MENU);
-                LeaderboardPlugin.logger.LogWarning("Player opened MainMenu screen");
+                LeaderboardPlugin.logger.LogWarning("[State] Player opened MainMenu screen");
                 return true;
             }
             return true;

@@ -114,7 +114,7 @@ public class ProcessProfileModel
                 if (godBalaclava)
                 {
                     LeaderboardPlugin.logger.LogWarning("Player has balaclava of a god, SUKA BLYAT!");
-                    godBalaclava = false; //Debug line
+                    godBalaclava = !SettingsModel.Instance.Debug.Value; //TODO: Delete debug. BEFORE PROD
                 }
                 
                 #endregion
@@ -146,19 +146,22 @@ public class ProcessProfileModel
 
                 if (!isScavRaid)
                 {
-                    LeaderboardPlugin.logger.LogWarning($"\n");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning($"\n");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
+                    }
                 }
 
                 #endregion
@@ -167,17 +170,19 @@ public class ProcessProfileModel
                 
                 if (isScavRaid)
                 {
-                    KilledPmc = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
-                    LongestShot = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
-                    HitCount = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
-                    TotalDamage = ScavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
-                    
-                    
-                    LeaderboardPlugin.logger.LogWarning($"\n");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
+                    KilledPmc = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
+                    LongestShot = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
+                    HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
+                    TotalDamage = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning($"\n");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
+                    }
                 }
                 
                 #endregion
@@ -208,8 +213,8 @@ public class ProcessProfileModel
                     Id = profileID,
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
-                    ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f",
-                    Mods = listModsPlayer,
+                    ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f", //TODO: Switch from static hash to dynamic calculation. BEFORE PROD
+                    Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : listModsPlayer, //TODO: Delete debug. BEFORE PROD
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
                     PmcLevel = PmcData.Info.Level,
@@ -225,9 +230,13 @@ public class ProcessProfileModel
                 if (!SettingsModel.Instance.PublicProfile.Value)
                 {
                     var privateProfileData = new PrivateProfileData(baseData);
-                    
-                    LeaderboardPlugin.logger.LogWarning($"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
-                    
+
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning(
+                            $"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
+                    }
+
                     LeaderboardPlugin.SendProfileData(privateProfileData);
                 }
                 else if (SettingsModel.Instance.PublicProfile.Value && !isScavRaid)
@@ -255,7 +264,11 @@ public class ProcessProfileModel
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
-                    LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
+                    
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
+                    }
 
                     LeaderboardPlugin.SendProfileData(pmcProfileData);
                 }
@@ -284,7 +297,12 @@ public class ProcessProfileModel
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
-                    LeaderboardPlugin.logger.LogWarning($"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
+                    
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning(
+                            $"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
+                    }
 
                     LeaderboardPlugin.SendProfileData(scavProfileData);
                 }
@@ -378,7 +396,7 @@ public class ProcessProfileModel
 
         try
         {
-            string json = RequestHandler.GetJson(SettingsModel.Instance.DebugString.Value);
+            string json = RequestHandler.GetJson("/launcher/profile/info");
 
             if (string.IsNullOrWhiteSpace(json))
                 return listServerMods;

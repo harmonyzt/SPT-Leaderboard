@@ -19,7 +19,7 @@ namespace SPTLeaderboard.Patches
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
             ProcessProfileModel.Create().ProcessAndSendProfile(results, settings);
             LeaderboardPlugin.SendHeartbeat(PlayerState.RAID_END);
-            LeaderboardPlugin.logger.LogWarning("Player ended raid");
+            LeaderboardPlugin.logger.LogWarning("[State] Player ended raid");
             return true;
         }
     }

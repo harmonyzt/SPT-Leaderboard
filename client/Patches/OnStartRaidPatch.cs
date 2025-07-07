@@ -18,7 +18,7 @@ namespace SPTLeaderboard.Patches
         static bool Prefix()
         {
             LeaderboardPlugin.Instance.StartInRaidHeartbeat();
-            LeaderboardPlugin.logger.LogWarning("Player started raid");
+            LeaderboardPlugin.logger.LogWarning("[State] Player started raid");
             return true;
         }
     }

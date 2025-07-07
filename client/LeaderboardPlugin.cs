@@ -42,14 +42,6 @@ namespace SPTLeaderboard
             Instance = this;
         }
 
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                
-            }
-        }
-
         public static void SendHeartbeat(PlayerState playerState)
         {
             if (SettingsModel.Instance.PublicProfile.Value)
@@ -63,12 +55,18 @@ namespace SPTLeaderboard
 
                         request.OnSuccess = (response, code) =>
                         {
-                            logger.LogWarning($"Request OnSuccess {response}:{code}");
+                            if (SettingsModel.Instance.Debug.Value)
+                            {
+                                logger.LogWarning($"Request OnSuccess {response}:{code}");
+                            }
                         };
 
                         request.OnFail = (error, code) =>
                         {
-                            logger.LogError($"Request OnFail {error}:{code}");
+                            if (SettingsModel.Instance.Debug.Value)
+                            {
+                                logger.LogError($"Request OnFail {error}:{code}");
+                            }
                         };
 
                         var data = new PlayerHeartbeatData
@@ -80,7 +78,10 @@ namespace SPTLeaderboard
                         };
 
                         string jsonBody = JsonConvert.SerializeObject(data);
-                        logger.LogWarning($"Request Data {jsonBody}");
+                        if (SettingsModel.Instance.Debug.Value)
+                        {
+                            logger.LogWarning($"Request Data {jsonBody}");
+                        }
 
                         request.SetData(jsonBody);
                         request.Send();
@@ -95,12 +96,12 @@ namespace SPTLeaderboard
 
             request.OnSuccess = (response, code) =>
             {
-                logger.LogWarning($"Request OnSuccess {response}:{code}");
+                logger.LogWarning($"Request OnSuccess {response}");
             };
 
             request.OnFail = (error, code) =>
             {
-                logger.LogError($"Request OnFail {error}:{code}");
+                logger.LogError($"Request OnFail {error}");
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
@@ -129,8 +130,6 @@ namespace SPTLeaderboard
             };
             _inRaidHeartbeatTimer.AutoReset = true;
             _inRaidHeartbeatTimer.Start();
-        
-            logger.LogWarning("InRaid timer started");
         }
 
         public void StopInRaidHeartbeat()
@@ -140,8 +139,6 @@ namespace SPTLeaderboard
                 _inRaidHeartbeatTimer.Stop();
                 _inRaidHeartbeatTimer.Dispose();
                 _inRaidHeartbeatTimer = null;
-            
-                logger.LogWarning("InRaid timer stopped");
             }
         }
     }

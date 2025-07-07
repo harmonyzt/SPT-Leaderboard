@@ -48,7 +48,7 @@ namespace SPTLeaderboard.Models
         {
             if (string.IsNullOrEmpty(_jsonBody))
             {
-                LeaderboardPlugin.logger.LogWarning("_jsonBody is null or empty, skipping request.");
+                LeaderboardPlugin.logger.LogWarning("Data is null or empty, skipping request");
                 yield break;
             }
             
@@ -65,9 +65,13 @@ namespace SPTLeaderboard.Models
 
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
+            
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                var reqId = Guid.NewGuid().ToString();
+                LeaderboardPlugin.logger.LogWarning($"Request ID = {reqId}");
+            }
 
-            var reqId = Guid.NewGuid().ToString();
-            LeaderboardPlugin.logger.LogWarning($"Request ID = {reqId}");
             request.timeout = SettingsModel.Instance.ConnectionTimeout.Value;
 
             yield return request.SendWebRequest();
@@ -78,7 +82,11 @@ namespace SPTLeaderboard.Models
             }
             else
             {
-                LeaderboardPlugin.logger.LogWarning($"OnFail responce {request.downloadHandler.text}");
+                if (SettingsModel.Instance.Debug.Value)
+                {
+                    LeaderboardPlugin.logger.LogWarning($"OnFail response {request.downloadHandler.text}");
+                }
+
                 OnFail?.Invoke(request.error, request.responseCode);
             }
             

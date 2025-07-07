@@ -21,7 +21,6 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<string> PhpPath;
 		public ConfigEntry<bool> Debug;
 		public ConfigEntry<int> SupportInRaidConnectionTimer;
-		public ConfigEntry<string> DebugString;
 
 		private SettingsModel(ConfigFile configFile)
 		{
@@ -33,13 +32,6 @@ namespace SPTLeaderboard.Models
 				new KeyboardShortcut(KeyCode.LeftArrow), 
 				new ConfigDescription(
 					"Just keybind for test requests")); 
-			
-			DebugString = configFile.Bind(
-				"Settings", 
-				"TEST STRING", 
-				"/launcher/profile/info", 
-				new ConfigDescription(
-					"Just string for test requests")); 
 			
 			KeyBindTwo = configFile.Bind(
 				"Settings", 
@@ -127,7 +119,7 @@ namespace SPTLeaderboard.Models
 			PhpPath = configFile.Bind(
 				"Settings", 
 				"PHP Path", 
-				"/SPT/testEnv/api/", 
+				"/SPT/api/", 
 				new ConfigDescription(
 					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
 					null, 
@@ -140,7 +132,7 @@ namespace SPTLeaderboard.Models
 			Debug = configFile.Bind(
 				"Settings", 
 				"Debug", 
-				false, 
+				true, //TODO: Set to false. BEFORE PROD
 				new ConfigDescription(
 					"Display debug messages in console and log them inside SPT server .log file",
 					null, 
