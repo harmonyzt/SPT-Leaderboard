@@ -41,7 +41,7 @@ public static class DataUtils
         return inRaid.HasValue && inRaid.Value;
     }
     
-    public static long CurrentTimestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    public static long CurrentTimestamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     
     /// <summary>
     /// Get string from enum PlayerState type
