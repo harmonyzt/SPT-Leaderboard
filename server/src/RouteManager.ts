@@ -45,11 +45,11 @@ export class RouteManager {
     // -------------------------- Private members --------------------------
 
     private registerRoutes(): void {
-        this.registerStackTrackRoute();
-        this.registerMatchEndRoute();
-        this.registerProfileInfoRoute();
-        this.registerClientGlobalsRoute();
-        this.registerClientMatchStartRoute();
+        // this.registerStackTrackRoute();
+        // this.registerMatchEndRoute();
+        // this.registerProfileInfoRoute();
+        // this.registerClientGlobalsRoute();
+        // this.registerClientMatchStartRoute();
         this.registerProfileItemsMovingRoute();
         this.registerGameLogoutRoute();
     }
@@ -229,13 +229,6 @@ export class RouteManager {
                 {
                     url: "/client/game/profile/items/moving",
                     action: async (url, info, sessionId, output) => {
-                        if (sessionId && config.public_profile) {
-                            this.stateCache.set(sessionId, {
-                                state: PlayerState.IN_STASH,
-                                lastSentTime: this.stateCache.get(sessionId)?.lastSentTime || 0
-                            });
-                        }
-
                         // We want to check it only once
                         const wasInboxChecked = this.inboxChecked.get(sessionId);
                         if (sessionId && !wasInboxChecked?.state || true) {

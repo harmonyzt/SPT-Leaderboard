@@ -75,14 +75,14 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
         this.instanceManager.preSptLoad(container);
         this.routeManager.preSptLoad(this, this.instanceManager);
 
-        this.uniqueToken = this.loadOrCreateToken();
+        // this.uniqueToken = this.loadOrCreateToken();
 
         // Load locale file
-        this.loadLocales();
+        // this.loadLocales();
 
         // Mod hash
-        const modHash = this.calculateFileHash(this.modPath);
-        this.key_size = modHash;
+        // const modHash = this.calculateFileHash(this.modPath);
+        // this.key_size = modHash;
     }
 
     public postDBLoad(container: DependencyContainer): void {
@@ -125,7 +125,7 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
 
     public async checkInbox(sessionId: string): Promise<void> {
         try {
-            const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}&token=${this.uniqueToken}`);
+            const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
             const data = await response.json();
 
             let generatedItems = [];
