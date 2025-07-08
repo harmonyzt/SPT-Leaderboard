@@ -134,12 +134,12 @@ public class ProcessProfileModel
                 var KilledBear = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBear);
                 var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
                 var HeadShots = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HeadShots);
-                var LongestShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
+                var LongestShot = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
                 var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestKillShot);
                 var LongestKillStreak = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillStreak);
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
-                var TotalDamage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+                var TotalDamage = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
 
                 if (!isScavRaid)
                 {
@@ -168,9 +168,9 @@ public class ProcessProfileModel
                 if (isScavRaid)
                 {
                     KilledPmc = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
-                    LongestShot = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestShot);
+                    LongestShot = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
                     HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
-                    TotalDamage = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.CauseBodyDamage);
+                    TotalDamage = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
 
                     if (SettingsModel.Instance.Debug.Value)
                     {
@@ -183,13 +183,6 @@ public class ProcessProfileModel
                 }
                 
                 #endregion
-                
-                string totalDamageString = TotalDamage.ToString();
-                
-                string trimmedDamage;
-                trimmedDamage = totalDamageString.Length > 2 ? totalDamageString.Substring(0, totalDamageString.Length - 2) : "0";
-
-                int NewDamageBody = int.Parse(trimmedDamage);
                 
                 if (HitCount <= 0) {
                     HitCount = 0;
@@ -257,7 +250,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
-                        RaidDamage = NewDamageBody,
+                        RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
@@ -290,7 +283,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
-                        RaidDamage = NewDamageBody,
+                        RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
                     };
