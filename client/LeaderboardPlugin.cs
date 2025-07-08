@@ -57,7 +57,7 @@ namespace SPTLeaderboard
                         {
                             if (SettingsModel.Instance.Debug.Value)
                             {
-                                logger.LogWarning($"Request OnSuccess {response}:{code}");
+                                logger.LogWarning($"Request OnSuccess {response}");
                             }
                         };
 
@@ -65,7 +65,7 @@ namespace SPTLeaderboard
                         {
                             if (SettingsModel.Instance.Debug.Value)
                             {
-                                logger.LogError($"Request OnFail {error}:{code}");
+                                logger.LogError($"Request OnFail {error}");
                             }
                         };
 

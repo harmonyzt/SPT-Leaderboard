@@ -49,7 +49,7 @@ public class ProcessProfileModel
                 
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
-                var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw);
+                var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw.ToLower());
                 
                 var pmcData = session.GetProfileBySide(ESideType.Pmc);
                 var scavData = session.GetProfileBySide(ESideType.Savage);
@@ -325,13 +325,13 @@ public class ProcessProfileModel
             "factory4_night" => "Night Factory",
             "interchange" => "Interchange",
             "laboratory" => "Labs",
-            "RezervBase" => "Reserve",
+            "rezervbase" => "Reserve",
             "shoreline" => "Shoreline",
             "woods" => "Woods",
             "lighthouse" => "Lighthouse",
-            "TarkovStreets" => "Streets of Tarkov",
-            "Sandbox" => "Ground Zero - Low",
-            "Sandbox_high" => "Ground Zero - High",
+            "tarkovstreets" => "Streets of Tarkov",
+            "sandbox" => "Ground Zero - Low",
+            "sandbox_high" => "Ground Zero - High",
             _ => "UNKNOWN"
         };
     }
