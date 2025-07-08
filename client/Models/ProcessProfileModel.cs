@@ -250,6 +250,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
+                        ScavLevel = scavData.Info.Level, 
                         RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
@@ -283,6 +284,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
+                        ScavLevel = scavData.Info.Level, 
                         RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
                         TraderInfo = traderInfoData
