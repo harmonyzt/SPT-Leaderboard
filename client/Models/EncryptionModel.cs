@@ -11,6 +11,10 @@ namespace SPTLeaderboard.Models
         
         private string _token = "";
         
+        private const string ExpectedToken = "aca1ee24fea237dd";
+
+        private bool isEditedDll = false;
+        
         public string Token => _token;
         
         private string PathToken => Path.Combine(BepInEx.Paths.PluginPath, "SPT-Leaderboard", "secret.token");
@@ -19,6 +23,8 @@ namespace SPTLeaderboard.Models
         {
             try
             {
+                CheckIntegrityMod();
+                
                 if (!File.Exists(PathToken))
                 {
                     _token = GenerateToken();
@@ -87,7 +93,45 @@ namespace SPTLeaderboard.Models
                 LeaderboardPlugin.logger.LogError($"[SPT Leaderboard] Error check integrity mod");
                 return "ERROR CHECK INTEGRITY";
             }
-            
+        }
+
+        private void CheckIntegrityMod()
+        {
+            if (IsSigned())
+            {
+                if (IsSignedWithMyKey(Assembly.GetExecutingAssembly()))
+                {
+                    isEditedDll = false;
+                    return;
+                }
+                isEditedDll = true;
+                return;
+            }
+            isEditedDll = true;
+        }
+        
+        private bool IsAssemblySigned(Assembly assembly)
+        {
+            byte[] publicKey = assembly.GetName().GetPublicKey();
+            return publicKey != null && publicKey.Length > 0;
+        }
+        
+        private bool IsSigned()
+        {
+            bool isSigned = IsAssemblySigned(Assembly.GetExecutingAssembly());
+            LeaderboardPlugin.logger.LogWarning(isSigned ? "Mod is signed" : "Mod not is signed");
+            return isSigned;
+        }
+
+        private bool IsSignedWithMyKey(Assembly assembly)
+        {
+            byte[] tokenBytes = assembly.GetName().GetPublicKeyToken();
+
+            if (tokenBytes == null || tokenBytes.Length == 0)
+                return false;
+
+            string token = BitConverter.ToString(tokenBytes).Replace("-", "").ToLowerInvariant();
+            return token == ExpectedToken;
         }
     }
 }
