@@ -196,8 +196,42 @@ public class ProcessProfileModel
                     .Concat(GetDirectories(BepInEx.Paths.PluginPath))
                     .ToList();
                 
-                var baseData = new BaseData
+                #region StatTrack
+
+                var statTrackIsUsed = StatTrackInterop.Loaded();
+                Dictionary<string, Dictionary<string, WeaponInfo>> processedStatTrackData = new Dictionary<string, Dictionary<string, WeaponInfo>>();
+                
+                if (!SettingsModel.Instance.EnableModSupport.Value && !statTrackIsUsed)
                 {
+                    processedStatTrackData = null;
+                }
+                else
+                {
+                    LeaderboardPlugin.logger.LogWarning($"Loaded StatTrack plugin {statTrackIsUsed}");
+                    
+                    var dataStatTrack = StatTrackInterop.LoadFromServer();
+                    if (dataStatTrack != null)
+                    {
+                        if (SettingsModel.Instance.Debug.Value)
+                        {
+                            LeaderboardPlugin.logger.LogWarning(
+                                $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
+                        }
+
+                        processedStatTrackData = GetAllValidWeapons(profileID ,dataStatTrack);
+                        if (processedStatTrackData != null)
+                        {
+                            if (SettingsModel.Instance.Debug.Value)
+                            {
+                                LeaderboardPlugin.logger.LogWarning(JsonConvert.SerializeObject(processedStatTrackData).ToJson());
+                            }
+                        }
+                    }
+                }
+
+                #endregion
+                
+                var baseData = new BaseData {
                     AccountType = gameVersion,
                     Health = CurrentHealth,
                     Id = profileID,
@@ -237,7 +271,7 @@ public class ProcessProfileModel
                     {
                         DiscFromRaid = discFromRaid,
                         IsTransition = isTransition,
-                        IsUsingStattrack = false, //TODO: Add support mod Sttattrack
+                        IsUsingStattrack = statTrackIsUsed,
                         LastRaidEXP = ExpLooting,
                         LastRaidHits = HitCount,
                         LastRaidMap = lastRaidLocation,
@@ -245,7 +279,7 @@ public class ProcessProfileModel
                         LastRaidTransitionTo = lastRaidTransitionTo,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
-                        ModWeaponStats = null,
+                        ModWeaponStats = processedStatTrackData,
                         PlayedAs = "PMC",
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
@@ -271,7 +305,7 @@ public class ProcessProfileModel
                     {
                         DiscFromRaid = discFromRaid,
                         IsTransition = isTransition,
-                        IsUsingStattrack = false, //TODO: Add support mod Sttattrack
+                        IsUsingStattrack = statTrackIsUsed,
                         LastRaidEXP = 0,
                         LastRaidHits = HitCount,
                         LastRaidMap = lastRaidLocation,
@@ -279,7 +313,7 @@ public class ProcessProfileModel
                         LastRaidTransitionTo = lastRaidTransitionTo,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
-                        ModWeaponStats = null,
+                        ModWeaponStats = processedStatTrackData,
                         PlayedAs = "SCAV",
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
@@ -368,7 +402,7 @@ public class ProcessProfileModel
         return tradersData;
     }
 
-    private Dictionary<string, string> TraderMap = new() {
+    private readonly Dictionary<string, string> TraderMap = new() {
         { "6617beeaa9cfa777ca915b7c", "REF" },
         { "54cb50c76803fa8b248b4571", "PRAPOR" },
         { "54cb57776803fa99248b456e", "THERAPIST" },
@@ -445,5 +479,57 @@ public class ProcessProfileModel
         return Directory.GetFiles(dirPath, "*.dll", SearchOption.TopDirectoryOnly)
             .Select(file => Path.GetFileName(file))
             .ToList();
+    }
+    
+    public static Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
+    {
+        if (!info.ContainsKey(sessionId))
+        {
+            return null;
+        }
+
+        var result = new Dictionary<string, Dictionary<string, WeaponInfo>>
+        {
+            [sessionId] = new Dictionary<string, WeaponInfo>()
+        };
+
+        foreach (var weaponInfo in info[sessionId])
+        {
+            string weaponId = weaponInfo.Key;
+            CustomizedObject weaponStats = weaponInfo.Value;
+
+            string weaponName = LocalizationModel.Instance.GetLocaleName(weaponId);
+
+            // Skip weapons with unknown names
+            if (weaponName == "Unknown")
+            {
+                if (SettingsModel.Instance.Debug.Value)
+                {
+                    LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName}");
+                }
+                continue;
+            }
+
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName}");
+            }
+            result[sessionId][weaponName] = new WeaponInfo
+            {
+                stats = weaponStats,
+                originalId = weaponId
+            };
+        }
+
+        if (result[sessionId].Count == 0)
+        {
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
+            }
+            return null;
+        }
+
+        return result;
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT.UI;
@@ -19,7 +22,9 @@ namespace SPTLeaderboard
         public static LeaderboardPlugin Instance { get; private set; }
         
         private SettingsModel _settings;
+        private LocalizationModel _localization;
         private EncryptionModel _encrypt;
+        
         private Timer _inRaidHeartbeatTimer;
 
         public static ManualLogSource logger;
@@ -27,11 +32,11 @@ namespace SPTLeaderboard
         private void Awake()
         {
             logger = Logger;
-            logger.LogInfo("[SPT Leaderboard] successful loaded!");
-            
+            logger.LogInfo("[SPT Leaderboard] Loading...");
             
             _settings = SettingsModel.Create(Config);
             _encrypt = EncryptionModel.Create();
+            _localization = LocalizationModel.Create();
             
             new OpenMainMenuScreenPatch().Enable();
             new OpenInventoryScreenPatch().Enable();
@@ -40,6 +45,7 @@ namespace SPTLeaderboard
             new HideoutAwakePatch().Enable();
             
             Instance = this;
+            logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
 
         public static void SendHeartbeat(PlayerState playerState)
@@ -105,8 +111,12 @@ namespace SPTLeaderboard
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
-            // logger.LogWarning($"Request Data {jsonBody}");
-            
+
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                logger.LogWarning($"Request Data {jsonBody}");
+            }
+
             request.SetData(jsonBody);
             request.Send();
         }
@@ -134,12 +144,11 @@ namespace SPTLeaderboard
 
         public void StopInRaidHeartbeat()
         {
-            if (_inRaidHeartbeatTimer != null)
-            {
-                _inRaidHeartbeatTimer.Stop();
-                _inRaidHeartbeatTimer.Dispose();
-                _inRaidHeartbeatTimer = null;
-            }
+            if (_inRaidHeartbeatTimer == null) return;
+            
+            _inRaidHeartbeatTimer.Stop();
+            _inRaidHeartbeatTimer.Dispose();
+            _inRaidHeartbeatTimer = null;
         }
     }
 }
