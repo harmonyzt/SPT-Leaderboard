@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.0.0")]
-[assembly: AssemblyFileVersion("1.0.0")]
+[assembly: AssemblyVersion("0.1.0")]
+[assembly: AssemblyFileVersion("0.1.0")]
 
 [assembly: AssemblyTitle("SPT.Leaderboard")]
 [assembly: AssemblyProduct("SPT.Leaderboard")]
@@ -11,4 +11,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("SPT.Leaderboard")]
 [assembly: AssemblyCopyright("Copyright© 2025")]
 [assembly: ComVisible(false)]
-[assembly: Guid("7c043e89-a2c2-4a90-aa67-308bea62ae09")]
+[assembly: Guid("8fd112e1-0467-4938-b63b-305e03e44069")]
