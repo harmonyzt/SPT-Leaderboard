@@ -119,7 +119,6 @@ namespace SPTLeaderboard.Models
         private bool IsSigned()
         {
             bool isSigned = IsAssemblySigned(Assembly.GetExecutingAssembly());
-            LeaderboardPlugin.logger.LogWarning(isSigned ? "Mod is signed" : "Mod not is signed");
             return isSigned;
         }
 
