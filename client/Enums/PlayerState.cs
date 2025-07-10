@@ -7,6 +7,7 @@
         IN_STASH,
         IN_RAID,
         RAID_END,
-        IN_HIDEOUT
+        IN_HIDEOUT,
+        IN_TRANSIT
     }
 }

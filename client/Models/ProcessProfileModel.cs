@@ -6,6 +6,7 @@ using EFT;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
+using SPTLeaderboard.Enums;
 using SPTLeaderboard.Utils;
 using TraderData = SPTLeaderboard.Data.TraderData;
 
