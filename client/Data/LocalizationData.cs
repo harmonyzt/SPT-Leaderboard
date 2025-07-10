@@ -172,6 +172,27 @@ public class LocalizationData
         { "ro", "Numele jucătorului conține caractere sau cuvinte interzise. Vă rugăm să-l modificați din setările jocului." }
     };
     
+    public static Dictionary<string, string> Error_Balaclava = new Dictionary<string, string>
+    {
+        { "ch", "检测到金色作弊头套。突袭数据将不会被提交。" },
+        { "cz", "Byla zjištěna zlatá cheaterská kukla. Údaje o nájezdu nebudou odeslány." },
+        { "en", "A golden cheater balaclava was detected. Raid data will not be submitted." },
+        { "fr", "Une cagoule dorée de tricheur a été détectée. Les données du raid ne seront pas envoyées." },
+        { "ge", "Eine goldene Cheater-Sturmhaube wurde entdeckt. Raid-Daten werden nicht übermittelt." },
+        { "hu", "Arany csaló símaszkot észleltünk. A rajtaütés adatai nem kerülnek elküldésre." },
+        { "it", "È stato rilevato un passamontagna dorato da cheater. I dati del raid non saranno inviati." },
+        { "jp", "ゴールドのチートバラクラバが検出されました。レイドデータは送信されません。" },
+        { "kr", "금색 치터 바라클라바가 감지되었습니다. 레이드 데이터는 전송되지 않습니다." },
+        { "pl", "Wykryto złotą oszukańczą kominiarkę. Dane z rajdu nie zostaną wysłane." },
+        { "po", "Foi detectada uma balaclava dourada de trapaça. Os dados do raid não serão enviados." },
+        { "sk", "Bola zistená zlatá cheaterská kukla. Údaje o nájazde nebudú odoslané." },
+        { "es", "Se ha detectado una balaclava dorada de tramposo. Los datos del asalto no serán enviados." },
+        { "es-mx", "Se detectó una pasamontañas dorada de tramposo. Los datos del raid no se enviarán." },
+        { "tu", "Altın hileci balaklava tespit edildi. Baskın verileri gönderilmeyecek." },
+        { "ru", "У вас обнаружена золотая читерская балаклава. Данные рейда не будут отправлены." },
+        { "ro", "A fost detectată o cagulă aurie de trișor. Datele raidului nu vor fi trimise." }
+    };
+    
     // Template for translating
     // public static Dictionary<string, string> TEMPLATE = new Dictionary<string, string>
     // {

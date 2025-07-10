@@ -94,6 +94,7 @@ namespace SPTLeaderboard.Models
                 ErrorType.SCAV_ONLY_PUBLIC => LocalizationData.Error_ScavOnlyPublic,
                 ErrorType.CHAR_LIMIT => LocalizationData.Error_CharLimit,
                 ErrorType.NSFW_NAME => LocalizationData.Error_NsfwName,
+                ErrorType.BALACLAVA => LocalizationData.Error_Balaclava,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
         }

@@ -110,8 +110,17 @@ public class ProcessProfileModel
                 
                 if (godBalaclava)
                 {
-                    LeaderboardPlugin.logger.LogWarning("Player has balaclava of a god, SUKA BLYAT!");
-                    godBalaclava = !SettingsModel.Instance.Debug.Value; //TODO: Delete debug. BEFORE PROD
+                    NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.BALACLAVA),
+                        ServerErrorHandler.GetDurationType(ErrorType.BALACLAVA));
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        godBalaclava = false; //TODO: Delete debug. BEFORE PROD
+                    }
+                    else
+                    {
+                        return;
+                    }
+
                 }
                 
                 #endregion
