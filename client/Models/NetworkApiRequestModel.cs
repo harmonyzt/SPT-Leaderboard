@@ -21,6 +21,11 @@ namespace SPTLeaderboard.Models
         /// </summary>
         public static NetworkApiRequestModel Create(string url)
         {
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                LeaderboardPlugin.logger.LogWarning($"Request Url -> '{url}'");
+            }
+            
             var obj = new GameObject("[SPTLeaderboard] NetworkRequest");
             DontDestroyOnLoad(obj);
             var request = obj.AddComponent<NetworkApiRequestModel>();
