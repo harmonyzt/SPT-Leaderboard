@@ -1,0 +1,72 @@
+﻿using System;
+using System.Text.RegularExpressions;
+using Comfort.Common;
+using EFT;
+using SPT.Reflection.Utils;
+using SPTLeaderboard.Data;
+using SPTLeaderboard.Enums;
+using UnityEngine;
+
+namespace SPTLeaderboard.Utils;
+
+public static class DataUtils
+{
+    public static ISession GetSession(bool throwIfNull = false)
+    {
+        var session = ClientAppUtils.GetClientApp().Session;
+
+        if (throwIfNull && session is null)
+        {
+            LeaderboardPlugin.logger.LogWarning("Trying to access the Session when it's null");
+        }
+
+        return session;
+    }
+    
+    public static Profile GetProfile(bool throwIfNull = false)
+    {
+        var profile = DataUtils.GetSession()?.Profile;
+
+        if (throwIfNull && profile is null)
+        {
+            LeaderboardPlugin.logger.LogWarning("Trying to access the Profile when it's null");
+        }
+        
+        return DataUtils.GetSession()?.Profile;
+    }
+    
+    public static bool HasRaidStarted()
+    {
+        bool? inRaid = Singleton<AbstractGame>.Instance?.InRaid;
+        return inRaid.HasValue && inRaid.Value;
+    }
+    
+    public static long CurrentTimestamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    
+    /// <summary>
+    /// Get string from enum PlayerState type
+    /// </summary>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    public static string GetPlayerState(PlayerState state)
+    {
+        return Enum.GetName(typeof(PlayerState), state)?.ToLower();
+    }
+    
+    /// <summary>
+    /// Parsing version SPT from PlayerPrefs
+    /// </summary>
+    /// <returns></returns>
+    public static string GetSptVersion()
+    {
+        var rawString = PlayerPrefs.GetString("SPT_Version");
+        var match = Regex.Match(rawString, @"SPT\s+([0-9\.]+)\s+-");
+        if (match.Success)
+        {
+            string version = match.Groups[1].Value;
+            return version;
+        }
+
+        return GlobalData.BaseSPTVersion;
+    }
+}
