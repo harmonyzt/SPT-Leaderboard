@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Comfort.Common;
 using EFT;
-using EFT.InventoryLogic;
 using EFT.UI;
 using Newtonsoft.Json;
-using SPT.Common.Http;
-using SPT.Common.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
 using TraderData = SPTLeaderboard.Data.TraderData;
@@ -136,16 +132,9 @@ public class ProcessProfileModel
                 var CurrentHealth = pmcData.Health.BodyParts.Where(
                     bodyPart => bodyPart.Value?.Health != null).
                     Sum(bodyPart => bodyPart.Value.Health.Current);
-                                
-                var Kills = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.Kills);
-                var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
+                
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
-                var KilledBear = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBear);
-                var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
-                var HeadShots = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HeadShots);
                 var LongestShot = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
-                var LongestKillShot = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.LongestKillShot);
-                var LongestKillStreak = session.Profile.Stats.Eft.SessionCounters.GetLong(SessionCounterTypesAbstractClass.LongestKillStreak);
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                 var TotalDamage = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
@@ -155,15 +144,8 @@ public class ProcessProfileModel
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning($"\n");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] Kills {Kills}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBear {KilledBear}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] HeadShots {HeadShots}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillShot {LongestKillShot}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestKillStreak {LongestKillStreak}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
@@ -199,10 +181,10 @@ public class ProcessProfileModel
                 
                 #endregion
                 
-                var listModsPlayer = GetServerMods()
-                    .Concat(GetDirectories(GlobalData.UserModsPath))
-                    .Concat(GetDirectories(BepInEx.Paths.PluginPath))
-                    .Concat(GetDirectories(BepInEx.Paths.PluginPath))
+                var listModsPlayer = DataUtils.GetServerMods()
+                    .Concat(DataUtils.GetDirectories(GlobalData.UserModsPath))
+                    .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
+                    .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
                     .ToList();
                 
                 #region StatTrack
@@ -425,72 +407,7 @@ public class ProcessProfileModel
         { "5c0647fdd443bc2504c2d371", "JAEGER" }
     };
     
-    private List<string> GetServerMods()
-    {
-        List<string> listServerMods = new List<string>();
-
-        try
-        {
-            string json = RequestHandler.GetJson("/launcher/profile/info");
-
-            if (string.IsNullOrWhiteSpace(json))
-                return listServerMods;
-
-            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
-
-            if (serverProfileInfo?.sptData?.Mods != null)
-            {
-                foreach (var serverMod in serverProfileInfo.sptData.Mods)
-                {
-                    if (serverMod?.Name != null)
-                        listServerMods.Add(serverMod.Name);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
-        }
-
-        return listServerMods;
-    }
-
-    private List<string> GetUserMods()
-    {
-        return GetDirectories(GlobalData.UserModsPath);
-    }
-    
-    private List<string> GetBepinexMods()
-    {
-        return GetDirectories(BepInEx.Paths.PluginPath);
-    }
-    
-    private List<string> GetBepinexDll()
-    {
-        return GetDllFiles(BepInEx.Paths.PluginPath);
-    }
-    
-    private List<string> GetDirectories(string dirPath)
-    {
-        if (!Directory.Exists(dirPath))
-            return new List<string>();
-
-        return Directory.GetDirectories(dirPath)
-            .Select(path => Path.GetFileName(path))
-            .ToList();
-    }
-    
-    private List<string> GetDllFiles(string dirPath)
-    {
-        if (!Directory.Exists(dirPath))
-            return new List<string>();
-
-        return Directory.GetFiles(dirPath, "*.dll", SearchOption.TopDirectoryOnly)
-            .Select(file => Path.GetFileName(file))
-            .ToList();
-    }
-    
-    public static Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
+    private Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
     {
         if (!info.ContainsKey(sessionId))
         {

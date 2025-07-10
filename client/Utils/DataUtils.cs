@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Comfort.Common;
 using EFT;
+using SPT.Common.Http;
+using SPT.Common.Utils;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -68,5 +73,70 @@ public static class DataUtils
         }
 
         return GlobalData.BaseSPTVersion;
+    }
+    
+    public static List<string> GetServerMods()
+    {
+        List<string> listServerMods = new List<string>();
+
+        try
+        {
+            string json = RequestHandler.GetJson("/launcher/profile/info");
+
+            if (string.IsNullOrWhiteSpace(json))
+                return listServerMods;
+
+            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
+
+            if (serverProfileInfo?.sptData?.Mods != null)
+            {
+                foreach (var serverMod in serverProfileInfo.sptData.Mods)
+                {
+                    if (serverMod?.Name != null)
+                        listServerMods.Add(serverMod.Name);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
+        }
+
+        return listServerMods;
+    }
+
+    public static List<string> GetUserMods()
+    {
+        return GetDirectories(GlobalData.UserModsPath);
+    }
+    
+    public static List<string> GetBepinexMods()
+    {
+        return GetDirectories(BepInEx.Paths.PluginPath);
+    }
+    
+    public static List<string> GetBepinexDll()
+    {
+        return GetDllFiles(BepInEx.Paths.PluginPath);
+    }
+    
+    public static List<string> GetDirectories(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+            return new List<string>();
+
+        return Directory.GetDirectories(dirPath)
+            .Select(path => Path.GetFileName(path))
+            .ToList();
+    }
+    
+    public static List<string> GetDllFiles(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+            return new List<string>();
+
+        return Directory.GetFiles(dirPath, "*.dll", SearchOption.TopDirectoryOnly)
+            .Select(file => Path.GetFileName(file))
+            .ToList();
     }
 }
