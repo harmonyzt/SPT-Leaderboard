@@ -1,8 +1,3 @@
-bin/
-obj/
-.idea
-.vs
-Dependencies
 dist
 node_modules
 secret.token
