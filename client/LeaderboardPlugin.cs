@@ -16,7 +16,7 @@ using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard
 {
-    [BepInPlugin("harmonyzt.SPTLeaderboard", "SPTLeaderboard", "0.1.1")]
+    [BepInPlugin("harmonyzt.SPTLeaderboard", "SPTLeaderboard", "3.1.0")]
     public class LeaderboardPlugin : BaseUnityPlugin
     {
         public static LeaderboardPlugin Instance { get; private set; }

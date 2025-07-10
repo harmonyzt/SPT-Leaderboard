@@ -36,9 +36,11 @@
     <PropertyGroup>
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
-    <PropertyGroup>
-        <PostBuildEvent>copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"</PostBuildEvent>
-    </PropertyGroup>
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command='copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll' />
+        <Exec Command='copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"' />
+        <Exec Command='powershell -ExecutionPolicy Bypass -File "F:\GitHub\Tarkov\SPT-Leaderboard\client\Dependencies\PackMod.ps1"' />
+    </Target>
     <ItemGroup>
         <Reference Include="0Harmony">
             <HintPath>Dependencies\0Harmony.dll</HintPath>
