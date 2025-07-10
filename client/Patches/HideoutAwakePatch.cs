@@ -3,6 +3,7 @@ using EFT.Hideout;
 using HarmonyLib;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
+using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Patches
 {
@@ -16,7 +17,7 @@ namespace SPTLeaderboard.Patches
         [PatchPostfix]
         private static void Postfix()
         {
-            LeaderboardPlugin.SendHeartbeat(PlayerState.IN_HIDEOUT);
+            HeartbeatSender.Send(PlayerState.IN_HIDEOUT);
             LeaderboardPlugin.logger.LogWarning("[State] Player entered in hideout");
         }
     }

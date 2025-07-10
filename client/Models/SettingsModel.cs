@@ -143,7 +143,7 @@ namespace SPTLeaderboard.Models
 			SupportInRaidConnectionTimer = configFile.Bind(
 				"Settings", 
 				"Support In Raid Connection Timer", 
-				20, 
+				60, 
 				new ConfigDescription(
 					"Timer for requests in server for support status IN_RAID",
 					null, 

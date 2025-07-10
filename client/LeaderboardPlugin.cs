@@ -47,51 +47,6 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-
-        public static void SendHeartbeat(PlayerState playerState)
-        {
-            if (SettingsModel.Instance.PublicProfile.Value)
-            {
-                if (Singleton<PreloaderUI>.Instantiated)
-                {
-                    var session = DataUtils.GetSession();
-                    if (session.Profile != null)
-                    {
-                        var request = NetworkApiRequestModel.Create(GlobalData.HeartbeatUrl);
-
-                        request.OnSuccess = (response, code) =>
-                        {
-                            if (SettingsModel.Instance.Debug.Value)
-                            {
-                                logger.LogWarning($"Request OnSuccess {response}");
-                            }
-                        };
-
-                        request.OnFail = (error, code) =>
-                        {
-                            ServerErrorHandler.HandleError(error, code);
-                        };
-
-                        var data = new PlayerHeartbeatData
-                        {
-                            Type = DataUtils.GetPlayerState(playerState),
-                            Timestamp = DataUtils.CurrentTimestamp,
-                            Version = GlobalData.Version,
-                            SessionId = session.Profile.Id
-                        };
-
-                        string jsonBody = JsonConvert.SerializeObject(data);
-                        if (SettingsModel.Instance.Debug.Value)
-                        {
-                            logger.LogWarning($"Request Data {jsonBody}");
-                        }
-
-                        request.SetData(jsonBody);
-                        request.Send();
-                    }
-                }
-            }
-        }
         
         public static void SendProfileData(object data)
         {
@@ -121,14 +76,14 @@ namespace SPTLeaderboard
         public void StartInRaidHeartbeat()
         {
             StopInRaidHeartbeat();
-            SendHeartbeat(PlayerState.IN_RAID);
+            HeartbeatSender.Send(PlayerState.IN_RAID);
         
             _inRaidHeartbeatTimer = new Timer(_settings.SupportInRaidConnectionTimer.Value * 1000);
             _inRaidHeartbeatTimer.Elapsed += (_, __) =>
             {
                 if (DataUtils.HasRaidStarted())
                 {
-                    SendHeartbeat(PlayerState.IN_RAID);
+                    HeartbeatSender.Send(PlayerState.IN_RAID);
                 }
                 else
                 {
@@ -147,5 +102,6 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer.Dispose();
             _inRaidHeartbeatTimer = null;
         }
+        
     }
 }
