@@ -246,7 +246,7 @@ public class ProcessProfileModel
                     Id = profileID,
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
-                    ModInt = "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f", //TODO: Switch from static hash to dynamic calculation. BEFORE PROD
+                    ModInt = SettingsModel.Instance.Debug.Value ? "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f" : EncryptionModel.Instance.GetHashMod(), //TODO: Delete debug. BEFORE PROD
                     Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : listModsPlayer, //TODO: Delete debug. BEFORE PROD
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
