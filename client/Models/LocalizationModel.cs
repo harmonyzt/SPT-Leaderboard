@@ -4,6 +4,7 @@ using System.IO;
 using Comfort.Common;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
+using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Models
 {
@@ -37,32 +38,17 @@ namespace SPTLeaderboard.Models
         /// <summary>
         /// Get locale text for needly type. See lang in game settings.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="errorType"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public string GetLocaleErrorText(TypeText type)
+        public string GetLocaleErrorText(ErrorType errorType)
         {
-            if (type == TypeText.ErrorRules)
+            if (GetLocaleTypeError(errorType).TryGetValue(CurrentLanguage(), out var errorTextExplain))
             {
-                if (LocalizationData.ErrorRules.TryGetValue(CurrentLanguage(), out var addOfferLocale))
-                {
-                    return addOfferLocale;
-                }
-            
-                return LocalizationData.ErrorRules["en"]; // fallback to English
+                return errorTextExplain;
             }
-
-            if (type == TypeText.ErrorBanned)
-            {
-                if (LocalizationData.ErrorBanned.TryGetValue(CurrentLanguage(), out var addOfferLocale))
-                {
-                    return addOfferLocale;
-                }
-
-                return LocalizationData.ErrorBanned["en"]; // fallback to English
-            }
-
-            return "Leaderboard error. Check logs";
+        
+            return GetLocaleTypeError(errorType)["en"]; // fallback to English
         }
 
         public LocalizationModel()
@@ -96,13 +82,20 @@ namespace SPTLeaderboard.Models
 
             return "Unknown";
         }
-    }
 
-    public enum TypeText
-    {
-        ErrorRules,
-        ErrorBanned
+        public Dictionary<string, string> GetLocaleTypeError(ErrorType errorType)
+        {
+            return errorType switch
+            {
+                ErrorType.VIOLATION_LA_TOS => LocalizationData.Error_LA_TOS,
+                ErrorType.TOKEN_MISMATCH => LocalizationData.Error_TokenMismatch,
+                ErrorType.TOKEN_NOT_SAFE => LocalizationData.Error_TokenNotSafe,
+                ErrorType.UPDATE_MOD => LocalizationData.Error_UpdateMod,
+                ErrorType.SCAV_ONLY_PUBLIC => LocalizationData.Error_ScavOnlyPublic,
+                ErrorType.CHAR_LIMIT => LocalizationData.Error_CharLimit,
+                ErrorType.NSFW_NAME => LocalizationData.Error_NsfwName,
+                _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
+            };
+        }
     }
-    
-    
 }

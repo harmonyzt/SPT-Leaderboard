@@ -69,10 +69,7 @@ namespace SPTLeaderboard
 
                         request.OnFail = (error, code) =>
                         {
-                            if (SettingsModel.Instance.Debug.Value)
-                            {
-                                logger.LogError($"Request OnFail {error}");
-                            }
+                            ServerErrorHandler.HandleError(error, code);
                         };
 
                         var data = new PlayerHeartbeatData
@@ -107,7 +104,7 @@ namespace SPTLeaderboard
 
             request.OnFail = (error, code) =>
             {
-                logger.LogError($"Request OnFail {error}");
+                ServerErrorHandler.HandleError(error, code);
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
