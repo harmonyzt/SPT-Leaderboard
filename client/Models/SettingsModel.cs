@@ -10,8 +10,12 @@ namespace SPTLeaderboard.Models
 	{
 		public static SettingsModel Instance { get; private set; }
 		
+#if DEBUG
 		public ConfigEntry<KeyboardShortcut> KeyBind;
 		public ConfigEntry<KeyboardShortcut> KeyBindTwo;
+		public ConfigEntry<bool> Debug;
+#endif
+		
 		public ConfigEntry<bool> ModCasualMode;
 		public ConfigEntry<bool> PublicProfile;
 		public ConfigEntry<bool> EnableModSupport;
@@ -19,11 +23,12 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<int> ConnectionTimeout;
 		public ConfigEntry<string> PhpEndpoint;
 		public ConfigEntry<string> PhpPath;
-		public ConfigEntry<bool> Debug;
 		public ConfigEntry<int> SupportInRaidConnectionTimer;
 
 		private SettingsModel(ConfigFile configFile)
 		{
+			#if DEBUG
+			
 			#region TEST
 				
 			KeyBind = configFile.Bind(
@@ -39,7 +44,10 @@ namespace SPTLeaderboard.Models
 				new KeyboardShortcut(KeyCode.UpArrow), 
 				new ConfigDescription(
 					"Just keybind for test requests"));
+			
 			#endregion
+			
+			#endif
 			
 			ModCasualMode = configFile.Bind(
 				"Settings", 
@@ -128,7 +136,7 @@ namespace SPTLeaderboard.Models
 						Order = 2,
 						IsAdvanced = true
 					}));
-			
+#if DEBUG
 			Debug = configFile.Bind(
 				"Settings", 
 				"Debug", 
@@ -140,6 +148,7 @@ namespace SPTLeaderboard.Models
 					{
 						Order = 1
 					}));
+#endif
 			SupportInRaidConnectionTimer = configFile.Bind(
 				"Settings", 
 				"Support In Raid Connection Timer", 

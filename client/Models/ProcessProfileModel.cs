@@ -109,6 +109,8 @@ public class ProcessProfileModel
                 {
                     NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.BALACLAVA),
                         ServerErrorHandler.GetDurationType(ErrorType.BALACLAVA));
+                    
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         godBalaclava = false; //TODO: Delete debug. BEFORE PROD
@@ -117,7 +119,9 @@ public class ProcessProfileModel
                     {
                         return;
                     }
-
+#else
+                    return;
+#endif
                 }
                 
                 #endregion
@@ -144,6 +148,7 @@ public class ProcessProfileModel
 
                 if (!isScavRaid)
                 {
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning($"\n");
@@ -155,6 +160,7 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
                     }
+#endif
                 }
 
                 #endregion
@@ -170,6 +176,7 @@ public class ProcessProfileModel
                     HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                     TotalDamage = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
 
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning($"\n");
@@ -180,6 +187,7 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
                     }
+#endif
                 }
                 
                 #endregion
@@ -212,13 +220,16 @@ public class ProcessProfileModel
                     var dataStatTrack = StatTrackInterop.LoadFromServer();
                     if (dataStatTrack != null)
                     {
+#if DEBUG
                         if (SettingsModel.Instance.Debug.Value)
                         {
                             LeaderboardPlugin.logger.LogWarning(
                                 $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
                         }
+#endif
 
                         processedStatTrackData = GetAllValidWeapons(profileID ,dataStatTrack);
+#if DEBUG
                         if (processedStatTrackData != null)
                         {
                             if (SettingsModel.Instance.Debug.Value)
@@ -226,6 +237,7 @@ public class ProcessProfileModel
                                 LeaderboardPlugin.logger.LogWarning(JsonConvert.SerializeObject(processedStatTrackData).ToJson());
                             }
                         }
+#endif
                     }
                 }
 
@@ -237,8 +249,13 @@ public class ProcessProfileModel
                     Id = profileID,
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
+#if DEBUG
                     ModInt = SettingsModel.Instance.Debug.Value ? "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f" : EncryptionModel.Instance.GetHashMod(), //TODO: Delete debug. BEFORE PROD
                     Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : listModsPlayer, //TODO: Delete debug. BEFORE PROD
+#else
+                    ModInt = EncryptionModel.Instance.GetHashMod(),
+                    Mods = listModsPlayer,
+#endif
                     Name = session.Profile.Nickname,
                     PmcHealth = MaxHealth,
                     PmcLevel = pmcData.Info.Level,
@@ -255,11 +272,13 @@ public class ProcessProfileModel
                 {
                     var privateProfileData = new PrivateProfileData(baseData);
 
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning(
                             $"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
                     }
+#endif
 
                     LeaderboardPlugin.SendProfileData(privateProfileData);
                 }
@@ -292,10 +311,12 @@ public class ProcessProfileModel
                         TraderInfo = traderInfoData
                     };
                     
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
                     }
+#endif
 
                     LeaderboardPlugin.SendProfileData(pmcProfileData);
                 }
@@ -328,11 +349,13 @@ public class ProcessProfileModel
                         TraderInfo = traderInfoData
                     };
                     
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning(
                             $"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
                     }
+#endif
 
                     LeaderboardPlugin.SendProfileData(scavProfileData);
                 }
@@ -442,17 +465,20 @@ public class ProcessProfileModel
             // Skip weapons with unknown names
             if (weaponName == "Unknown")
             {
+#if DEBUG
                 if (SettingsModel.Instance.Debug.Value)
                 {
                     LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName}");
                 }
+#endif
                 continue;
             }
-
+#if DEBUG
             if (SettingsModel.Instance.Debug.Value)
             {
                 LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName}");
             }
+#endif
             result[sessionId][weaponName] = new WeaponInfo
             {
                 stats = weaponStats,
@@ -462,10 +488,12 @@ public class ProcessProfileModel
 
         if (result[sessionId].Count == 0)
         {
+#if DEBUG
             if (SettingsModel.Instance.Debug.Value)
             {
                 LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
             }
+#endif
             return null;
         }
 

@@ -35,10 +35,7 @@ namespace SPTLeaderboard.Utils
 
                     request.OnSuccess = (response, code) =>
                     {
-                        if (SettingsModel.Instance.Debug.Value)
-                        {
-                            LeaderboardPlugin.logger.LogWarning($"Request OnSuccess {response}");
-                        }
+                        LeaderboardPlugin.logger.LogWarning($"Request OnSuccess {response}");
                     };
 
                     request.OnFail = (error, code) => { ServerErrorHandler.HandleError(error, code); };
@@ -53,10 +50,12 @@ namespace SPTLeaderboard.Utils
 
                     string jsonBody = JsonConvert.SerializeObject(data);
 
+#if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
                         LeaderboardPlugin.logger.LogWarning($"Request Data {jsonBody}");
                     }
+#endif
 
                     request.SetData(jsonBody);
                     request.Send();

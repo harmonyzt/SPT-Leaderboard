@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Timers;
+﻿using System.Timers;
 using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Logging;
-using Comfort.Common;
-using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -63,12 +57,14 @@ namespace SPTLeaderboard
             };
 
             string jsonBody = JsonConvert.SerializeObject(data);
-
+            
+#if DEBUG
             if (SettingsModel.Instance.Debug.Value)
             {
                 logger.LogWarning($"Request Data {jsonBody}");
             }
-
+#endif
+            
             request.SetData(jsonBody);
             request.Send();
         }
