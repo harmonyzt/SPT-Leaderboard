@@ -24,6 +24,12 @@
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <PostBuildEvent>
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            powershell -ExecutionPolicy Bypass -File "F:\GitHub\Tarkov\SPT-Leaderboard\client\Dependencies\PackModDebug.ps1
+        </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <DebugType>pdbonly</DebugType>
@@ -32,16 +38,16 @@
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <PostBuildEvent>
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "F:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            powershell -ExecutionPolicy Bypass -File "F:\GitHub\Tarkov\SPT-Leaderboard\client\Dependencies\PackModRelease.ps1
+        </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup>
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command='copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll' />
-        <Exec Command='copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "F:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll' />
-        <Exec Command='copy /Y "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"' />
-        <Exec Command='powershell -ExecutionPolicy Bypass -File "F:\GitHub\Tarkov\SPT-Leaderboard\client\Dependencies\PackMod.ps1"' />
-    </Target>
     <ItemGroup>
         <Reference Include="0Harmony">
             <HintPath>Dependencies\0Harmony.dll</HintPath>
