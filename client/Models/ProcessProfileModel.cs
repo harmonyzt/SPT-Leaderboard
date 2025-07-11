@@ -135,6 +135,8 @@ public class ProcessProfileModel
                     Sum(bodyPart => bodyPart.Value.Health.Current);
                 
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
+                var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
+                var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
                 var LongestShot = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
@@ -146,6 +148,8 @@ public class ProcessProfileModel
                     {
                         LeaderboardPlugin.logger.LogWarning($"\n");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
@@ -160,6 +164,8 @@ public class ProcessProfileModel
                 if (isScavRaid)
                 {
                     KilledPmc = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
+                    KilledSavage = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
+                    KilledBoss = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
                     LongestShot = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
                     HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                     TotalDamage = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
@@ -168,6 +174,8 @@ public class ProcessProfileModel
                     {
                         LeaderboardPlugin.logger.LogWarning($"\n");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage Scav {KilledSavage}");
+                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss Scav {KilledBoss}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
@@ -271,6 +279,8 @@ public class ProcessProfileModel
                         LastRaidTransitionTo = lastRaidTransitionTo,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
+                        BossKills = KilledBoss,
+                        SavageKills = KilledSavage,
                         ModWeaponStats = processedStatTrackData,
                         PlayedAs = "PMC",
                         PmcSide = pmcData.Side.ToString(),
@@ -305,6 +315,8 @@ public class ProcessProfileModel
                         LastRaidTransitionTo = lastRaidTransitionTo,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
+                        BossKills = KilledBoss,
+                        SavageKills = KilledSavage,
                         ModWeaponStats = processedStatTrackData,
                         PlayedAs = "SCAV",
                         PmcSide = pmcData.Side.ToString(),

@@ -92,6 +92,12 @@ namespace SPTLeaderboard.Data
         
         [JsonProperty("longestShot")]
         public int LongestShot { get; set; }
+        
+        [JsonProperty("savageKills")]
+        public int SavageKills { get; set; }
+        
+        [JsonProperty("bossKills")]
+        public int BossKills { get; set; }
 
         [JsonProperty("modWeaponStats")]
         public Dictionary<string, Dictionary<string, WeaponInfo>> ModWeaponStats { get; set; } = null;
