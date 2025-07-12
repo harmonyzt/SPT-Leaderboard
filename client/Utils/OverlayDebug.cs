@@ -1,4 +1,5 @@
 ﻿using System;
+using SPTLeaderboard.Models;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +17,7 @@ public class OverlayDebug: MonoBehaviour
     public void Enable()
     {
         _instance = this;
-
-        // Canvas
+        
         _overlay = new GameObject("[SPTLeaderboard] Overlay", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         var canvas = _overlay.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -27,12 +27,12 @@ public class OverlayDebug: MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
         
-        var textObj = new GameObject("OverlayText", typeof(RectTransform));
+        var textObj = new GameObject("[SPTLeaderboard] OverlayText", typeof(RectTransform));
         textObj.transform.SetParent(_overlay.transform, false);
 
         _overlayText = textObj.AddComponent<TextMeshProUGUI>();
         _overlayText.text = "Overlay initialized";
-        _overlayText.fontSize = 28;
+        _overlayText.fontSize = SettingsModel.Instance.FontSizeDebug.Value;
         _overlayText.color = Color.white;
         _overlayText.alignment = TextAlignmentOptions.TopLeft;
         _overlayText.enableWordWrapping = false;
@@ -43,7 +43,7 @@ public class OverlayDebug: MonoBehaviour
         rectTransform.pivot = new Vector2(0, 1);
         rectTransform.sizeDelta = new Vector2(800, 200);
         
-        SetOverlayPosition(new Vector2(10, -10));
+        SetOverlayPosition(new Vector2(SettingsModel.Instance.PositionXDebug.Value, SettingsModel.Instance.PositionYDebug.Value));
     }
     
     public void UpdateOverlay()
@@ -51,7 +51,10 @@ public class OverlayDebug: MonoBehaviour
         if (_overlayText == null) return;
         
         var currentHitsData = HitsTracker.Instance.GetHitsData();
-        _overlayText.text = $"Head -> {currentHitsData.Head}\nChest -> {currentHitsData.Chest}\nStomach -> {currentHitsData.Stomach}\nLeftArm -> {currentHitsData.LeftArm}\nRightArm -> {currentHitsData.RightArm}\nLeftLeg -> {currentHitsData.LeftLeg}\nRightLeg -> {currentHitsData.RightLeg}";
+        _overlayText.text = string.Format(
+                "Raid hits:\nHead -> {0}\nChest -> {1}\nStomach -> {2}\nLeftArm -> {3}\nRightArm -> {4}\nLeftLeg -> {5}\nRightLeg -> {6}",
+            currentHitsData.Head, currentHitsData.Chest, currentHitsData.Stomach, currentHitsData.LeftArm,
+            currentHitsData.RightArm, currentHitsData.LeftLeg, currentHitsData.RightLeg);
     }
 
     public void SetOverlayPosition(Vector2 anchoredPosition)
