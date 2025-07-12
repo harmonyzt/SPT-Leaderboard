@@ -10,7 +10,7 @@ namespace SPTLeaderboard.Patches
     {
         protected override MethodBase GetTargetMethod() =>
             typeof(Player).GetMethod(
-                "ApplyShot",
+                "ApplyDamageInfo",
                 BindingFlags.Instance | BindingFlags.Public);
 
         [PatchPrefix]
