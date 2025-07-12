@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using SPTLeaderboard.Utils;
 using UnityEngine;
 
 namespace SPTLeaderboard.Models
@@ -13,6 +14,9 @@ namespace SPTLeaderboard.Models
 #if DEBUG
 		public ConfigEntry<KeyboardShortcut> KeyBind;
 		public ConfigEntry<KeyboardShortcut> KeyBindTwo;
+		public ConfigEntry<float> PositionXDebug;
+		public ConfigEntry<float> PositionYDebug;
+		public ConfigEntry<int> FontSizeDebug;
 		public ConfigEntry<bool> Debug;
 #endif
 		
@@ -29,7 +33,6 @@ namespace SPTLeaderboard.Models
 		private SettingsModel(ConfigFile configFile)
 		{
 #if DEBUG
-			#region TEST
 				
 			KeyBind = configFile.Bind(
 				"Settings", 
@@ -44,8 +47,36 @@ namespace SPTLeaderboard.Models
 				new KeyboardShortcut(KeyCode.UpArrow), 
 				new ConfigDescription(
 					"Just keybind for test requests"));
+
+			PositionXDebug = configFile.Bind(
+				"Settings",
+				"PositionX",
+				10f,
+				new ConfigDescription("X Position", new AcceptableValueRange<float>(-2000f, 2000f)));
+
+			PositionYDebug = configFile.Bind(
+				"Settings",
+				"PositionY",
+				-10f,
+				new ConfigDescription("Y Position", new AcceptableValueRange<float>(-2000f, 2000f)));
 			
-			#endregion
+			FontSizeDebug = configFile.Bind(
+				"Settings",
+				"FontSizeDebug",
+				28,
+				new ConfigDescription("FontSizeDebug", new AcceptableValueRange<int>(0, 200)));
+			
+			Debug = configFile.Bind(
+				"Settings", 
+				"Debug", 
+				true, //TODO: Set to false. BEFORE PROD
+				new ConfigDescription(
+					"Display debug messages in console and log them inside SPT server .log file",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 1
+					}));
 #endif
 			
 			EnableSendData = configFile.Bind(
@@ -147,19 +178,7 @@ namespace SPTLeaderboard.Models
 						Order = 2,
 						IsAdvanced = true
 					}));
-#if DEBUG
-			Debug = configFile.Bind(
-				"Settings", 
-				"Debug", 
-				true, //TODO: Set to false. BEFORE PROD
-				new ConfigDescription(
-					"Display debug messages in console and log them inside SPT server .log file",
-					null, 
-					new ConfigurationManagerAttributes
-					{
-						Order = 1
-					}));
-#endif
+			
 			SupportInRaidConnectionTimer = configFile.Bind(
 				"Settings", 
 				"Support In Raid Connection Timer", 
@@ -172,6 +191,23 @@ namespace SPTLeaderboard.Models
 						Order = 0,
 						IsAdvanced = true
 					}));
+			
+			#if DEBUG
+			PositionXDebug.SettingChanged += (_, __) =>
+			{
+				OverlayDebug.Instance.SetOverlayPosition(new Vector2(PositionXDebug.Value, PositionYDebug.Value));
+			};
+			
+			PositionXDebug.SettingChanged += (_, __) =>
+			{
+				OverlayDebug.Instance.SetOverlayPosition(new Vector2(PositionXDebug.Value, PositionYDebug.Value));
+			};
+
+			FontSizeDebug.SettingChanged += (_, __) =>
+			{
+				OverlayDebug.Instance.SetFontSize(FontSizeDebug.Value);
+			};
+			#endif
 		}
 		
 		/// <summary>
