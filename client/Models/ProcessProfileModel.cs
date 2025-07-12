@@ -462,8 +462,7 @@ public class ProcessProfileModel
         {
             string weaponId = weaponInfo.Key;
             CustomizedObject weaponStats = weaponInfo.Value;
-
-            string weaponName = LocalizationModel.Instance.GetLocaleName(weaponId);
+            string weaponName = LocalizationModel.Instance.GetLocaleName(weaponId + " ShortName");
 
             // Skip weapons with unknown names
             if (weaponName == "Unknown")
@@ -471,7 +470,7 @@ public class ProcessProfileModel
 #if DEBUG
                 if (SettingsModel.Instance.Debug.Value)
                 {
-                    LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName}");
+                    LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName + " ShortName"}");
                 }
 #endif
                 continue;
@@ -479,7 +478,7 @@ public class ProcessProfileModel
 #if DEBUG
             if (SettingsModel.Instance.Debug.Value)
             {
-                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName}");
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName + " ShortName"}");
             }
 #endif
             result[sessionId][weaponName] = new WeaponInfo

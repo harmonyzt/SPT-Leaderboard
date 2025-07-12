@@ -10,7 +10,6 @@ namespace SPTLeaderboard.Models
 {
     public class LocalizationModel
     {
-        public Dictionary<string, string> LocaleStatTrack = new Dictionary<string, string>();
         public static LocalizationModel Instance { get; private set; }
         
         /// <summary>
@@ -51,39 +50,36 @@ namespace SPTLeaderboard.Models
             return GetLocaleTypeError(errorType)["en"]; // fallback to English
         }
 
-        public LocalizationModel()
-        {
-            if (File.Exists(GlobalData.LocalePath))
-            {
-                try
-                {
-                    var tempLocale = File.ReadAllText(GlobalData.LocalePath);
-                    LocaleStatTrack = JsonConvert.DeserializeObject<Dictionary<string, string>>(tempLocale);
-                    LeaderboardPlugin.logger.LogWarning("[LocalizationModel] Locale loaded");
-                }
-                catch (Exception ex)
-                {
-                    LeaderboardPlugin.logger.LogError("[LocalizationModel] Failed to load locale StatTrack: " + ex.ToString());
-                }
-                
-            }
-        }
-
+        /// <summary>
+        /// Get localization by id in LocaleManagerClass EFT
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public string GetLocaleName(string id)
         {
-            if (LocaleStatTrack.Count > 0)
-            { 
-                LeaderboardPlugin.logger.LogWarning($"[StatTrackLocale] Get name for {id}");
-                if (LocaleStatTrack.TryGetValue(id, out var name)) {
-                    LeaderboardPlugin.logger.LogWarning($"[StatTrackLocale] Name {id} id {name}");
-                    return name;
-                }
+            if (!string.IsNullOrEmpty(id))
+            {
+                return GetLocaleString(id, "en");
             }
 
             return "Unknown";
         }
 
-        public Dictionary<string, string> GetLocaleTypeError(ErrorType errorType)
+        private string GetLocaleString(string id, string locale)
+        {
+            if (string.IsNullOrEmpty(id.Trim()))
+            {
+                return "Unknown";
+            }
+            string text;
+            if (LocaleManagerClass.LocaleManagerClass.method_8(id, locale, out text))
+            {
+                return text;
+            }
+            return "Unknown";
+        }
+
+        private Dictionary<string, string> GetLocaleTypeError(ErrorType errorType)
         {
             return errorType switch
             {
