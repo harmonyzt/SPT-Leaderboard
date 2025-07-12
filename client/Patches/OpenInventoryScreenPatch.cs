@@ -4,6 +4,7 @@ using EFT.InventoryLogic;
 using EFT.UI;
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Enums;
+using SPTLeaderboard.Models;
 using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Patches
@@ -34,6 +35,9 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
+            if (!SettingsModel.Instance.EnableSendData.Value)
+                return true;
+            
             if (!DataUtils.HasRaidStarted())
             {
                 HeartbeatSender.Send(PlayerState.IN_STASH);

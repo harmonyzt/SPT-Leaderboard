@@ -16,6 +16,7 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<bool> Debug;
 #endif
 		
+		public ConfigEntry<bool> EnableSendData;
 		public ConfigEntry<bool> ModCasualMode;
 		public ConfigEntry<bool> PublicProfile;
 		public ConfigEntry<bool> EnableModSupport;
@@ -27,8 +28,7 @@ namespace SPTLeaderboard.Models
 
 		private SettingsModel(ConfigFile configFile)
 		{
-			#if DEBUG
-			
+#if DEBUG
 			#region TEST
 				
 			KeyBind = configFile.Bind(
@@ -46,8 +46,19 @@ namespace SPTLeaderboard.Models
 					"Just keybind for test requests"));
 			
 			#endregion
+#endif
 			
-			#endif
+			EnableSendData = configFile.Bind(
+				"Settings", 
+				"Is Sending Data", 
+				true, 
+				new ConfigDescription(
+					"When disable, stops sending your scores and statistics to the leaderboard server",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 9
+					}));
 			
 			ModCasualMode = configFile.Bind(
 				"Settings", 

@@ -18,6 +18,9 @@ public class ProcessProfileModel
 
     public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings)
     {
+        if (!SettingsModel.Instance.EnableSendData.Value)
+            return;
+        
         if (Singleton<PreloaderUI>.Instantiated)
         {
             var session = DataUtils.GetSession();

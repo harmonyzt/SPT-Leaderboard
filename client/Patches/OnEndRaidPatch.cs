@@ -17,6 +17,8 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix(LocalRaidSettings settings, GClass1959 results)
         {
+            if (!SettingsModel.Instance.EnableSendData.Value)
+                return true;
             
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
             ProcessProfileModel.Create().ProcessAndSendProfile(results, settings);
