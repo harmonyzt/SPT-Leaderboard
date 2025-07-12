@@ -172,25 +172,25 @@ public class LocalizationData
         { "ro", "Numele jucătorului conține caractere sau cuvinte interzise. Vă rugăm să-l modificați din setările jocului." }
     };
     
-    public static Dictionary<string, string> Error_Balaclava = new Dictionary<string, string>
+    public static Dictionary<string, string> Error_DevItems = new Dictionary<string, string>
     {
-        { "ch", "检测到金色作弊头套。突袭数据将不会被提交。" },
-        { "cz", "Byla zjištěna zlatá cheaterská kukla. Údaje o nájezdu nebudou odeslány." },
-        { "en", "A golden cheater balaclava was detected. Raid data will not be submitted." },
-        { "fr", "Une cagoule dorée de tricheur a été détectée. Les données du raid ne seront pas envoyées." },
-        { "ge", "Eine goldene Cheater-Sturmhaube wurde entdeckt. Raid-Daten werden nicht übermittelt." },
-        { "hu", "Arany csaló símaszkot észleltünk. A rajtaütés adatai nem kerülnek elküldésre." },
-        { "it", "È stato rilevato un passamontagna dorato da cheater. I dati del raid non saranno inviati." },
-        { "jp", "ゴールドのチートバラクラバが検出されました。レイドデータは送信されません。" },
-        { "kr", "금색 치터 바라클라바가 감지되었습니다. 레이드 데이터는 전송되지 않습니다." },
-        { "pl", "Wykryto złotą oszukańczą kominiarkę. Dane z rajdu nie zostaną wysłane." },
-        { "po", "Foi detectada uma balaclava dourada de trapaça. Os dados do raid não serão enviados." },
-        { "sk", "Bola zistená zlatá cheaterská kukla. Údaje o nájazde nebudú odoslané." },
-        { "es", "Se ha detectado una balaclava dorada de tramposo. Los datos del asalto no serán enviados." },
-        { "es-mx", "Se detectó una pasamontañas dorada de tramposo. Los datos del raid no se enviarán." },
-        { "tu", "Altın hileci balaklava tespit edildi. Baskın verileri gönderilmeyecek." },
-        { "ru", "У вас обнаружена золотая читерская балаклава. Данные рейда не будут отправлены." },
-        { "ro", "A fost detectată o cagulă aurie de trișor. Datele raidului nu vor fi trimise." }
+        { "ch", "检测到开发者物品。突袭数据将不会被上传。" },
+        { "cz", "Byl u vás nalezen vývojářský předmět. Údaje z nájezdu nebudou odeslány." },
+        { "en", "Developer item detected. Raid data will not be submitted." },
+        { "fr", "Un objet de développeur a été détecté. Les données du raid ne seront pas envoyées." },
+        { "ge", "Ein Entwicklergegenstand wurde gefunden. Raid-Daten werden nicht gesendet." },
+        { "hu", "Fejlesztői tárgyat észleltünk. A rajtaütés adatai nem kerülnek elküldésre." },
+        { "it", "Oggetto sviluppatore rilevato. I dati del raid non verranno inviati." },
+        { "jp", "開発者アイテムが検出されました。レイドデータは送信されません。" },
+        { "kr", "개발자 아이템이 감지되었습니다. 레이드 데이터는 전송되지 않습니다." },
+        { "pl", "Wykryto przedmiot dewelopera. Dane z rajdu nie zostaną wysłane." },
+        { "po", "Item de desenvolvedor detectado. Os dados da incursão não serão enviados." },
+        { "sk", "Bol zistený vývojársky predmet. Údaje z nájazdu nebudú odoslané." },
+        { "es", "Se ha detectado un objeto de desarrollador. Los datos de la incursión no se enviarán." },
+        { "es-mx", "Se detectó un objeto de desarrollador. Los datos del asalto no se enviarán." },
+        { "tu", "Geliştirici öğesi tespit edildi. Baskın verileri gönderilmeyecek." },
+        { "ru", "У вас обнаружен предмет разработчика. Данные рейда не будут отправлены." },
+        { "ro", "A fost detectat un obiect de dezvoltator. Datele raidului nu vor fi trimise." }
     };
     
     // Template for translating

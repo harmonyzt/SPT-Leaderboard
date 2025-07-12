@@ -46,7 +46,7 @@ namespace SPTLeaderboard.Utils
                 ErrorType.SCAV_ONLY_PUBLIC => ENotificationDurationType.Default,
                 ErrorType.CHAR_LIMIT => ENotificationDurationType.Long,
                 ErrorType.NSFW_NAME => ENotificationDurationType.Long,
-                ErrorType.BALACLAVA => ENotificationDurationType.Long,
+                ErrorType.DEVITEMS => ENotificationDurationType.Long,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
         }
@@ -62,6 +62,6 @@ namespace SPTLeaderboard.Utils
         CHAR_LIMIT,
         NSFW_NAME,
         SILENT_ERROR,
-        BALACLAVA
+        DEVITEMS
     }
 }

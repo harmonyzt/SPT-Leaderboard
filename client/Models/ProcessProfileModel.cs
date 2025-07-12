@@ -110,8 +110,8 @@ public class ProcessProfileModel
                 
                 if (HaveDevItems)
                 {
-                    NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.BALACLAVA),
-                        ServerErrorHandler.GetDurationType(ErrorType.BALACLAVA));
+                    NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.DEVITEMS),
+                        ServerErrorHandler.GetDurationType(ErrorType.DEVITEMS));
                     
 #if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
