@@ -96,19 +96,19 @@ public class ProcessProfileModel
                 
                 #region CheckGodBalaclava
 
-                bool godBalaclava = false;
+                bool HaveDevItems = false;
                 
                 var allItems = pmcData.Inventory.GetPlayerItems();
                 foreach (var item in allItems)
                 {
-                    if (item.TemplateId == "58ac60eb86f77401897560ff")
+                    if (item.TemplateId == "58ac60eb86f77401897560ff" || item.TemplateId == "5c0a5a5986f77476aa30ae64")
                     {
-                        godBalaclava = true;
+                        HaveDevItems = true;
                     }
                 }
                 
                 
-                if (godBalaclava)
+                if (HaveDevItems)
                 {
                     NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.BALACLAVA),
                         ServerErrorHandler.GetDurationType(ErrorType.BALACLAVA));
@@ -116,7 +116,7 @@ public class ProcessProfileModel
 #if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
-                        godBalaclava = false; //TODO: Delete debug. BEFORE PROD
+                        HaveDevItems = false; //TODO: Delete debug. BEFORE PROD
                     }
                     else
                     {
@@ -267,7 +267,7 @@ public class ProcessProfileModel
                     RaidTime = resultRaid.playTime,
                     SptVersion = DataUtils.GetSptVersion(),
                     Token = EncryptionModel.Instance.Token,
-                    DBinInv = godBalaclava,
+                    DBinInv = HaveDevItems,
                     IsCasual = SettingsModel.Instance.ModCasualMode.Value
                 };
 
