@@ -40,16 +40,25 @@ namespace SPTLeaderboard
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
             
+            if (!DataUtils.IsLoaded)
+            {
+                DataUtils.Load(callback=>
+                {
+                    if (!callback) return;
+                    
+                    new OnCoopApplyShotFourPatch().Enable();
+                    logger.LogInfo("FIKA is found. Enable patch for hit hook");
+                });
+            }
 #if DEBUG
             new HookEftBattleUIScreenPatch().Enable();
             new OnGameWorldStartPatch().Enable();
             new OnGameWorldDisposePatch().Enable();
 #endif
-            
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-        
+
         public static void SendProfileData(object data)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.ProfileUrl);

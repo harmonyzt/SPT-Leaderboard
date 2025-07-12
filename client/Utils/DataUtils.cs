@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using BepInEx;
+using BepInEx.Bootstrap;
 using Comfort.Common;
 using EFT;
 using SPT.Common.Http;
@@ -112,5 +114,37 @@ public static class DataUtils
         return Directory.GetFiles(dirPath, "*.dll", SearchOption.TopDirectoryOnly)
             .Select(file => Path.GetFileName(file))
             .ToList();
+    }
+    
+    public static bool TryGetPlugin(string pluginGUID, out BaseUnityPlugin plugin)
+    {
+        PluginInfo pluginInfo;
+        bool flag = Chainloader.PluginInfos.TryGetValue(pluginGUID, out pluginInfo);
+        plugin = (flag ? pluginInfo.Instance : null);
+        return flag;
+    }
+
+    public static void Load(Action<bool> callback)
+    {
+        BaseUnityPlugin FikaCoreBLYAT;
+        TryGetPlugin("com.fika.core", out FikaCoreBLYAT);
+        FikaCore = FikaCoreBLYAT;
+        IsLoaded = true;
+        callback.Invoke(FikaCore != null);
+    }
+    
+    public static bool IsFika = FikaCore != null;
+    
+    public static bool IsLoaded = false;
+    
+    public static BaseUnityPlugin FikaCore;
+    
+    public static Type GetPluginType(BaseUnityPlugin plugin, string typePath)
+    {
+        if (plugin == null)
+        {
+            throw new ArgumentNullException("plugin");
+        }
+        return plugin.GetType().Assembly.GetType(typePath, true);
     }
 }

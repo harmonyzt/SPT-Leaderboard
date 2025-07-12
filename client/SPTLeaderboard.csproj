@@ -141,6 +141,7 @@
         <Compile Include="Patches\HideoutAwakePatch.cs" />
         <Compile Include="Patches\HookEftBattleUIScreenPatch.cs" />
         <Compile Include="Patches\OnApplyDamageInfoPatch.cs" />
+        <Compile Include="Patches\OnCoopApplyShotFourPatch.cs" />
         <Compile Include="Patches\OnEndRaidPatch.cs" />
         <Compile Include="Patches\OnGameWorldDisposePatch.cs" />
         <Compile Include="Patches\OnGameWorldStartPatch.cs" />
