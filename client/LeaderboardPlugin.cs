@@ -1,7 +1,6 @@
 ﻿using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
-using EFT;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -40,6 +39,12 @@ namespace SPTLeaderboard
             new HideoutAwakePatch().Enable();
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
+            
+#if DEBUG
+            new HookEftBattleUIScreenPatch().Enable();
+            new OnGameWorldStartPatch().Enable();
+            new OnGameWorldDisposePatch().Enable();
+#endif
             
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");

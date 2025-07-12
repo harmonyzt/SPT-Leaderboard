@@ -87,6 +87,9 @@ namespace SPTLeaderboard.Data
         [JsonProperty("lastRaidTransitionTo")]
         public string LastRaidTransitionTo { get; set; }
         
+        [JsonProperty("raidHits")]
+        public HitsData RaidHits { get; set; }
+        
         [JsonProperty("allAchievements")]
         public Dictionary<string, int> AllAchievements { get; set; }
         

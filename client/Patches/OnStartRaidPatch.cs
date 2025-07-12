@@ -1,10 +1,7 @@
 ﻿using System.Reflection;
-using System.Timers;
-using EFT;
-using EFT.UI;
 using SPT.Reflection.Patching;
-using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
+using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Patches
 {
@@ -20,7 +17,7 @@ namespace SPTLeaderboard.Patches
         {
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;
-            
+            HitsTracker.Instance.Clear();
             LeaderboardPlugin.Instance.StartInRaidHeartbeat();
             LeaderboardPlugin.logger.LogWarning("[State] Player started raid");
             return true;

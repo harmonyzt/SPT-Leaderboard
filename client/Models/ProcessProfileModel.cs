@@ -6,7 +6,6 @@ using EFT;
 using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
-using SPTLeaderboard.Enums;
 using SPTLeaderboard.Utils;
 using TraderData = SPTLeaderboard.Data.TraderData;
 
@@ -16,7 +15,7 @@ public class ProcessProfileModel
 {
     public static ProcessProfileModel Instance { get; private set; }
 
-    public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings)
+    public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings, HitsData hitsData)
     {
         if (!SettingsModel.Instance.EnableSendData.Value)
             return;
@@ -299,6 +298,7 @@ public class ProcessProfileModel
                         LastRaidMap = lastRaidLocation,
                         LastRaidMapRaw = lastRaidLocationRaw,
                         LastRaidTransitionTo = lastRaidTransitionTo,
+                        RaidHits = hitsData,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
                         BossKills = KilledBoss,
@@ -337,6 +337,7 @@ public class ProcessProfileModel
                         LastRaidMap = lastRaidLocation,
                         LastRaidMapRaw = lastRaidLocationRaw,
                         LastRaidTransitionTo = lastRaidTransitionTo,
+                        RaidHits = hitsData,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
                         BossKills = KilledBoss,

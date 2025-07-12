@@ -1,5 +1,6 @@
 ﻿using Comfort.Common;
 using EFT;
+using EFT.UI;
 using SPT.Reflection.Utils;
 
 namespace SPTLeaderboard.Utils;
@@ -41,4 +42,6 @@ public class PlayerHelper
     }
     
     public Player Player { get; set; }
+    
+    public EftBattleUIScreen EftBattleUIScreen { get; set; }
 }

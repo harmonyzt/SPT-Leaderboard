@@ -111,6 +111,9 @@
             <SpecificVersion>False</SpecificVersion>
             <HintPath>Dependencies\UnityEngine.UI.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UIModule">
+          <HintPath>Dependencies\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.UnityWebRequestModule">
           <HintPath>Dependencies\UnityEngine.UnityWebRequestModule.dll</HintPath>
         </Reference>
@@ -119,6 +122,7 @@
         <Compile Include="Data\BaseData.cs" />
         <Compile Include="Data\CustomizedObject.cs" />
         <Compile Include="Data\GlobalData.cs" />
+        <Compile Include="Data\HitsData.cs" />
         <Compile Include="Data\LocalizationData.cs" />
         <Compile Include="Data\PlayerHeartbeatData.cs" />
         <Compile Include="Data\PrivateProfileData.cs" />
@@ -135,13 +139,19 @@
         <Compile Include="Models\ProcessProfileModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
         <Compile Include="Patches\HideoutAwakePatch.cs" />
+        <Compile Include="Patches\HookEftBattleUIScreenPatch.cs" />
+        <Compile Include="Patches\OnApplyDamageInfoPatch.cs" />
         <Compile Include="Patches\OnEndRaidPatch.cs" />
+        <Compile Include="Patches\OnGameWorldDisposePatch.cs" />
+        <Compile Include="Patches\OnGameWorldStartPatch.cs" />
+        <Compile Include="Patches\OnInitPlayerPatch.cs" />
         <Compile Include="Patches\OnStartRaidPatch.cs" />
         <Compile Include="Patches\OpenInventoryScreenPatch.cs" />
         <Compile Include="Patches\OpenMainMenuScreenPatch.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Utils\DataUtils.cs" />
         <Compile Include="Utils\HeartbeatSender.cs" />
+        <Compile Include="Utils\HitsTracker.cs" />
         <Compile Include="Utils\OverlayDebug.cs" />
         <Compile Include="Utils\PlayerHelper.cs" />
         <Compile Include="Utils\ServerErrorHandler.cs" />
