@@ -198,7 +198,7 @@ namespace SPTLeaderboard.Models
 				OverlayDebug.Instance.SetOverlayPosition(new Vector2(PositionXDebug.Value, PositionYDebug.Value));
 			};
 			
-			PositionXDebug.SettingChanged += (_, __) =>
+			PositionYDebug.SettingChanged += (_, __) =>
 			{
 				OverlayDebug.Instance.SetOverlayPosition(new Vector2(PositionXDebug.Value, PositionYDebug.Value));
 			};

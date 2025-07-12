@@ -51,7 +51,7 @@ public class OverlayDebug: MonoBehaviour
         if (_overlayText == null) return;
         
         var currentHitsData = HitsTracker.Instance.GetHitsData();
-        _overlayText.text = $"Head -> {currentHitsData.Head}Chest -> {currentHitsData.Chest}\nStomach -> {currentHitsData.Stomach}\nLeftArm -> {currentHitsData.LeftArm}\nRightArm -> {currentHitsData.RightArm}\nLeftLeg -> {currentHitsData.LeftLeg}\nRightLeg -> {currentHitsData.RightLeg}";
+        _overlayText.text = $"Head -> {currentHitsData.Head}\nChest -> {currentHitsData.Chest}\nStomach -> {currentHitsData.Stomach}\nLeftArm -> {currentHitsData.LeftArm}\nRightArm -> {currentHitsData.RightArm}\nLeftLeg -> {currentHitsData.LeftLeg}\nRightLeg -> {currentHitsData.RightLeg}";
     }
 
     public void SetOverlayPosition(Vector2 anchoredPosition)
