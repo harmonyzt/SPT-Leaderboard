@@ -16,36 +16,6 @@ namespace SPTLeaderboard.Utils;
 
 public static class DataUtils
 {
-    public static ISession GetSession(bool throwIfNull = false)
-    {
-        var session = ClientAppUtils.GetClientApp().Session;
-
-        if (throwIfNull && session is null)
-        {
-            LeaderboardPlugin.logger.LogWarning("Trying to access the Session when it's null");
-        }
-
-        return session;
-    }
-    
-    public static Profile GetProfile(bool throwIfNull = false)
-    {
-        var profile = DataUtils.GetSession()?.Profile;
-
-        if (throwIfNull && profile is null)
-        {
-            LeaderboardPlugin.logger.LogWarning("Trying to access the Profile when it's null");
-        }
-        
-        return DataUtils.GetSession()?.Profile;
-    }
-    
-    public static bool HasRaidStarted()
-    {
-        bool? inRaid = Singleton<AbstractGame>.Instance?.InRaid;
-        return inRaid.HasValue && inRaid.Value;
-    }
-    
     public static long CurrentTimestamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     
     /// <summary>
@@ -75,6 +45,10 @@ public static class DataUtils
         return GlobalData.BaseSPTVersion;
     }
     
+    /// <summary>
+    /// Get list loaded mods from server in user
+    /// </summary>
+    /// <returns></returns>
     public static List<string> GetServerMods()
     {
         List<string> listServerMods = new List<string>();

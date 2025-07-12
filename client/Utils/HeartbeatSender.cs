@@ -27,7 +27,7 @@ namespace SPTLeaderboard.Utils
                         return;
                     }
 
-                    var session = DataUtils.GetSession();
+                    var session = PlayerHelper.GetSession();
                     if (session?.Profile == null)
                         return;
 

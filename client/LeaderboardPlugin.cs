@@ -1,6 +1,7 @@
 ﻿using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
+using EFT;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -37,6 +38,8 @@ namespace SPTLeaderboard
             new OnStartRaidPatch().Enable();
             new OnEndRaidPatch().Enable();
             new HideoutAwakePatch().Enable();
+            new OnApplyDamageInfoPatch().Enable();
+            new OnInitPlayerPatch().Enable();
             
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
@@ -77,7 +80,7 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer = new Timer(_settings.SupportInRaidConnectionTimer.Value * 1000);
             _inRaidHeartbeatTimer.Elapsed += (_, __) =>
             {
-                if (DataUtils.HasRaidStarted())
+                if (PlayerHelper.HasRaidStarted())
                 {
                     HeartbeatSender.Send(PlayerState.IN_RAID);
                 }
@@ -98,6 +101,5 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer.Dispose();
             _inRaidHeartbeatTimer = null;
         }
-        
     }
 }

@@ -23,7 +23,7 @@ public class ProcessProfileModel
         
         if (Singleton<PreloaderUI>.Instantiated)
         {
-            var session = DataUtils.GetSession();
+            var session = PlayerHelper.GetSession();
             if (session.Profile != null)
             {
                 var profileID = session.Profile.Id;
