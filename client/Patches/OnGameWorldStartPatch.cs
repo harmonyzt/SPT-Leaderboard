@@ -15,7 +15,9 @@ namespace SPTLeaderboard.Patches
         [PatchPostfix]
         static void PostFix()
         {
+#if DEBUG
             OverlayDebug.Instance.Enable();
+#endif
             LeaderboardPlugin.logger.LogWarning("Player started world");
         }
     }

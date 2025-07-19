@@ -15,7 +15,9 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static void Prefix()
         {
+#if DEBUG
             OverlayDebug.Instance.Disable();
+#endif
             LeaderboardPlugin.logger.LogWarning("Player dispose world");
         }
     }

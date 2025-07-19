@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if DEBUG
+using System;
 using SPTLeaderboard.Models;
 using TMPro;
 using UnityEngine;
@@ -75,3 +76,4 @@ public class OverlayDebug: MonoBehaviour
         Destroy(this);
     }
 }
+#endif
