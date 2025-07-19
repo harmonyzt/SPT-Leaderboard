@@ -117,6 +117,9 @@ namespace SPTLeaderboard.Data
         [JsonProperty("publicProfile")]
         public bool PublicProfile { get; set; } = true;
         
+        [JsonProperty("hasKappa")]
+        public bool HasKappa { get; set; } = false;
+        
         [JsonProperty("raidDamage")]
         public int RaidDamage { get; set; }
         

@@ -127,6 +127,20 @@ public class ProcessProfileModel
                 }
                 
                 #endregion
+                
+                #region CheckHasKappa
+
+                bool hasKappa = false;
+                
+                foreach (var item in allItems)
+                {
+                    if (item.TemplateId == "676008db84e242067d0dc4c9" || item.TemplateId == "5c093ca986f7740a1867ab12")
+                    {
+                        hasKappa = true;
+                    }
+                }
+                
+                #endregion
 
                 #region Stats
                 
@@ -308,6 +322,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
+                        HasKappa = hasKappa,
                         ScavLevel = scavData.Info.Level, 
                         RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
@@ -347,6 +362,7 @@ public class ProcessProfileModel
                         PmcSide = pmcData.Side.ToString(),
                         Prestige = pmcData.Info.PrestigeLevel,
                         PublicProfile = true,
+                        HasKappa = hasKappa,
                         ScavLevel = scavData.Info.Level, 
                         RaidDamage = TotalDamage,
                         RegistrationDate = session.Profile.Info.RegistrationDate,
