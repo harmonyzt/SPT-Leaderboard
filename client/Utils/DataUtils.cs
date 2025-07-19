@@ -147,4 +147,61 @@ public static class DataUtils
         }
         return plugin.GetType().Assembly.GetType(typePath, true);
     }
+
+    public static string GetRaidGameTime()
+    {
+        try
+        {
+            var gameWorld = Singleton<GameWorld>.Instance;
+            if (gameWorld != null)
+            {
+                string time = gameWorld.GameDateTime.Calculate().ToString("HH:mm:ss");
+                return time;
+            }
+
+            return "";
+        }
+        catch
+        {
+            return "";
+        }
+    }
+    
+    public static string GetRaidPlayerSide()
+    {
+        try
+        {
+            var gameWorld = Singleton<GameWorld>.Instance;
+            if (gameWorld != null)
+            {
+                string side = gameWorld.MainPlayer.Side.ToString();
+                return side;
+            }
+
+            return "";
+        }
+        catch
+        {
+            return "";
+        }
+    }
+    
+    public static string GetRaidRawMap()
+    {
+        try
+        {
+            var gameWorld = Singleton<GameWorld>.Instance;
+            if (gameWorld != null)
+            {
+                string rawMap = gameWorld.LocationId;
+                return rawMap;
+            }
+
+            return "";
+        }
+        catch
+        {
+            return "";
+        }
+    }
 }

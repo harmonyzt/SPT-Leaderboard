@@ -66,5 +66,53 @@ namespace SPTLeaderboard.Utils
                 }
             }
         }
+        
+        public static void SendInRaid(PlayerState playerState = PlayerState.IN_RAID)
+        {
+            if (SettingsModel.Instance.PublicProfile.Value)
+            {
+                if (Singleton<PreloaderUI>.Instantiated)
+                {
+
+                    var session = PlayerHelper.GetSession();
+                    if (session?.Profile == null)
+                        return;
+
+                    var request = NetworkApiRequestModel.Create(GlobalData.HeartbeatUrl);
+
+                    request.OnSuccess = (response, code) =>
+                    {
+                        LeaderboardPlugin.logger.LogWarning($"Request OnSuccess {response}");
+                    };
+
+                    request.OnFail = (error, code) => { ServerErrorHandler.HandleError(error, code); };
+
+                    var data = new PlayerHeartbeatRaidData
+                    {
+                        Type = DataUtils.GetPlayerState(playerState),
+                        Timestamp = DataUtils.CurrentTimestamp,
+                        Version = GlobalData.Version,
+                        SessionId = session.Profile.Id,
+                        Map = DataUtils.GetRaidRawMap(),
+                        Side = DataUtils.GetRaidPlayerSide(),
+                        GameTime = DataUtils.GetRaidGameTime()
+                    };
+
+                    string jsonBody = JsonConvert.SerializeObject(data);
+
+#if DEBUG
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        LeaderboardPlugin.logger.LogWarning($"Request Data {jsonBody}");
+                    }
+#endif
+
+                    request.SetData(jsonBody);
+                    request.Send();
+
+                    _lastSentState = playerState;
+                }
+            }
+        }
     }
 }

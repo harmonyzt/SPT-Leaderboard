@@ -1,6 +1,9 @@
-﻿using System.Timers;
+﻿using System;
+using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
+using Comfort.Common;
+using EFT;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -96,11 +99,7 @@ namespace SPTLeaderboard
             {
                 if (PlayerHelper.HasRaidStarted())
                 {
-                    HeartbeatSender.Send(PlayerState.IN_RAID);
-                }
-                else
-                {
-                    StopInRaidHeartbeat();
+                    HeartbeatSender.SendInRaid();
                 }
             };
             _inRaidHeartbeatTimer.AutoReset = true;
