@@ -17,7 +17,18 @@ namespace SPTLeaderboard.Patches
         {
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;
-            
+
+            try
+            {
+                LeaderboardPlugin.logger.LogWarning("Start create icon");
+                IconSaver iconSaver = new IconSaver();
+                iconSaver.Create();
+            }
+            catch
+            {
+                // ignored
+            }
+
             HitsTracker.Instance.Clear();
             LeaderboardPlugin.Instance.StartInRaidHeartbeat();
             LeaderboardPlugin.logger.LogWarning("[State] Player started raid");

@@ -3,8 +3,6 @@ using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
-using EFT;
-using EFT.InventoryLogic;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -25,7 +23,6 @@ namespace SPTLeaderboard
         private EncryptionModel _encrypt;
         
         private Timer _inRaidHeartbeatTimer;
-        private GClass907 presetIcon;
 
         public static ManualLogSource logger;
 
@@ -70,69 +67,44 @@ namespace SPTLeaderboard
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                var profile = PlayerHelper.GetProfile();
-                
-                logger.LogWarning("1");
-                
-                XYCellSizeStruct textureSize = new XYCellSizeStruct((int)_settings.IconSize.Value.x, (int)_settings.IconSize.Value.y);
-                
-                presetIcon = Singleton<GClass905>.Instance.method_11(new GClass910(profile.Inventory.Equipment.CloneVisibleItem(), profile.Customization), textureSize);
-                
-                logger.LogWarning("2");
-                if (presetIcon.Sprite == null)
-                {
-                    presetIcon.Changed.Bind(ChangedBlyat);
-                }
-                else
-                {
-                    var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
-                    
-                    request.OnSuccess = (response, code) =>
-                    {
-                        logger.LogWarning($"Request OnSuccess {response}");
-                    };
+                IconSaver iconSaver = new IconSaver();
+                iconSaver.Create();
+            }
+        }
 
-                    request.OnFail = (error, code) =>
-                    {
-                        ServerErrorHandler.HandleError(error, code);
-                    };
+        public static void SendProfileIcon(GClass907 presetIcon)
+        {
+            var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
                     
-                    byte[] imageData = presetIcon.Sprite.texture.EncodeToPNG();
-                    var encodedImage = Convert.ToBase64String(imageData);
-                    var data = new ImageData
-                    {
-                        EncodedImage = encodedImage
-                    };
-                    string jsonBody = JsonConvert.SerializeObject(data);
+            request.OnSuccess = (response, code) =>
+            {
+                logger.LogWarning($"Request OnSuccess {response}");
+            };
+
+            request.OnFail = (error, code) =>
+            {
+                ServerErrorHandler.HandleError(error, code);
+            };
+                    
+            byte[] imageData = presetIcon.Sprite.texture.EncodeToPNG();
+            var encodedImage = Convert.ToBase64String(imageData);
+            var data = new ImageData
+            {
+                EncodedImage = encodedImage
+            };
+            string jsonBody = JsonConvert.SerializeObject(data);
                     
 #if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
-                        logger.LogWarning($"Request Data {jsonBody}");
-                    }
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                logger.LogWarning($"Request Image Data {jsonBody}");
+            }
 #endif
                     
-                    request.SetData(jsonBody);
-                    request.Send();
-                    
-                    var saver = new SpriteSaver();
-                    saver.SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, presetIcon.Sprite);
-                }
-            }
+            request.SetData(jsonBody);
+            request.Send();
         }
-
-        private void ChangedBlyat()
-        {
-            bool flag = presetIcon.Sprite != null;
-            logger.LogWarning($"Is loaded icon? {flag}");
-
-            if (flag)
-            {
-                var saver = new SpriteSaver();
-                saver.SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, presetIcon.Sprite);
-            }
-        }
-
+        
         public static void SendProfileData(object data)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.ProfileUrl);
