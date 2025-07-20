@@ -52,6 +52,9 @@
         <Reference Include="0Harmony">
             <HintPath>Dependencies\0Harmony.dll</HintPath>
         </Reference>
+        <Reference Include="CommonExtensions">
+          <HintPath>..\..\..\..\Games\SPT\EscapeFromTarkov_Data\Managed\CommonExtensions.dll</HintPath>
+        </Reference>
         <Reference Include="spt-common">
             <HintPath>Dependencies\spt-common.dll</HintPath>
         </Reference>
@@ -126,6 +129,7 @@
         <Compile Include="Data\CustomizedObject.cs" />
         <Compile Include="Data\GlobalData.cs" />
         <Compile Include="Data\HitsData.cs" />
+        <Compile Include="Data\ImageData.cs" />
         <Compile Include="Data\LocalizationData.cs" />
         <Compile Include="Data\PlayerHeartbeatData.cs" />
         <Compile Include="Data\PrivateProfileData.cs" />

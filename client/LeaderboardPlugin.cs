@@ -11,6 +11,7 @@ using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
 using SPTLeaderboard.Patches;
 using SPTLeaderboard.Utils;
+using UnityEngine;
 
 namespace SPTLeaderboard
 {
@@ -72,7 +73,11 @@ namespace SPTLeaderboard
                 var profile = PlayerHelper.GetProfile();
                 
                 logger.LogWarning("1");
-                presetIcon = Singleton<GClass905>.Instance.GetIcon(new GClass910(profile.Inventory.Equipment.CloneVisibleItem<InventoryEquipment>(), profile.Customization));
+                
+                XYCellSizeStruct textureSize = new XYCellSizeStruct((int)_settings.IconSize.Value.x, (int)_settings.IconSize.Value.y);
+                
+                presetIcon = Singleton<GClass905>.Instance.method_11(new GClass910(profile.Inventory.Equipment.CloneVisibleItem(), profile.Customization), textureSize);
+                
                 logger.LogWarning("2");
                 if (presetIcon.Sprite == null)
                 {
@@ -80,6 +85,36 @@ namespace SPTLeaderboard
                 }
                 else
                 {
+                    var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
+                    
+                    request.OnSuccess = (response, code) =>
+                    {
+                        logger.LogWarning($"Request OnSuccess {response}");
+                    };
+
+                    request.OnFail = (error, code) =>
+                    {
+                        ServerErrorHandler.HandleError(error, code);
+                    };
+                    
+                    byte[] imageData = presetIcon.Sprite.texture.EncodeToPNG();
+                    var encodedImage = Convert.ToBase64String(imageData);
+                    var data = new ImageData
+                    {
+                        EncodedImage = encodedImage
+                    };
+                    string jsonBody = JsonConvert.SerializeObject(data);
+                    
+#if DEBUG
+                    if (SettingsModel.Instance.Debug.Value)
+                    {
+                        logger.LogWarning($"Request Data {jsonBody}");
+                    }
+#endif
+                    
+                    request.SetData(jsonBody);
+                    request.Send();
+                    
                     var saver = new SpriteSaver();
                     saver.SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, presetIcon.Sprite);
                 }

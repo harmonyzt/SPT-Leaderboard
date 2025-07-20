@@ -25,6 +25,7 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<bool> PublicProfile;
 		public ConfigEntry<bool> EnableModSupport;
 		public ConfigEntry<int> ConnectionRetries;
+		public ConfigEntry<Vector2> IconSize;
 		public ConfigEntry<int> ConnectionTimeout;
 		public ConfigEntry<string> PhpEndpoint;
 		public ConfigEntry<string> PhpPath;
@@ -78,6 +79,18 @@ namespace SPTLeaderboard.Models
 						Order = 1
 					}));
 #endif
+			
+			IconSize = configFile.Bind(
+				"Settings", 
+				"Icon Size", 
+				new Vector2(500f, 450f), 
+				new ConfigDescription(
+					"Size for icon save...",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 10
+					}));
 			
 			EnableSendData = configFile.Bind(
 				"Settings", 
