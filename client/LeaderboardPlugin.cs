@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
+using EFT.InventoryLogic;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -23,6 +24,7 @@ namespace SPTLeaderboard
         private EncryptionModel _encrypt;
         
         private Timer _inRaidHeartbeatTimer;
+        private GClass907 presetIcon;
 
         public static ManualLogSource logger;
 
@@ -60,6 +62,40 @@ namespace SPTLeaderboard
 #endif
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
+        }
+
+
+        private void Update()
+        {
+            if (_settings.KeyBind.Value.IsDown())
+            {
+                var profile = PlayerHelper.GetProfile();
+                
+                logger.LogWarning("1");
+                presetIcon = Singleton<GClass905>.Instance.GetIcon(new GClass910(profile.Inventory.Equipment.CloneVisibleItem<InventoryEquipment>(), profile.Customization));
+                logger.LogWarning("2");
+                if (presetIcon.Sprite == null)
+                {
+                    presetIcon.Changed.Bind(ChangedBlyat);
+                }
+                else
+                {
+                    var saver = new SpriteSaver();
+                    saver.SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, presetIcon.Sprite);
+                }
+            }
+        }
+
+        private void ChangedBlyat()
+        {
+            bool flag = presetIcon.Sprite != null;
+            logger.LogWarning($"Is loaded icon? {flag}");
+
+            if (flag)
+            {
+                var saver = new SpriteSaver();
+                saver.SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, presetIcon.Sprite);
+            }
         }
 
         public static void SendProfileData(object data)

@@ -3,7 +3,7 @@ using SPTLeaderboard.Models;
 
 namespace SPTLeaderboard.Data;
 
-public class GlobalData
+public static class GlobalData
 {
     public static string Version = "2.6.0";
     public static string BaseSPTVersion = "3.11.3";
@@ -14,4 +14,5 @@ public class GlobalData
     
     public static string SptRootPath = Path.GetFullPath(Path.Combine(BepInEx.Paths.PluginPath, "..", "..")); 
     public static string UserModsPath = Path.GetFullPath(Path.Combine(SptRootPath, "user", "mods")); 
+    public static string LeaderboardIconPath = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "SavedIcon.png")); 
 }

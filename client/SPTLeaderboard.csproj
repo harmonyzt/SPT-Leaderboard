@@ -100,6 +100,9 @@
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>Dependencies\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.ImageConversionModule">
+          <HintPath>..\..\..\..\Games\SPT\EscapeFromTarkov_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>Dependencies\UnityEngine.IMGUIModule.dll</HintPath>
@@ -156,6 +159,7 @@
         <Compile Include="Utils\OverlayDebug.cs" />
         <Compile Include="Utils\PlayerHelper.cs" />
         <Compile Include="Utils\ServerErrorHandler.cs" />
+        <Compile Include="Utils\SpriteSaver.cs" />
         <Compile Include="Utils\StatTrackInterop.cs" />
     </ItemGroup>
     <ItemGroup>
