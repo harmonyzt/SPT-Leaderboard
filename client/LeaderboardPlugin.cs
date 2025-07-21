@@ -2,7 +2,6 @@
 using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
-using Comfort.Common;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
@@ -67,8 +66,7 @@ namespace SPTLeaderboard
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                IconSaver iconSaver = new IconSaver();
-                iconSaver.Create();
+                PlayerHelper.GetEquipmentData();
             }
         }
 
