@@ -24,6 +24,7 @@ namespace SPTLeaderboard.Utils
 
             if (flag)
             {
+                LeaderboardPlugin.SendProfileIcon(_presetIcon);
                 new IconSaver().SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, _presetIcon.Sprite);
             }
         }
@@ -42,6 +43,8 @@ namespace SPTLeaderboard.Utils
             }
             else
             {
+                LeaderboardPlugin.SendProfileIcon(_presetIcon);
+                
                 new IconSaver().SaveSpriteAsPNG(GlobalData.LeaderboardIconPath, _presetIcon.Sprite);
             }
         }
