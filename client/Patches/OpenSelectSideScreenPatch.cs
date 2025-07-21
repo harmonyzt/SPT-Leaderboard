@@ -26,7 +26,8 @@ namespace SPTLeaderboard.Patches
         {
             if (!SettingsModel.Instance.EnableSendData.Value && PlayerHelper.HasRaidStarted())
                 return true;
- 
+
+            PlayerHelper.GetLimitViolations(PlayerHelper.GetEquipmentData());
             LeaderboardPlugin.logger.LogWarning("Player opened select side screen");
             return true;
         }

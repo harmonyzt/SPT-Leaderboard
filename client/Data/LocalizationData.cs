@@ -193,6 +193,27 @@ public class LocalizationData
         { "ro", "A fost detectat un obiect de dezvoltator. Datele raidului nu vor fi trimise." }
     };
     
+    public static Dictionary<string, string> Error_Capacity = new Dictionary<string, string>
+    {
+        { "ch", "{0} 太大了。突袭数据将不会被发送。" },
+        { "cz", "{0} je příliš velký. Údaje z nájezdu nebudou odeslány." },
+        { "en", "{0} is too large. Raid data will not be submitted." },
+        { "fr", "{0} est trop grand. Les données du raid ne seront pas envoyées." },
+        { "ge", "{0} ist zu groß. Raid-Daten werden nicht übermittelt." },
+        { "hu", "{0} túl nagy. A rajtaütési adatok nem kerülnek elküldésre." },
+        { "it", "{0} è troppo grande. I dati del raid non verranno inviati." },
+        { "jp", "{0} が大きすぎます。レイドデータは送信されません。" },
+        { "kr", "{0} 이(가) 너무 큽니다. 레이드 데이터가 전송되지 않습니다." },
+        { "pl", "{0} jest zbyt duży. Dane z rajdu nie zostaną przesłane." },
+        { "po", "{0} é muito grande. Os dados da incursão não serão enviados." },
+        { "sk", "{0} je príliš veľký. Údaje z nájazdu nebudú odoslané." },
+        { "es", "{0} es demasiado grande. Los datos de la incursión no se enviarán." },
+        { "es-mx", "{0} es demasiado grande. Los datos del asalto no se enviarán." },
+        { "tu", "{0} çok büyük. Baskın verileri gönderilmeyecek." },
+        { "ru", "{0} слишком большой. Данные рейда не будут отправлены." },
+        { "ro", "{0} este prea mare. Datele raidului nu vor fi trimise." }
+    };
+    
     // Template for translating
     // public static Dictionary<string, string> TEMPLATE = new Dictionary<string, string>
     // {

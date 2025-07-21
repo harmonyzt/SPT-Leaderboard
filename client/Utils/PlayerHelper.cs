@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using Comfort.Common;
 using EFT;
+using EFT.Communications;
 using EFT.InventoryLogic;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
+using SPTLeaderboard.Models;
 
 namespace SPTLeaderboard.Utils;
 
@@ -71,7 +73,7 @@ public class PlayerHelper
     /// <param name="pmcData"></param>
     /// <param name="slot"></param>
     /// <returns></returns>
-    public static int GetSlotCapacity(Profile pmcData, EquipmentSlot slot)
+    private static int GetSlotCapacity(Profile pmcData, EquipmentSlot slot)
     {
         var item = pmcData.Inventory.Equipment.GetSlot(slot).ContainedItem as CompoundItem;
         if (item == null)
@@ -82,6 +84,50 @@ public class PlayerHelper
         LeaderboardPlugin.logger.LogWarning($"Size {slot.ToString()} {capacity}");
 #endif
         return capacity;
+    }
+    
+    /// <summary>
+    /// Check limit violation capacity
+    /// </summary>
+    /// <param name="input"></param>
+    public static void GetLimitViolations(EquipmentData input)
+    {
+        if (input.TacticalVest > GlobalData.EquipmentLimits.TacticalVest)
+                NotificationManagerClass.DisplayWarningNotification(
+                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "TacticalVest"), 
+                    ENotificationDurationType.Long);
+
+        if (input.Pockets > GlobalData.EquipmentLimits.Pockets)
+                NotificationManagerClass.DisplayWarningNotification(
+                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Pockets"), 
+                    ENotificationDurationType.Long);
+
+        if (input.Backpack > GlobalData.EquipmentLimits.Backpack)
+                NotificationManagerClass.DisplayWarningNotification(
+                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Backpack"), 
+                    ENotificationDurationType.Long);
+
+        if (input.SecuredContainer > GlobalData.EquipmentLimits.SecuredContainer)
+                NotificationManagerClass.DisplayWarningNotification(
+                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "SecuredContainer"), 
+                    ENotificationDurationType.Long);
+    }
+    
+    /// <summary>
+    /// Check limit violation capacity silent
+    /// </summary>
+    /// <param name="input"></param>
+    public static bool GetLimitViolationsSilent(EquipmentData input)
+    {
+        if (input.TacticalVest > GlobalData.EquipmentLimits.TacticalVest) { return true; }
+
+        if (input.Pockets > GlobalData.EquipmentLimits.Pockets) { return true; }
+
+        if (input.Backpack > GlobalData.EquipmentLimits.Backpack) { return true; }
+
+        if (input.SecuredContainer > GlobalData.EquipmentLimits.SecuredContainer) { return true; }
+        
+        return false;
     }
 }
 

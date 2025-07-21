@@ -17,7 +17,7 @@ public class ProcessProfileModel
 
     public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings, HitsData hitsData)
     {
-        if (!SettingsModel.Instance.EnableSendData.Value)
+        if (!SettingsModel.Instance.EnableSendData.Value || PlayerHelper.GetLimitViolationsSilent(PlayerHelper.GetEquipmentData()))
             return;
         
         if (Singleton<PreloaderUI>.Instantiated)

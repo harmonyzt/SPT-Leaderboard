@@ -62,6 +62,7 @@ namespace SPTLeaderboard.Utils
         CHAR_LIMIT,
         NSFW_NAME,
         SILENT_ERROR,
-        DEVITEMS
+        DEVITEMS,
+        CAPACITY
     }
 }

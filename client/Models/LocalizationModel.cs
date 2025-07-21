@@ -40,14 +40,28 @@ namespace SPTLeaderboard.Models
         /// <param name="errorType"></param>
         /// <param name="price"></param>
         /// <returns></returns>
-        public string GetLocaleErrorText(ErrorType errorType)
+        public string GetLocaleErrorText(ErrorType errorType, string localeKey = "")
         {
-            if (GetLocaleTypeError(errorType).TryGetValue(CurrentLanguage(), out var errorTextExplain))
+            if (errorType == ErrorType.CAPACITY)
             {
-                return errorTextExplain;
+                var localeTypeEquipment = GetLocaleName(localeKey);
+                if (LocalizationData.Error_Capacity.TryGetValue(CurrentLanguage(), out var errorTextExplain))
+                {
+                    return string.Format(errorTextExplain, localeTypeEquipment);
+                }
+                
+                return string.Format(LocalizationData.Error_Capacity["en"], localeTypeEquipment); // fallback to English
             }
-        
-            return GetLocaleTypeError(errorType)["en"]; // fallback to English
+            else
+            {
+                if (GetLocaleTypeError(errorType).TryGetValue(CurrentLanguage(), out var errorTextExplain))
+                {
+                   return errorTextExplain;
+                }
+
+                return GetLocaleTypeError(errorType)["en"]; // fallback to English 
+            }
+            
         }
 
         /// <summary>
@@ -65,6 +79,12 @@ namespace SPTLeaderboard.Models
             return "Unknown";
         }
 
+        /// <summary>
+        /// Get localization by id and custom locale lang
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="locale"></param>
+        /// <returns></returns>
         private string GetLocaleString(string id, string locale)
         {
             if (string.IsNullOrEmpty(id.Trim()))
