@@ -73,7 +73,7 @@ namespace SPTLeaderboard
         public static void SendProfileIcon(GClass907 presetIcon)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
-                    
+            var session = PlayerHelper.GetSession();
             request.OnSuccess = (response, code) =>
             {
                 logger.LogWarning($"Request OnSuccess {response}");
@@ -88,7 +88,8 @@ namespace SPTLeaderboard
             var encodedImage = Convert.ToBase64String(imageData);
             var data = new ImageData
             {
-                EncodedImage = encodedImage
+                EncodedImage = encodedImage,
+                PlayerId = session.Profile.Id
             };
             string jsonBody = JsonConvert.SerializeObject(data);
                     
