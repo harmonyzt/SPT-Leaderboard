@@ -44,7 +44,7 @@ namespace SPTLeaderboard.Models
         {
             if (errorType == ErrorType.CAPACITY)
             {
-                var localeTypeEquipment = GetLocaleName(localeKey);
+                var localeTypeEquipment = GetLocale(localeKey);
                 if (LocalizationData.Error_Capacity.TryGetValue(CurrentLanguage(), out var errorTextExplain))
                 {
                     return string.Format(errorTextExplain, localeTypeEquipment);
@@ -62,6 +62,21 @@ namespace SPTLeaderboard.Models
                 return GetLocaleTypeError(errorType)["en"]; // fallback to English 
             }
             
+        }
+        
+        /// <summary>
+        /// Get localization by id with current locale in LocaleManagerClass EFT
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GetLocale(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                return GetLocaleString(id, CurrentLanguage());
+            }
+
+            return "Unknown";
         }
 
         /// <summary>
