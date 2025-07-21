@@ -53,7 +53,6 @@ namespace SPTLeaderboard
                 });
             }
 #if DEBUG
-            new HookEftBattleUIScreenPatch().Enable();
             new OnGameWorldStartPatch().Enable();
             new OnGameWorldDisposePatch().Enable();
 #endif

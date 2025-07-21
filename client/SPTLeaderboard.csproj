@@ -147,7 +147,6 @@
         <Compile Include="Models\ProcessProfileModel.cs" />
         <Compile Include="Models\SettingsModel.cs"/>
         <Compile Include="Patches\HideoutAwakePatch.cs" />
-        <Compile Include="Patches\HookEftBattleUIScreenPatch.cs" />
         <Compile Include="Patches\OnApplyDamageInfoPatch.cs" />
         <Compile Include="Patches\OnCoopApplyShotFourPatch.cs" />
         <Compile Include="Patches\OnEndRaidPatch.cs" />
