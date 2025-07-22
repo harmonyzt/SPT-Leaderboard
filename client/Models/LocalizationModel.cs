@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Comfort.Common;
+using EFT;
 using Newtonsoft.Json;
+using Sirenix.Serialization;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
 
@@ -83,15 +86,16 @@ namespace SPTLeaderboard.Models
         /// Get localization by id in LocaleManagerClass EFT
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="throwUnknown"></param>
         /// <returns></returns>
-        public string GetLocaleName(string id)
+        public string GetLocaleName(string id, bool throwUnknown = true)
         {
             if (!string.IsNullOrEmpty(id))
             {
                 return GetLocaleString(id, "en");
             }
 
-            return "Unknown";
+            return throwUnknown ? "Unknown" : id;
         }
 
         /// <summary>
@@ -128,6 +132,16 @@ namespace SPTLeaderboard.Models
                 ErrorType.DEVITEMS => LocalizationData.Error_DevItems,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
+        }
+        
+        public static string GetCorrectedNickname(GInterface187 profileData)
+        {
+            return profileData.Side == EPlayerSide.Savage ? Transliterate(profileData.Nickname) : profileData.Nickname;
+        }
+        
+        public static string Transliterate(string text)
+        {
+            return GClass930.dictionary_0.Aggregate(text, (current, key) => current.Replace(key.Key, key.Value));
         }
     }
 }

@@ -26,24 +26,25 @@ public class ProcessProfileModel
             if (session.Profile != null)
             {
                 var profileID = session.Profile.Id;
-
+                
+                string nameKiller = "";
                 GClass767 agressorData = session.Profile.EftStats.Aggressor;
                 if (agressorData != null && resultRaid.result == ExitStatus.Killed)
                 {
-                    string nameKiller = string.Empty;
+                    
                     if (((GInterface187)agressorData).ProfileId != session.Profile.Id)
                     {
                         if (((GInterface187)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
                         {
-                            nameKiller = agressorData.Name.Localized(null);
+                            nameKiller = LocalizationModel.Instance.GetLocaleName(agressorData.Name, false);
                         }
                         else
                         {
-                            nameKiller = agressorData.GetCorrectedNickname();
+                            nameKiller = LocalizationModel.GetCorrectedNickname(agressorData);
                         }
                     }
                     
-                    LeaderboardPlugin.logger.LogWarning($"AgressorData.Name {nameKiller}");
+                    LeaderboardPlugin.logger.LogWarning($"Agressor Name {nameKiller}\n");
                 }
                 
                 var gameVersion = session.Profile.Info.GameVersion;
@@ -61,6 +62,7 @@ public class ProcessProfileModel
                 catch (Exception e)
                 {
                     LeaderboardPlugin.logger.LogError($"Cant parse data profile {e.Message}");
+                    return;
                 }
                 
                 bool isScavRaid = session.Profile.Side == EPlayerSide.Savage;
@@ -305,6 +307,7 @@ public class ProcessProfileModel
                     var pmcProfileData = new AdditiveProfileData(baseData)
                     {
                         DiscFromRaid = discFromRaid,
+                        AgressorName = nameKiller,
                         IsTransition = isTransition,
                         IsUsingStattrack = statTrackIsUsed,
                         LastRaidEXP = ExpLooting,
@@ -345,6 +348,7 @@ public class ProcessProfileModel
                     var scavProfileData = new AdditiveProfileData(baseData)
                     {
                         DiscFromRaid = discFromRaid,
+                        AgressorName = nameKiller,
                         IsTransition = isTransition,
                         IsUsingStattrack = statTrackIsUsed,
                         LastRaidEXP = 0,

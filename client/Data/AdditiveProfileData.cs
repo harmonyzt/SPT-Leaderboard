@@ -66,6 +66,9 @@ namespace SPTLeaderboard.Data
         [JsonProperty("discFromRaid")]
         public bool DiscFromRaid { get; set; }
         
+        [JsonProperty("agressorName")]
+        public string AgressorName { get; set; }
+        
         [JsonProperty("isTransition")]
         public bool IsTransition { get; set; }
         
