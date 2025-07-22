@@ -88,7 +88,7 @@ namespace SPTLeaderboard.Models
         /// <param name="id"></param>
         /// <param name="throwUnknown"></param>
         /// <returns></returns>
-        public string GetLocaleName(string id, bool throwUnknown = true)
+        public static string GetLocaleName(string id, bool throwUnknown = true)
         {
             if (!string.IsNullOrEmpty(id))
             {
@@ -104,7 +104,7 @@ namespace SPTLeaderboard.Models
         /// <param name="id"></param>
         /// <param name="locale"></param>
         /// <returns></returns>
-        private string GetLocaleString(string id, string locale)
+        public static string GetLocaleString(string id, string locale)
         {
             if (string.IsNullOrEmpty(id.Trim()))
             {

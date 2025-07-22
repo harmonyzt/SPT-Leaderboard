@@ -47,6 +47,8 @@ public class PlayerHelper
     
     public Player Player { get; set; }
 
+    #region Equipment
+
     /// <summary>
     /// Calculate capacity for each main equipment items
     /// </summary>
@@ -68,7 +70,7 @@ public class PlayerHelper
     }
 
     /// <summary>
-    /// Get capacity for slot in equipment
+    /// Get capacity slot
     /// </summary>
     /// <param name="pmcData"></param>
     /// <param name="slot"></param>
@@ -128,6 +130,35 @@ public class PlayerHelper
         if (input.SecuredContainer > GlobalData.EquipmentLimits.SecuredContainer) { return true; }
         
         return false;
+    }
+    
+    #endregion
+
+    public static string TryGetAgressorName(Profile profile)
+    {
+        string nameKiller = "";
+        GClass767 agressorData = profile.EftStats.Aggressor;
+        if (agressorData != null)
+        {
+                    
+            if (((GInterface187)agressorData).ProfileId != profile.Id)
+            {
+                if (((GInterface187)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
+                {
+                    nameKiller = LocalizationModel.GetLocaleName(agressorData.Name, false);
+                }
+                else
+                {
+                    nameKiller = LocalizationModel.GetCorrectedNickname(agressorData);
+                }
+            }
+                    
+            LeaderboardPlugin.logger.LogWarning($"Agressor Name {nameKiller}\n");
+            return nameKiller;
+        }
+
+        LeaderboardPlugin.logger.LogWarning($"Aggressor Data == null");
+        return nameKiller;
     }
 }
 

@@ -27,32 +27,22 @@ public class ProcessProfileModel
             {
                 var profileID = session.Profile.Id;
                 
+                var pmcData = session.GetProfileBySide(ESideType.Pmc);
+                var scavData = session.GetProfileBySide(ESideType.Savage);
+
                 string nameKiller = "";
-                GClass767 agressorData = session.Profile.EftStats.Aggressor;
-                if (agressorData != null && resultRaid.result == ExitStatus.Killed)
+                if (resultRaid.result == ExitStatus.Killed)
                 {
-                    
-                    if (((GInterface187)agressorData).ProfileId != session.Profile.Id)
+                    nameKiller = PlayerHelper.TryGetAgressorName(session.Profile);
+                    if (string.IsNullOrEmpty(nameKiller))
                     {
-                        if (((GInterface187)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
-                        {
-                            nameKiller = LocalizationModel.Instance.GetLocaleName(agressorData.Name, false);
-                        }
-                        else
-                        {
-                            nameKiller = LocalizationModel.GetCorrectedNickname(agressorData);
-                        }
+                        nameKiller = PlayerHelper.TryGetAgressorName(scavData);
                     }
-                    
-                    LeaderboardPlugin.logger.LogWarning($"Agressor Name {nameKiller}\n");
                 }
                 
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
                 var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw.ToLower());
-                
-                var pmcData = session.GetProfileBySide(ESideType.Pmc);
-                var scavData = session.GetProfileBySide(ESideType.Savage);
                 
                 ProfileData profileData = null;
                 try
@@ -483,7 +473,7 @@ public class ProcessProfileModel
         {
             string weaponId = weaponInfo.Key;
             CustomizedObject weaponStats = weaponInfo.Value;
-            string weaponName = LocalizationModel.Instance.GetLocaleName(weaponId + " ShortName");
+            string weaponName = LocalizationModel.GetLocaleName(weaponId + " ShortName");
 
             // Skip weapons with unknown names
             if (weaponName == "Unknown")
