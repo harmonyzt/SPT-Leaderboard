@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using EFT.HealthSystem;
 using EFT.InventoryLogic;
 using EFT.UI;
 using EFT.UI.Matchmaker;
 using SPT.Reflection.Patching;
+using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
 using SPTLeaderboard.Utils;
@@ -28,6 +30,30 @@ namespace SPTLeaderboard.Patches
                 return true;
 
             PlayerHelper.GetLimitViolations(PlayerHelper.GetEquipmentData());
+
+            var modsPlayer = DataUtils.GetServerMods()
+                .Concat(DataUtils.GetDirectories(GlobalData.UserModsPath))
+                .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
+                .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
+                .ToList();
+            
+            var preraidData = new PreRaidData
+            {
+                VersionMod = GlobalData.Version,
+                IsCasual = SettingsModel.Instance.ModCasualMode.Value,
+#if DEBUG
+                Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : modsPlayer,
+                Hash = SettingsModel.Instance.Debug.Value
+                    ? "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f"
+                    : EncryptionModel.Instance.GetHashMod()
+#else
+                Mods = modsPlayer,
+                Hash = EncryptionModel.Instance.GetHashMod()
+#endif
+            };
+            
+            LeaderboardPlugin.SendPreRaidData(preraidData);
+            
             LeaderboardPlugin.logger.LogWarning("Player opened select side screen");
             return true;
         }

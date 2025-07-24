@@ -131,6 +131,33 @@ namespace SPTLeaderboard
             request.Send();
         }
         
+        public static void SendPreRaidData(object data)
+        {
+            var request = NetworkApiRequestModel.Create(GlobalData.PreRaidUrl);
+
+            request.OnSuccess = (response, code) =>
+            {
+                logger.LogWarning($"Request OnSuccess {response}");
+            };
+
+            request.OnFail = (error, code) =>
+            {
+                ServerErrorHandler.HandleError(error, code);
+            };
+
+            string jsonBody = JsonConvert.SerializeObject(data);
+            
+#if DEBUG
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                logger.LogWarning($"Request Data {jsonBody}");
+            }
+#endif
+            
+            request.SetData(jsonBody);
+            request.Send();
+        }
+        
         public void StartInRaidHeartbeat()
         {
             StopInRaidHeartbeat();
