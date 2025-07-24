@@ -7,22 +7,22 @@ public class LocalizationData
     public static Dictionary<string, string> Error_Banned = new Dictionary<string, string> // TODO: Get error code for this
     {
         { "ch", "您因违反排行榜规则而被封禁" },
-        { "cz", "Byli jste zabanováni za porušení pravidel žebříčku" },
-        { "en", "You have been banned for violating the Leaderboard rules" },
-        { "fr", "Vous avez été banni pour avoir enfreint les règles du classement" },
-        { "ge", "Sie wurden wegen Verstoßes gegen die Bestenlistenregeln gesperrt" },
-        { "hu", "Ki lettél tiltva a ranglista szabályainak megsértése miatt" },
-        { "it", "Sei stato bannato per aver violato le regole della classifica" },
+        { "cz", "Byli jste zabanováni za porušení pravidel žebříčku." },
+        { "en", "You have been banned from Leaderboard. Contact staff for more info." },
+        { "fr", "Vous avez été banni pour avoir enfreint les règles du classement." },
+        { "ge", "Sie wurden wegen Verstoßes gegen die Bestenlistenregeln gesperrt." },
+        { "hu", "Ki lettél tiltva a ranglista szabályainak megsértése miatt." },
+        { "it", "Sei stato bannato per aver violato le regole della classifica." },
         { "jp", "ランキングのルール違反によりBANされました" },
         { "kr", "리더보드 규칙 위반으로 인해 이용이 제한되었습니다" },
-        { "pl", "Zostałeś zbanowany za naruszenie zasad rankingu" },
-        { "po", "Você foi banido por violar as regras da tabela de classificação" },
-        { "sk", "Boli ste zabanovaní za porušenie pravidiel rebríčka" },
-        { "es", "Has sido baneado por infringir las reglas del leaderboard" },
-        { "es-mx", "Has sido baneado por violar las reglas del leaderboard" },
-        { "tu", "Liderlik tablosu kurallarını ihlal ettiğiniz için yasaklandınız" },
-        { "ru", "Вы забанены за нарушение правил Leaderboard" },
-        { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului" }
+        { "pl", "Zostałeś zbanowany za naruszenie zasad rankingu." },
+        { "po", "Você foi banido por violar as regras da tabela de classificação." },
+        { "sk", "Boli ste zabanovaní za porušenie pravidiel rebríčka." },
+        { "es", "Has sido baneado por infringir las reglas del leaderboard." },
+        { "es-mx", "Has sido baneado por violar las reglas del leaderboard." },
+        { "tu", "Liderlik tablosu kurallarını ihlal ettiğiniz için yasaklandınız." },
+        { "ru", "Вы забанены за нарушение правил Leaderboard." },
+        { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
     };
         
     public static Dictionary<string, string> Error_LA_TOS = new Dictionary<string, string> // 699
@@ -50,7 +50,7 @@ public class LocalizationData
     {
         { "ch", "令牌不适用于当前资料。它可能正被其他玩家使用。" },
         { "cz", "Token neodpovídá aktuálnímu profilu. Možná jej používá jiný hráč." },
-        { "en", "The token does not match the current profile. It may be used by another player." },
+        { "en", "The token does not match the current profile. Make sure you have the same token as before." },
         { "fr", "Le jeton ne correspond pas au profil actuel. Il est peut-être utilisé par un autre joueur." },
         { "ge", "Das Token passt nicht zum aktuellen Profil. Es könnte von einem anderen Spieler verwendet werden." },
         { "hu", "A token nem illik a jelenlegi profilhoz. Lehet, hogy egy másik játékos használja." },
@@ -71,7 +71,7 @@ public class LocalizationData
     {
         { "ch", "您的令牌被拒绝为不安全。请尝试另一个或重新生成。" },
         { "cz", "Váš token byl zamítnut jako nebezpečný. Zkuste jiný nebo jej znovu vygenerujte." },
-        { "en", "Your token was rejected as unsafe. Try a different one or generate a new one." },
+        { "en", "Your token was marked as unsafe. Try a different one, or generate a new one." },
         { "fr", "Votre jeton a été rejeté comme non sécurisé. Essayez-en un autre ou générez-en un nouveau." },
         { "ge", "Ihr Token wurde als unsicher abgelehnt. Versuchen Sie einen anderen oder generieren Sie einen neuen." },
         { "hu", "A token elutasításra került, mert nem biztonságos. Próbáljon meg egy másikat, vagy generáljon egy újat." },
@@ -92,7 +92,7 @@ public class LocalizationData
     {
         { "ch", "请更新模组到最新版本以提交结果。" },
         { "cz", "Aktualizujte prosím mod na nejnovější verzi pro odeslání výsledků." },
-        { "en", "Please update the mod to the latest version to submit results." },
+        { "en", "Please update the mod to the latest version to continue using Leaderboard." },
         { "fr", "Veuillez mettre à jour le mod vers la dernière version pour envoyer les résultats." },
         { "ge", "Bitte aktualisieren Sie die Mod auf die neueste Version, um Ergebnisse zu übermitteln." },
         { "hu", "Kérjük, frissítse a modot a legújabb verzióra az eredmények elküldéséhez." },
@@ -176,7 +176,7 @@ public class LocalizationData
     {
         { "ch", "检测到开发者物品。突袭数据将不会被上传。" },
         { "cz", "Byl u vás nalezen vývojářský předmět. Údaje z nájezdu nebudou odeslány." },
-        { "en", "Developer item detected. Raid data will not be submitted." },
+        { "en", "Developer item(s) detected. Raid data will not be submitted." },
         { "fr", "Un objet de développeur a été détecté. Les données du raid ne seront pas envoyées." },
         { "ge", "Ein Entwicklergegenstand wurde gefunden. Raid-Daten werden nicht gesendet." },
         { "hu", "Fejlesztői tárgyat észleltünk. A rajtaütés adatai nem kerülnek elküldésre." },
