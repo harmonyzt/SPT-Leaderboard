@@ -22,6 +22,8 @@ namespace SPTLeaderboard
         private EncryptionModel _encrypt;
         
         private Timer _inRaidHeartbeatTimer;
+        private Timer _preRaidCheckTimer;
+        public bool canPreRaidCheck = true;
 
         public static ManualLogSource logger;
 
@@ -182,6 +184,33 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer.Stop();
             _inRaidHeartbeatTimer.Dispose();
             _inRaidHeartbeatTimer = null;
+        }
+
+        public void StartPreRaidCheckTimer()
+        {
+            StopPreRaidCheckTimer();
+            
+            canPreRaidCheck = false;
+            _preRaidCheckTimer = new Timer(10 * 60 * 1000);
+            _preRaidCheckTimer.Elapsed += (sender, args) =>
+            {
+                canPreRaidCheck = true;
+                _preRaidCheckTimer.Stop();
+                _preRaidCheckTimer.Dispose();
+                _preRaidCheckTimer = null;
+                LeaderboardPlugin.logger.LogWarning("Таймер PreRaidData завершился, можно отправлять снова");
+            };
+            _preRaidCheckTimer.AutoReset = false;
+            _preRaidCheckTimer.Start();
+        }
+        
+        public void StopPreRaidCheckTimer()
+        {
+            if (_preRaidCheckTimer == null) return;
+            
+            _preRaidCheckTimer.Stop();
+            _preRaidCheckTimer.Dispose();
+            _preRaidCheckTimer = null;
         }
     }
 }

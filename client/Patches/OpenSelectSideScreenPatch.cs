@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using EFT.HealthSystem;
 using EFT.InventoryLogic;
@@ -14,6 +15,9 @@ namespace SPTLeaderboard.Patches
 {
     internal class OpenSelectSideScreenPatch : ModulePatch
     {
+        private static DateTime? _lastSendTime = null;
+        private static readonly TimeSpan Cooldown = TimeSpan.FromMinutes(10);
+        
         protected override MethodBase GetTargetMethod() =>
             typeof(MatchMakerSideSelectionScreen).GetMethod(
                 "Show",
@@ -26,10 +30,17 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
+            LeaderboardPlugin.logger.LogWarning("Player opened select side screen");
             if (!SettingsModel.Instance.EnableSendData.Value && PlayerHelper.HasRaidStarted())
                 return true;
 
             PlayerHelper.GetLimitViolations(PlayerHelper.GetEquipmentData());
+            
+            // If it has not yet been 10 minutes since the last call - we do nothing
+            if (!LeaderboardPlugin.Instance.canPreRaidCheck)
+            {
+                return true;
+            }
 
             var modsPlayer = DataUtils.GetServerMods()
                 .Concat(DataUtils.GetDirectories(GlobalData.UserModsPath))
@@ -39,7 +50,7 @@ namespace SPTLeaderboard.Patches
             
             var preraidData = new PreRaidData
             {
-                VersionMod = GlobalData.Version,
+                VersionMod = "3.1.0",//TODO: Replace by GlobalData.Version before prod
                 IsCasual = SettingsModel.Instance.ModCasualMode.Value,
 #if DEBUG
                 Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : modsPlayer,
@@ -53,8 +64,7 @@ namespace SPTLeaderboard.Patches
             };
             
             LeaderboardPlugin.SendPreRaidData(preraidData);
-            
-            LeaderboardPlugin.logger.LogWarning("Player opened select side screen");
+            LeaderboardPlugin.Instance.StartPreRaidCheckTimer();
             return true;
         }
     }

@@ -193,7 +193,7 @@ public class LocalizationData
         { "ro", "A fost detectat un obiect de dezvoltator. Datele raidului nu vor fi trimise." }
     };
     
-    public static Dictionary<string, string> Error_Capacity = new Dictionary<string, string>
+    public static Dictionary<string, string> Error_Capacity = new Dictionary<string, string> //Error after check capacity storages violation
     {
         { "ch", "{0} 太大了。突袭数据将不会被发送。" },
         { "cz", "{0} je příliš velký. Údaje z nájezdu nebudou odeslány." },
