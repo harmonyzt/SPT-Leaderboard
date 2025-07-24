@@ -44,6 +44,7 @@ namespace SPTLeaderboard
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
             new OpenSelectSideScreenPatch().Enable();
+            new LeaderboardVersionLabelPatch().Enable();
             
             if (!DataUtils.IsLoaded)
             {
@@ -62,8 +63,7 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-
-
+        
         private void Update()
         {
             if (_settings.KeyBind.Value.IsDown())
