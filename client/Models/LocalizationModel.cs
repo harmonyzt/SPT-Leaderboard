@@ -130,6 +130,8 @@ namespace SPTLeaderboard.Models
                 ErrorType.CHAR_LIMIT => LocalizationData.Error_CharLimit,
                 ErrorType.NSFW_NAME => LocalizationData.Error_NsfwName,
                 ErrorType.DEVITEMS => LocalizationData.Error_DevItems,
+                ErrorType.API_BANNED => LocalizationData.Error_API_BANNED,
+                ErrorType.API_TOO_MANY_REQUESTS => LocalizationData.Error_API_TOO_MUCH_REQUESTS,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
         }

@@ -7,3 +7,4 @@ dist
 node_modules
 secret.token
 *vscode
+client/SPTLeaderboard.sln.DotSettings.user

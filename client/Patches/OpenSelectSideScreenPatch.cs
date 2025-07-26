@@ -15,15 +15,12 @@ namespace SPTLeaderboard.Patches
 {
     internal class OpenSelectSideScreenPatch : ModulePatch
     {
-        private static DateTime? _lastSendTime = null;
-        private static readonly TimeSpan Cooldown = TimeSpan.FromMinutes(10);
-        
         protected override MethodBase GetTargetMethod() =>
             typeof(MatchMakerSideSelectionScreen).GetMethod(
                 "Show",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                new[] { typeof(MatchMakerSideSelectionScreen.GClass3629) },
+                [typeof(MatchMakerSideSelectionScreen.GClass3629)],
                 null
             );
 
@@ -48,7 +45,7 @@ namespace SPTLeaderboard.Patches
                 .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
                 .ToList();
             
-            var preraidData = new PreRaidData
+            var preRaidData = new PreRaidData
             {
                 VersionMod = "3.1.0",//TODO: Replace by GlobalData.Version before prod
                 IsCasual = SettingsModel.Instance.ModCasualMode.Value,
@@ -63,7 +60,7 @@ namespace SPTLeaderboard.Patches
 #endif
             };
             
-            LeaderboardPlugin.SendPreRaidData(preraidData);
+            LeaderboardPlugin.SendPreRaidData(preRaidData);
             LeaderboardPlugin.Instance.StartPreRaidCheckTimer();
             return true;
         }

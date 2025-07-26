@@ -2,7 +2,9 @@
 using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
+using EFT.UI;
 using Newtonsoft.Json;
+using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
@@ -20,9 +22,13 @@ namespace SPTLeaderboard
         private SettingsModel _settings;
         private LocalizationModel _localization;
         private EncryptionModel _encrypt;
+        private IconSaver _iconSaver;
+
+        public GameObject ClonePlayerModelViewPrefab;
         
         private Timer _inRaidHeartbeatTimer;
         private Timer _preRaidCheckTimer;
+        
         public bool canPreRaidCheck = true;
 
         public static ManualLogSource logger;
@@ -36,15 +42,16 @@ namespace SPTLeaderboard
             _encrypt = EncryptionModel.Create();
             _localization = LocalizationModel.Create();
             
+            new LeaderboardVersionLabelPatch().Enable();
             new OpenMainMenuScreenPatch().Enable();
             new OpenInventoryScreenPatch().Enable();
+            new OpenSelectSideScreenPatch().Enable();
+            new OpenLoadingRaidScreenPatch().Enable();
             new OnStartRaidPatch().Enable();
             new OnEndRaidPatch().Enable();
             new HideoutAwakePatch().Enable();
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
-            new OpenSelectSideScreenPatch().Enable();
-            new LeaderboardVersionLabelPatch().Enable();
             
             if (!DataUtils.IsLoaded)
             {
@@ -68,10 +75,29 @@ namespace SPTLeaderboard
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                PlayerHelper.GetEquipmentData();
+                CreatePhotoFullPlayer();
             }
         }
 
+        public void CreatePhotoFullPlayer()
+        {
+            GameObject playerModelViewPrefab = GameObject.Find("Common UI/Common UI/InventoryScreen/Overall Panel/LeftSide/CharacterPanel/PlayerModelView");
+            GameObject menuScreenParent = GameObject.Find("Menu UI/UI/Matchmaker Time Has Come");
+
+            if (!_iconSaver)
+            {
+                _iconSaver = new IconSaver();
+            }
+
+            if (!ClonePlayerModelViewPrefab)
+            {
+                ClonePlayerModelViewPrefab = _iconSaver.CreateClonedPlayerModelView(menuScreenParent, playerModelViewPrefab);
+                _iconSaver.HidePlayerModelExtraElements(ClonePlayerModelViewPrefab);
+            }
+                
+            _iconSaver.FindPlayerModelStats();
+        }
+        
         public static void SendProfileIcon(GClass907 presetIcon)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
@@ -198,7 +224,6 @@ namespace SPTLeaderboard
                 _preRaidCheckTimer.Stop();
                 _preRaidCheckTimer.Dispose();
                 _preRaidCheckTimer = null;
-                LeaderboardPlugin.logger.LogWarning("Таймер PreRaidData завершился, можно отправлять снова");
             };
             _preRaidCheckTimer.AutoReset = false;
             _preRaidCheckTimer.Start();

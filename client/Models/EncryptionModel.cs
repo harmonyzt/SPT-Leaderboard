@@ -88,7 +88,7 @@ namespace SPTLeaderboard.Models
                 var hash = sha256.ComputeHash(dllBytes);
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 LeaderboardPlugin.logger.LogError($"[SPT Leaderboard] Error check integrity mod");
                 return "ERROR CHECK INTEGRITY";

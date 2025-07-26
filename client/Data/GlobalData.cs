@@ -17,6 +17,7 @@ public static class GlobalData
     public static string SptRootPath = Path.GetFullPath(Path.Combine(BepInEx.Paths.PluginPath, "..", "..")); 
     public static string UserModsPath = Path.GetFullPath(Path.Combine(SptRootPath, "user", "mods")); 
     public static string LeaderboardIconPath = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "SavedIcon.png"));
+    public static string LeaderboardFullImagePath = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "SavedFull.png"));
 
     public static EquipmentData EquipmentLimits = new()
     {

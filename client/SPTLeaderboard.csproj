@@ -157,6 +157,7 @@
         <Compile Include="Patches\OnInitPlayerPatch.cs" />
         <Compile Include="Patches\OnStartRaidPatch.cs" />
         <Compile Include="Patches\OpenInventoryScreenPatch.cs" />
+        <Compile Include="Patches\OpenLoadingRaidScreenPatch.cs" />
         <Compile Include="Patches\OpenMainMenuScreenPatch.cs" />
         <Compile Include="Patches\OpenSelectSideScreenPatch.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
