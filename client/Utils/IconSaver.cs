@@ -176,11 +176,20 @@ namespace SPTLeaderboard.Utils
             }
             else
             {
-                GameObject o = Instantiate(prefab, parent.transform);
-                o.name = "[SPTLeaderboard] PlayerModelView";
-                o.SetActive(true);
-                o.transform.position = GetOffScreenPosition();
-                clonedPlayerModelObject = o;
+                GameObject copyPlayerModel = Instantiate(prefab, parent.transform);
+                copyPlayerModel.name = "[SPTLeaderboard] PlayerModelView";
+                copyPlayerModel.SetActive(true);
+                copyPlayerModel.transform.position = GetOffScreenPosition();
+
+                Transform playerMVObjectTransform = copyPlayerModel.transform.Find("PlayerMVObject");
+
+                if (playerMVObjectTransform != null)
+                {
+                    GameObject playerMVObject = playerMVObjectTransform.gameObject;
+                    playerMVObject.SetActive(true);
+                }
+                
+                clonedPlayerModelObject = copyPlayerModel;
             }
             return clonedPlayerModelObject;
         }

@@ -20,7 +20,7 @@ namespace SPTLeaderboard.Patches
 
             try
             {
-                LeaderboardPlugin.Instance.CreateIconFullBodyPlayer();
+                LeaderboardPlugin.Instance.CreateIconPlayer();
             }
             catch
             {
