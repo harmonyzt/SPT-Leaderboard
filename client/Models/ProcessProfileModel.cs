@@ -73,9 +73,9 @@ public class ProcessProfileModel
                     {
                         isTransition = true;
                         var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
-                        lastRaidTransitionTo = GetPrettyMapName(locationTransit.location);
+                        lastRaidTransitionTo = GetPrettyMapName(locationTransit.location.ToLower());
                         
-                        LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {GetPrettyMapName(lastRaidTransitionTo)}");
+                        LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {lastRaidTransitionTo}");
                         LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
                     }
                 }
