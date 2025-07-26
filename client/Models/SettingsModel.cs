@@ -24,8 +24,6 @@ namespace SPTLeaderboard.Models
 		public ConfigEntry<bool> ModCasualMode;
 		public ConfigEntry<bool> PublicProfile;
 		public ConfigEntry<bool> EnableModSupport;
-		public ConfigEntry<int> ConnectionRetries;
-		public ConfigEntry<Vector2> IconSize;
 		public ConfigEntry<int> ConnectionTimeout;
 		public ConfigEntry<string> PhpEndpoint;
 		public ConfigEntry<string> PhpPath;
@@ -72,25 +70,8 @@ namespace SPTLeaderboard.Models
 				"Debug", 
 				true, //TODO: Set to false. BEFORE PROD
 				new ConfigDescription(
-					"Display debug messages in console and log them inside SPT server .log file",
-					null, 
-					new ConfigurationManagerAttributes
-					{
-						Order = 1
-					}));
+					"Display debug messages in console and log them inside SPT server .log file"));
 #endif
-			
-			IconSize = configFile.Bind(
-				"Settings", 
-				"Icon Size", 
-				new Vector2(500f, 450f), 
-				new ConfigDescription(
-					"Size for icon save...",
-					null, 
-					new ConfigurationManagerAttributes
-					{
-						Order = 10
-					}));
 			
 			EnableSendData = configFile.Bind(
 				"Settings", 
@@ -101,7 +82,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 9
+						Order = 8
 					}));
 			
 			ModCasualMode = configFile.Bind(
@@ -113,7 +94,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 8
+						Order = 7
 					}));
 			
 			PublicProfile = configFile.Bind(
@@ -125,7 +106,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 7
+						Order = 6
 					}));
 			
 			EnableModSupport = configFile.Bind(
@@ -137,20 +118,7 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 6
-					}));
-			
-			ConnectionRetries = configFile.Bind(
-				"Settings", 
-				"Connection Retries", 
-				1, 
-				new ConfigDescription(
-					"Maximum raids to retry to connect to the Leaderboard API if it failed for first time",
-					null, 
-					new ConfigurationManagerAttributes
-					{
-						Order = 5,
-						IsAdvanced = true
+						Order = 5
 					}));
 			
 			ConnectionTimeout = configFile.Bind(

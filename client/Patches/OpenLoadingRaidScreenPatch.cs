@@ -28,7 +28,7 @@ namespace SPTLeaderboard.Patches
                 return true;
             
             LeaderboardPlugin.logger.LogWarning("Player opened Loading raid screen");
-            LeaderboardPlugin.Instance.CreatePhotoFullPlayer();
+            LeaderboardPlugin.Instance.CreateIconFullBodyPlayer();
             return true;
         }
     }

@@ -20,9 +20,7 @@ namespace SPTLeaderboard.Patches
 
             try
             {
-                LeaderboardPlugin.logger.LogWarning("Start create icon");
-                IconSaver iconSaver = new IconSaver();
-                iconSaver.Create();
+                LeaderboardPlugin.Instance.CreateIconFullBodyPlayer();
             }
             catch
             {

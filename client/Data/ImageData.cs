@@ -9,4 +9,7 @@ public class ImageData
 
     [JsonProperty("player_id")]
     public string PlayerId;
+    
+    [JsonProperty("isFullBody")]
+    public bool IsFullBody;
 }

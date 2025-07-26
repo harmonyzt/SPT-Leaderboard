@@ -2,9 +2,7 @@
 using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
-using EFT.UI;
 using Newtonsoft.Json;
-using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using SPTLeaderboard.Models;
@@ -23,8 +21,6 @@ namespace SPTLeaderboard
         private LocalizationModel _localization;
         private EncryptionModel _encrypt;
         private IconSaver _iconSaver;
-
-        public GameObject ClonePlayerModelViewPrefab;
         
         private Timer _inRaidHeartbeatTimer;
         private Timer _preRaidCheckTimer;
@@ -67,38 +63,49 @@ namespace SPTLeaderboard
             new OnGameWorldStartPatch().Enable();
             new OnGameWorldDisposePatch().Enable();
 #endif
+            
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-        
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                CreatePhotoFullPlayer();
-            }
-        }
 
-        public void CreatePhotoFullPlayer()
+        #region Icons
+        
+        public void CreateIconFullBodyPlayer()
         {
             GameObject playerModelViewPrefab = GameObject.Find("Common UI/Common UI/InventoryScreen/Overall Panel/LeftSide/CharacterPanel/PlayerModelView");
             GameObject menuScreenParent = GameObject.Find("Menu UI/UI/Matchmaker Time Has Come");
 
             if (!_iconSaver)
             {
-                _iconSaver = new IconSaver();
+                _iconSaver = gameObject.AddComponent<IconSaver>();
             }
 
-            if (!ClonePlayerModelViewPrefab)
+            if (!_iconSaver.clonePlayerModelViewObj)
             {
-                ClonePlayerModelViewPrefab = _iconSaver.CreateClonedPlayerModelView(menuScreenParent, playerModelViewPrefab);
-                _iconSaver.HidePlayerModelExtraElements(ClonePlayerModelViewPrefab);
+                _iconSaver.clonePlayerModelViewObj = _iconSaver.CreateClonedPlayerModelView(menuScreenParent, playerModelViewPrefab);
+                _iconSaver.HidePlayerModelExtraElements();
             }
                 
-            _iconSaver.FindPlayerModelStats();
+            _iconSaver.CreateFullBodyIcon();
+        }
+
+        public void CreateIconPlayer()
+        {
+            logger.LogWarning("Start create icon");
+
+            if (!_iconSaver)
+            {
+                _iconSaver = gameObject.AddComponent<IconSaver>();
+            }
+            
+            _iconSaver.CreateIcon();
         }
         
-        public static void SendProfileIcon(GClass907 presetIcon)
+        #endregion
+
+        #region Network
+        
+        public static void SendProfileIcon(Texture2D texture, bool isFullBody)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
             var session = PlayerHelper.GetSession();
@@ -112,12 +119,13 @@ namespace SPTLeaderboard
                 ServerErrorHandler.HandleError(error, code);
             };
                     
-            byte[] imageData = presetIcon.Sprite.texture.EncodeToPNG();
+            byte[] imageData = texture.EncodeToPNG();
             var encodedImage = Convert.ToBase64String(imageData);
             var data = new ImageData
             {
                 EncodedImage = encodedImage,
-                PlayerId = session.Profile.Id
+                PlayerId = session.Profile.Id,
+                IsFullBody = isFullBody
             };
             string jsonBody = JsonConvert.SerializeObject(data);
                     
@@ -186,6 +194,10 @@ namespace SPTLeaderboard
             request.Send();
         }
         
+        #endregion
+
+        #region Timers
+        
         public void StartInRaidHeartbeat()
         {
             StopInRaidHeartbeat();
@@ -237,5 +249,7 @@ namespace SPTLeaderboard
             _preRaidCheckTimer.Dispose();
             _preRaidCheckTimer = null;
         }
+        
+        #endregion
     }
 }
