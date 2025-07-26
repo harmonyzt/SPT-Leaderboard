@@ -31,6 +31,8 @@ namespace SPTLeaderboard.Utils
                 231 => ErrorType.SCAV_ONLY_PUBLIC,
                 232 => ErrorType.CHAR_LIMIT,
                 707 => ErrorType.NSFW_NAME,
+                800 => ErrorType.API_BANNED,
+                801 => ErrorType.API_TOO_MANY_REQUESTS,
                 _ => ErrorType.SILENT_ERROR
             };
         }
@@ -47,6 +49,8 @@ namespace SPTLeaderboard.Utils
                 ErrorType.CHAR_LIMIT => ENotificationDurationType.Long,
                 ErrorType.NSFW_NAME => ENotificationDurationType.Long,
                 ErrorType.DEVITEMS => ENotificationDurationType.Long,
+                ErrorType.API_BANNED => ENotificationDurationType.Infinite,
+                ErrorType.API_TOO_MANY_REQUESTS => ENotificationDurationType.Long,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
         }
@@ -63,6 +67,8 @@ namespace SPTLeaderboard.Utils
         NSFW_NAME,
         SILENT_ERROR,
         DEVITEMS,
-        CAPACITY
+        CAPACITY,
+        API_BANNED,
+        API_TOO_MANY_REQUESTS
     }
 }

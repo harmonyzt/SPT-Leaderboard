@@ -4,7 +4,7 @@ namespace SPTLeaderboard.Data;
 
 public class LocalizationData
 {
-    public static Dictionary<string, string> Error_Banned = new Dictionary<string, string> // TODO: Get error code for this
+    public static Dictionary<string, string> Error_API_BANNED = new Dictionary<string, string> // TODO: Get error code for this
     {
         { "ch", "您因违反排行榜规则而被封禁" },
         { "cz", "Byli jste zabanováni za porušení pravidel žebříčku." },
@@ -23,6 +23,27 @@ public class LocalizationData
         { "tu", "Liderlik tablosu kurallarını ihlal ettiğiniz için yasaklandınız." },
         { "ru", "Вы забанены за нарушение правил Leaderboard." },
         { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
+    };
+    
+    public static Dictionary<string, string> Error_API_TOO_MUCH_REQUESTS = new Dictionary<string, string>
+    {
+        { "ch", "" },
+        { "cz", "" },
+        { "en", "" },
+        { "fr", "" },
+        { "ge", "" },
+        { "hu", "" },
+        { "it", "" },
+        { "jp", "" },
+        { "kr", "" },
+        { "pl", "" },
+        { "po", "" },
+        { "sk", "" },
+        { "es", "" },
+        { "es-mx", "" },
+        { "tu", "" },
+        { "ru", "" },
+        { "ro", "" }
     };
         
     public static Dictionary<string, string> Error_LA_TOS = new Dictionary<string, string> // 699
