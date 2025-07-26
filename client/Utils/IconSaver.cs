@@ -181,12 +181,34 @@ namespace SPTLeaderboard.Utils
                 copyPlayerModel.SetActive(true);
                 copyPlayerModel.transform.position = GetOffScreenPosition();
 
-                Transform playerMVObjectTransform = copyPlayerModel.transform.Find("PlayerMVObject");
-
-                if (playerMVObjectTransform != null)
+                try
                 {
-                    GameObject playerMVObject = playerMVObjectTransform.gameObject;
-                    playerMVObject.SetActive(true);
+                    Transform playerViewTransform = copyPlayerModel.transform.Find("PlayerMVObject");
+                    
+                    if (playerViewTransform != null)
+                    {
+                        GameObject playerViewObject = playerViewTransform.gameObject;
+                        playerViewObject.SetActive(true);
+                        Transform playerLightsTransform = playerViewObject.transform.Find("PlayerMVObjectLights");
+                        if (playerLightsTransform != null)
+                        {
+                            GameObject playerLightObject = playerLightsTransform.gameObject;
+                            playerLightObject.transform.localPosition = new Vector3(0f, 0f, -0.3f);
+                            playerLightObject.transform.localScale = new Vector3(1.2f, 2f, 1f);
+
+                            Transform mainLightTransform = playerLightObject.transform.Find("Main Light (1)");
+                            if (mainLightTransform != null)
+                            {
+                                GameObject mainLightObject = mainLightTransform.gameObject;
+                                Light mainLight = mainLightObject.GetComponent<Light>();
+                                mainLight.range = 3f;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LeaderboardPlugin.logger.LogWarning($"Error while search obj in playerView\n{ex}");
                 }
                 
                 clonedPlayerModelObject = copyPlayerModel;
