@@ -17,17 +17,10 @@ namespace SPTLeaderboard.Patches
         {
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;
-
-            try
-            {
-                LeaderboardPlugin.Instance.CreateIconPlayer();
-            }
-            catch
-            {
-                // ignored
-            }
-
+            
             HitsTracker.Instance.Clear();
+            
+            LeaderboardPlugin.Instance.CreateIconPlayer();
             LeaderboardPlugin.Instance.StartInRaidHeartbeat();
             LeaderboardPlugin.logger.LogWarning("[State] Player started raid");
             return true;

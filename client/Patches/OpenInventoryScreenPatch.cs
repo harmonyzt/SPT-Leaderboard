@@ -16,8 +16,7 @@ namespace SPTLeaderboard.Patches
                 "Show",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                new[]
-                {
+                [
                     typeof(IHealthController),
                     typeof(InventoryController),
                     typeof(AbstractQuestControllerClass),
@@ -28,7 +27,7 @@ namespace SPTLeaderboard.Patches
                     typeof(ISession),
                     typeof(ItemContextAbstractClass),
                     typeof(bool)
-                },
+                ],
                 null
             );
 

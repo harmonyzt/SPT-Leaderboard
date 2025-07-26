@@ -19,9 +19,13 @@ namespace SPTLeaderboard.Patches
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;
             
+#if DEBUG
             LeaderboardPlugin.logger.LogWarning("[ProcessShot Local] Hit");
+#endif
             IPlayerOwner player = damageInfo.Player;
+#if DEBUG
             LeaderboardPlugin.logger.LogWarning($"[ProcessShot Local] Nick -> {player?.Nickname}");
+#endif
             if ((Player)((player != null) ? player.iPlayer : null) != PlayerHelper.Instance.Player)
             {
                 return true;

@@ -18,9 +18,13 @@ public class OnCoopApplyShotFourPatch: ModulePatch
         if (!SettingsModel.Instance.EnableSendData.Value)
             return;
             
+#if DEBUG
         LeaderboardPlugin.logger.LogWarning("[ProcessShot ObservedClientBridge] Hit");
+#endif
         IPlayerOwner player = damageInfo.Player;
+#if DEBUG
         LeaderboardPlugin.logger.LogWarning($"[ProcessShot ObservedClientBridge] Nick -> {player?.Nickname}");
+#endif
         if ((Player)((player != null) ? player.iPlayer : null) != PlayerHelper.Instance.Player)
         {
             return;
