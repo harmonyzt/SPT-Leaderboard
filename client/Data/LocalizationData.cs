@@ -21,29 +21,29 @@ public class LocalizationData
         { "es", "Has sido baneado por infringir las reglas del leaderboard." },
         { "es-mx", "Has sido baneado por violar las reglas del leaderboard." },
         { "tu", "Liderlik tablosu kurallarını ihlal ettiğiniz için yasaklandınız." },
-        { "ru", "Вы забанены за нарушение правил Leaderboard." },
+        { "ru", "Вы были забанены за нарушение правил SPT Leaderboard." },
         { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
     };
     
     public static Dictionary<string, string> Error_API_TOO_MUCH_REQUESTS = new Dictionary<string, string>
     {
-        { "ch", "" },
-        { "cz", "" },
-        { "en", "" },
-        { "fr", "" },
-        { "ge", "" },
-        { "hu", "" },
-        { "it", "" },
-        { "jp", "" },
-        { "kr", "" },
-        { "pl", "" },
-        { "po", "" },
-        { "sk", "" },
-        { "es", "" },
-        { "es-mx", "" },
-        { "tu", "" },
-        { "ru", "" },
-        { "ro", "" }
+        { "ch", "您向API发送了太多请求。 稍后再试。" },
+        { "cz", "Odeslali jste příliš mnoho požadavků na API. Zkuste to znovu později." },
+        { "en", "You've sent too many requests to API. Try again later." },
+        { "fr", "Vous avez envoyé trop de demandes à l'API. Réessayez plus tard." },
+        { "ge", "Sie haben zu viele Anfragen an die API gesendet. Versuchen Sie es später noch einmal." },
+        { "hu", "Túl sok kérést küldött az API-nak. Próbálja újra később." },
+        { "it", "Hai inviato troppe richieste all'API. Riprova più tardi." },
+        { "jp", "APIに送信したリクエストが多すぎます。 後でもう一度やり直してください。" },
+        { "kr", "너무 많은 요청을 보냈습니다. 나중에 다시 시도하십시오." },
+        { "pl", "Wysłałeś zbyt wiele żądań do API. Spróbuj ponownie później." },
+        { "po", "Você enviou muitas solicitações para a API. Tente novamente mais tarde." },
+        { "sk", "Do API ste odoslali príliš veľa požiadaviek. Skúste to znova neskôr." },
+        { "es", "Has enviado demasiadas solicitudes a la API. Inténtalo de nuevo más tarde." },
+        { "es-mx", "Has enviado demasiadas solicitudes a la API. Inténtalo de nuevo más tarde." },
+        { "tu", "API'ye çok fazla istek gönderdiniz. Daha sonra tekrar deneyin." },
+        { "ru", "Вы отправили слишком много запросов к API. Попробуйте еще раз позже." },
+        { "ro", "Ați trimis prea multe solicitări API. Încercați din nou mai târziu." }
     };
         
     public static Dictionary<string, string> Error_LA_TOS = new Dictionary<string, string> // 699
@@ -63,7 +63,7 @@ public class LocalizationData
         { "es", "Entrada al ranking denegada. Violación de LA/TOS 1.2" },
         { "es-mx", "Entrada al leaderboard denegada. Violación de LA/TOS 1.2" },
         { "tu", "Liderlik tablosuna giriş reddedildi. LA/TOS 1.2 ihlali" },
-        { "ru", "Доступ к таблице лидеров отклонён. Нарушение LA/TOS 1.2" },
+        { "ru", "Доступ к SPT Leaderboard отклонён. Нарушение LA/TOS 1.2" },
         { "ro", "Intrarea în clasament a fost refuzată. Încălcarea LA/TOS 1.2" }
     };
     
