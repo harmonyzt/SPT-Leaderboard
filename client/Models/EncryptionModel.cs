@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using SPTLeaderboard.Data;
 
 namespace SPTLeaderboard.Models
 {
@@ -17,21 +18,31 @@ namespace SPTLeaderboard.Models
         
         public string Token => _token;
         
-        private string PathToken => Path.Combine(BepInEx.Paths.PluginPath, "SPT-Leaderboard", "secret.token");
-
         private EncryptionModel()
         {
             try
             {
                 CheckIntegrityMod();
                 
-                if (!File.Exists(PathToken))
+                if (!File.Exists(GlobalData.PathToken))
                 {
-                    _token = GenerateToken();
-                    WriteTokenToFile(_token);
+                    //Migration block
+                    if (File.Exists(GlobalData.PathMigrationToken))
+                    {
+                        File.Copy(GlobalData.PathMigrationToken, GlobalData.PathToken);
+                        LoadToken();
+                        
+                        LeaderboardPlugin.logger.LogWarning(
+                            $"Migrated token from server mod. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!");
+                    }
+                    else
+                    {
+                        _token = GenerateToken();
+                        WriteTokenToFile(_token);
 
-                    LeaderboardPlugin.logger.LogWarning(
-                        $"Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!");
+                        LeaderboardPlugin.logger.LogWarning(
+                            $"Generated your secret token, see mod directory. WARNING: DO NOT SHARE IT WITH ANYONE! If you lose it, you will lose access to the Leaderboard until next season!");
+                    }
                 }
                 else
                 {
@@ -50,7 +61,7 @@ namespace SPTLeaderboard.Models
         
         private void LoadToken()
         {
-            _token = File.ReadAllText(PathToken);
+            _token = File.ReadAllText(GlobalData.PathToken);
         }
         
         private string GenerateToken()
@@ -66,7 +77,7 @@ namespace SPTLeaderboard.Models
         private void WriteTokenToFile(string token)
         {
             _token = token;
-            File.WriteAllText(PathToken, token);
+            File.WriteAllText(GlobalData.PathToken, token);
         }
         
         public static EncryptionModel Create()
