@@ -11,12 +11,14 @@ namespace SPTLeaderboard.Models
 	{
 		public static SettingsModel Instance { get; private set; }
 		
-#if DEBUG
+#if DEBUG || BETA
 		public ConfigEntry<KeyboardShortcut> KeyBind;
 		public ConfigEntry<KeyboardShortcut> KeyBindTwo;
 		public ConfigEntry<float> PositionXDebug;
 		public ConfigEntry<float> PositionYDebug;
 		public ConfigEntry<int> FontSizeDebug;
+#endif
+#if DEBUG
 		public ConfigEntry<bool> Debug;
 #endif
 		
@@ -31,21 +33,20 @@ namespace SPTLeaderboard.Models
 
 		private SettingsModel(ConfigFile configFile)
 		{
-#if DEBUG
-				
+#if DEBUG || BETA
 			KeyBind = configFile.Bind(
 				"Settings", 
-				"Test key bind", 
+				"Test key bind 1", 
 				new KeyboardShortcut(KeyCode.LeftArrow), 
 				new ConfigDescription(
-					"Just keybind for test requests")); 
+					"Just keybind for tests")); 
 			
 			KeyBindTwo = configFile.Bind(
 				"Settings", 
-				"Test key bind2", 
+				"Test key bind 2", 
 				new KeyboardShortcut(KeyCode.UpArrow), 
 				new ConfigDescription(
-					"Just keybind for test requests"));
+					"Just keybind for tests"));
 
 			PositionXDebug = configFile.Bind(
 				"Settings",
@@ -64,11 +65,12 @@ namespace SPTLeaderboard.Models
 				"FontSizeDebug",
 				28,
 				new ConfigDescription("FontSizeDebug", new AcceptableValueRange<int>(0, 200)));
-			
+#endif
+#if DEBUG
 			Debug = configFile.Bind(
 				"Settings", 
 				"Debug", 
-				true, //TODO: Set to false. BEFORE PROD
+				true,
 				new ConfigDescription(
 					"Display debug messages in console and log them inside SPT server .log file"));
 #endif
@@ -173,7 +175,7 @@ namespace SPTLeaderboard.Models
 						IsAdvanced = true
 					}));
 			
-			#if DEBUG
+			#if DEBUG || BETA
 			PositionXDebug.SettingChanged += (_, __) =>
 			{
 				OverlayDebug.Instance.SetOverlayPosition(new Vector2(PositionXDebug.Value, PositionYDebug.Value));

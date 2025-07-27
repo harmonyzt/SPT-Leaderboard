@@ -107,7 +107,7 @@ public class ProcessProfileModel
 #if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
-                        HaveDevItems = false; //TODO: Delete debug. BEFORE PROD
+                        HaveDevItems = false;
                     }
                     else
                     {
@@ -156,18 +156,15 @@ public class ProcessProfileModel
 
                 if (!isScavRaid)
                 {
-#if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
-                        LeaderboardPlugin.logger.LogWarning($"\n");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
-                    }
+#if DEBUG || BETA
+                    LeaderboardPlugin.logger.LogWarning($"\n");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
 #endif
                 }
 
@@ -184,9 +181,7 @@ public class ProcessProfileModel
                     HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                     TotalDamage = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
 
-#if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
+#if DEBUG || BETA
                         LeaderboardPlugin.logger.LogWarning($"\n");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage Scav {KilledSavage}");
@@ -194,7 +189,6 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
-                    }
 #endif
                 }
                 
@@ -228,22 +222,16 @@ public class ProcessProfileModel
                     var dataStatTrack = StatTrackInterop.LoadFromServer();
                     if (dataStatTrack != null)
                     {
-#if DEBUG
-                        if (SettingsModel.Instance.Debug.Value)
-                        {
-                            LeaderboardPlugin.logger.LogWarning(
-                                $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
-                        }
+#if DEBUG || BETA
+                        LeaderboardPlugin.logger.LogWarning(
+                            $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
 #endif
 
                         processedStatTrackData = GetAllValidWeapons(profileID ,dataStatTrack);
-#if DEBUG
+#if DEBUG || BETA
                         if (processedStatTrackData != null)
                         {
-                            if (SettingsModel.Instance.Debug.Value)
-                            {
-                                LeaderboardPlugin.logger.LogWarning(JsonConvert.SerializeObject(processedStatTrackData).ToJson());
-                            }
+                            LeaderboardPlugin.logger.LogWarning(JsonConvert.SerializeObject(processedStatTrackData).ToJson());
                         }
 #endif
                     }
@@ -281,11 +269,18 @@ public class ProcessProfileModel
                     var privateProfileData = new PrivateProfileData(baseData);
 
 #if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
-                        LeaderboardPlugin.logger.LogWarning(
-                            $"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
-                    }
+                    LeaderboardPlugin.logger.LogWarning(
+                        $"DATA privateProfileData {JsonConvert.SerializeObject(privateProfileData)}");
+#endif
+                    
+#if BETA
+                    var betaDataPrivateProfile = privateProfileData;
+                    betaDataPrivateProfile.ModInt = "BETA";
+                    betaDataPrivateProfile.Mods = ["BETA"];
+                    betaDataPrivateProfile.Token = "BETA";
+                    
+                    LeaderboardPlugin.logger.LogWarning(
+                        $"DATA privateProfileData {JsonConvert.SerializeObject(betaDataPrivateProfile)}");
 #endif
 
                     LeaderboardPlugin.SendProfileData(privateProfileData);
@@ -323,10 +318,16 @@ public class ProcessProfileModel
                     };
                     
 #if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
-                        LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
-                    }
+                    LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(pmcProfileData)}");
+#endif
+                    
+#if BETA
+                    var betaDataPmcProfile = pmcProfileData;
+                    betaDataPmcProfile.ModInt = "BETA";
+                    betaDataPmcProfile.Mods = ["BETA"];
+                    betaDataPmcProfile.Token = "BETA";
+                    
+                    LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(betaDataPmcProfile)}");
 #endif
 
                     LeaderboardPlugin.SendProfileData(pmcProfileData);
@@ -364,11 +365,17 @@ public class ProcessProfileModel
                     };
                     
 #if DEBUG
-                    if (SettingsModel.Instance.Debug.Value)
-                    {
-                        LeaderboardPlugin.logger.LogWarning(
-                            $"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
-                    }
+                    LeaderboardPlugin.logger.LogWarning(
+                        $"DATA SCAV {JsonConvert.SerializeObject(scavProfileData)}");
+#endif
+                    
+#if BETA
+                    var betaDataScavProfile = scavProfileData;
+                    betaDataScavProfile.ModInt = "BETA";
+                    betaDataScavProfile.Mods = ["BETA"];
+                    betaDataScavProfile.Token = "BETA";
+                    
+                    LeaderboardPlugin.logger.LogWarning($"DATA SCAV {JsonConvert.SerializeObject(betaDataScavProfile)}");
 #endif
 
                     LeaderboardPlugin.SendProfileData(scavProfileData);

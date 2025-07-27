@@ -21,11 +21,8 @@ namespace SPTLeaderboard.Models
         /// </summary>
         public static NetworkApiRequestModel Create(string url)
         {
-#if DEBUG
-            if (SettingsModel.Instance.Debug.Value)
-            {
-                LeaderboardPlugin.logger.LogWarning($"Request Url -> '{url}'");
-            }
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"Request Url -> '{url}'");
 #endif
             
             var obj = new GameObject("[SPTLeaderboard] NetworkRequest");
@@ -73,12 +70,9 @@ namespace SPTLeaderboard.Models
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
             
-#if DEBUG
-            if (SettingsModel.Instance.Debug.Value)
-            {
-                var reqId = Guid.NewGuid().ToString();
-                LeaderboardPlugin.logger.LogWarning($"Request ID = {reqId}");
-            }
+#if DEBUG || BETA
+            var reqId = Guid.NewGuid().ToString();
+            LeaderboardPlugin.logger.LogWarning($"Request ID = {reqId}");
 #endif
 
             request.timeout = SettingsModel.Instance.ConnectionTimeout.Value;
@@ -91,13 +85,9 @@ namespace SPTLeaderboard.Models
             }
             else
             {
-#if DEBUG
-                if (SettingsModel.Instance.Debug.Value)
-                {
-                    LeaderboardPlugin.logger.LogWarning($"OnFail response {request.downloadHandler.text}");
-                }
+#if DEBUG || BETA
+                LeaderboardPlugin.logger.LogWarning($"OnFail response {request.downloadHandler.text}");
 #endif
-
                 OnFail?.Invoke(request.error, request.responseCode);
             }
             

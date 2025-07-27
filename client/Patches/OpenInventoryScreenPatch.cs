@@ -41,7 +41,6 @@ namespace SPTLeaderboard.Patches
             {
                 HeartbeatSender.Send(PlayerState.IN_STASH);
                 LeaderboardPlugin.logger.LogWarning("[State] Player opened Inventory screen");
-                return true;
             }
 
             return true;

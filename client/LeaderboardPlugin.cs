@@ -91,8 +91,9 @@ namespace SPTLeaderboard
 
         public void CreateIconPlayer()
         {
+#if BETA || DEBUG
             logger.LogWarning("Start create icon");
-
+#endif
             if (!_iconSaver)
             {
                 _iconSaver = gameObject.AddComponent<IconSaver>();

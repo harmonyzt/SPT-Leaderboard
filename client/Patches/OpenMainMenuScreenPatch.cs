@@ -36,8 +36,8 @@ namespace SPTLeaderboard.Patches
             {
                 HeartbeatSender.Send(PlayerState.IN_MENU);
                 LeaderboardPlugin.logger.LogWarning("[State] Player opened MainMenu screen");
-                return true;
             }
+            
             return true;
         }
     }

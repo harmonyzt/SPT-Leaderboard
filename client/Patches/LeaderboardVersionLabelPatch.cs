@@ -2,6 +2,7 @@
 using EFT.UI;
 using HarmonyLib;
 using SPT.Reflection.Patching;
+using SPTLeaderboard.Data;
 
 namespace SPTLeaderboard.Patches
 {
@@ -29,9 +30,11 @@ namespace SPTLeaderboard.Patches
 			if (!string.IsNullOrEmpty(string_4))
 				str = str + " | " + string_4;
 #if DEBUG
-			str = str + " | " + "SPT Leaderboard 3.1.0 [DEBUG]";
+			str = str + " | " + $"SPT Leaderboard 3.1.0 [DEBUG] - {GlobalData.SubVersion}";
+#elif BETA
+			str = str + " | " + $"SPT Leaderboard 3.1.0 [BETA] - {GlobalData.SubVersion}";
 #else
-			str = str + " | " + "SPT Leaderboard 3.1.0";	
+			str = str + " | " + "SPT Leaderboard 3.1.0";
 #endif
 			
 			var labelField = AccessTools.Field(typeof(PreloaderUI), "_alphaVersionLabel");

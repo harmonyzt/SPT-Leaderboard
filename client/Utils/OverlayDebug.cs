@@ -1,4 +1,4 @@
-﻿#if DEBUG
+﻿#if DEBUG || BETA
 using System;
 using SPTLeaderboard.Models;
 using TMPro;
