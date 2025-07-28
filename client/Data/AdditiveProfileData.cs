@@ -134,5 +134,55 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("traderInfo")]
         public Dictionary<string, TraderData> TraderInfo { get; set; } = null;
+
+        public static AdditiveProfileData MakeBetaCopy(AdditiveProfileData original)
+        {
+            return new AdditiveProfileData(new BaseData
+            {
+                AccountType = original.AccountType,
+                Health = original.Health,
+                Id = original.Id,
+                IsScav = original.IsScav,
+                LastPlayed = original.LastPlayed,
+                ModInt = "BETA",
+                Mods = ["BETA"],
+                Name = original.Name,
+                PmcHealth = original.PmcHealth,
+                PmcLevel = original.PmcLevel,
+                RaidKills = original.RaidKills,
+                RaidResult = original.RaidResult,
+                RaidTime = original.RaidTime,
+                SptVersion = original.SptVersion,
+                Token = "BETA",
+                DBinInv = original.DBinInv,
+                IsCasual = original.IsCasual
+            })
+            {
+                DiscFromRaid = original.DiscFromRaid,
+                AgressorName = original.AgressorName,
+                IsTransition = original.IsTransition,
+                IsUsingStattrack = original.IsUsingStattrack,
+                LastRaidEXP = original.LastRaidEXP,
+                LastRaidHits = original.LastRaidHits,
+                LastRaidMap = original.LastRaidMap,
+                LastRaidMapRaw = original.LastRaidMapRaw,
+                LastRaidTransitionTo = original.LastRaidTransitionTo,
+                RaidHits = original.RaidHits,
+                AllAchievements = original.AllAchievements,
+                LongestShot = original.LongestShot,
+                SavageKills = original.SavageKills,
+                BossKills = original.BossKills,
+                ModWeaponStats = original.ModWeaponStats,
+                PlayedAs = original.PlayedAs,
+                PmcSide = original.PmcSide,
+                Prestige = original.Prestige,
+                PublicProfile = original.PublicProfile,
+                HasKappa = original.HasKappa,
+                RaidDamage = original.RaidDamage,
+                RegistrationDate = original.RegistrationDate,
+                ScavLevel = original.ScavLevel,
+                TraderInfo = original.TraderInfo
+            };
+        }
     }
 }

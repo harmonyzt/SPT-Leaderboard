@@ -274,7 +274,7 @@ public class ProcessProfileModel
 #endif
                     
 #if BETA
-                    var betaDataPrivateProfile = privateProfileData;
+                    var betaDataPrivateProfile = PrivateProfileData.MakeBetaCopy(privateProfileData);
                     betaDataPrivateProfile.ModInt = "BETA";
                     betaDataPrivateProfile.Mods = ["BETA"];
                     betaDataPrivateProfile.Token = "BETA";
@@ -322,7 +322,7 @@ public class ProcessProfileModel
 #endif
                     
 #if BETA
-                    var betaDataPmcProfile = pmcProfileData;
+                    var betaDataPmcProfile = AdditiveProfileData.MakeBetaCopy(pmcProfileData);
                     betaDataPmcProfile.ModInt = "BETA";
                     betaDataPmcProfile.Mods = ["BETA"];
                     betaDataPmcProfile.Token = "BETA";
@@ -370,7 +370,7 @@ public class ProcessProfileModel
 #endif
                     
 #if BETA
-                    var betaDataScavProfile = scavProfileData;
+                    var betaDataScavProfile = AdditiveProfileData.MakeBetaCopy(scavProfileData);
                     betaDataScavProfile.ModInt = "BETA";
                     betaDataScavProfile.Mods = ["BETA"];
                     betaDataScavProfile.Token = "BETA";

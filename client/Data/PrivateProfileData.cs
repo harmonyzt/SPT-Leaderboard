@@ -47,9 +47,6 @@ namespace SPTLeaderboard.Data
         [JsonProperty("sptVer")]
         public string SptVersion { get; set; } = baseData.SptVersion;
 
-        // [JsonProperty("teamTag")]
-        // public string TeamTag { get; set; }
-
         [JsonProperty("token")]
         public string Token { get; set; } = baseData.Token;
 
@@ -61,5 +58,49 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("publicProfile")]
         public bool IsPublicProfile { get; set; } = false;
+        
+        public static PrivateProfileData MakeBetaCopy(PrivateProfileData original)
+        {
+            return new PrivateProfileData(new BaseData
+            {
+                AccountType = original.AccountType,
+                Health = original.Health,
+                Id = original.Id,
+                IsScav = original.IsScav,
+                LastPlayed = original.LastPlayed,
+                ModInt = "BETA",
+                Mods = ["BETA"],
+                Name = original.Name,
+                PmcHealth = original.PmcHealth,
+                PmcLevel = original.PmcLevel,
+                RaidKills = original.RaidKills,
+                RaidResult = original.RaidResult,
+                RaidTime = original.RaidTime,
+                SptVersion = original.SptVersion,
+                Token = "BETA",
+                DBinInv = original.DBinInv,
+                IsCasual = original.IsCasual
+            })
+            {
+                AccountType = original.AccountType,
+                Health = original.Health,
+                Id = original.Id,
+                IsScav = original.IsScav,
+                LastPlayed = original.LastPlayed,
+                ModInt = "BETA",
+                Mods = ["BETA"],
+                Name = original.Name,
+                PmcHealth = original.PmcHealth,
+                PmcLevel = original.PmcLevel,
+                RaidKills = original.RaidKills,
+                RaidResult = original.RaidResult,
+                RaidTime = original.RaidTime,
+                SptVersion = original.SptVersion,
+                Token = "BETA",
+                DBinInv = original.DBinInv,
+                IsCasual = original.IsCasual,
+                IsPublicProfile = false
+            };
+        }
     }
 }
