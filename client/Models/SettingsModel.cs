@@ -35,40 +35,40 @@ namespace SPTLeaderboard.Models
 		{
 #if DEBUG || BETA
 			KeyBind = configFile.Bind(
-				"Settings", 
+				"2. Debug",
 				"Test key bind 1", 
 				new KeyboardShortcut(KeyCode.LeftArrow), 
 				new ConfigDescription(
 					"Just keybind for tests")); 
 			
 			KeyBindTwo = configFile.Bind(
-				"Settings", 
+				"2. Debug",
 				"Test key bind 2", 
 				new KeyboardShortcut(KeyCode.UpArrow), 
 				new ConfigDescription(
 					"Just keybind for tests"));
 
 			PositionXDebug = configFile.Bind(
-				"Settings",
+				"2. Debug",
 				"PositionX",
 				10f,
 				new ConfigDescription("X Position", new AcceptableValueRange<float>(-2000f, 2000f)));
 
 			PositionYDebug = configFile.Bind(
-				"Settings",
+				"2. Debug",
 				"PositionY",
 				-10f,
 				new ConfigDescription("Y Position", new AcceptableValueRange<float>(-2000f, 2000f)));
 			
 			FontSizeDebug = configFile.Bind(
-				"Settings",
+				"2. Debug",
 				"FontSizeDebug",
 				28,
 				new ConfigDescription("FontSizeDebug", new AcceptableValueRange<int>(0, 200)));
 #endif
 #if DEBUG
 			Debug = configFile.Bind(
-				"Settings", 
+				"2. Debug",
 				"Debug", 
 				true,
 				new ConfigDescription(
@@ -76,7 +76,7 @@ namespace SPTLeaderboard.Models
 #endif
 			
 			EnableSendData = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Is Sending Data", 
 				true, 
 				new ConfigDescription(
@@ -84,11 +84,11 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 8
+						Order = 7
 					}));
 			
 			ModCasualMode = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Casual mode", 
 				false, 
 				new ConfigDescription(
@@ -96,11 +96,11 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 7
+						Order = 6
 					}));
 			
 			PublicProfile = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Public Profile", 
 				true, 
 				new ConfigDescription(
@@ -108,11 +108,11 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 6
+						Order = 5
 					}));
 			
 			EnableModSupport = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Mod Support", 
 				true, 
 				new ConfigDescription(
@@ -120,11 +120,11 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 5
+						Order = 4
 					}));
 			
 			ConnectionTimeout = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Connection Timeout", 
 				10, 
 				new ConfigDescription(
@@ -132,27 +132,14 @@ namespace SPTLeaderboard.Models
 					null, 
 					new ConfigurationManagerAttributes
 					{
-						Order = 4,
-						IsAdvanced = true
-					}));
-			
-			PhpEndpoint = configFile.Bind(
-				"Settings", 
-				"PHP Endpoint", 
-				"visuals.nullcore.net", 
-				new ConfigDescription(
-					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
-					null, 
-					new ConfigurationManagerAttributes
-					{
 						Order = 3,
 						IsAdvanced = true
 					}));
 			
-			PhpPath = configFile.Bind(
-				"Settings", 
-				"PHP Path", 
-				"/SPT/api/", 
+			PhpEndpoint = configFile.Bind(
+				"1. Settings", 
+				"PHP Endpoint", 
+				"visuals.nullcore.net", 
 				new ConfigDescription(
 					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
 					null, 
@@ -162,8 +149,21 @@ namespace SPTLeaderboard.Models
 						IsAdvanced = true
 					}));
 			
+			PhpPath = configFile.Bind(
+				"1. Settings", 
+				"PHP Path", 
+				"/SPT/api/", 
+				new ConfigDescription(
+					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 1,
+						IsAdvanced = true
+					}));
+			
 			SupportInRaidConnectionTimer = configFile.Bind(
-				"Settings", 
+				"1. Settings", 
 				"Support In Raid Connection Timer", 
 				60, 
 				new ConfigDescription(
