@@ -13,6 +13,9 @@ if ($subVersionLine -match 'SubVersion\s*=\s*"(\d+)"') {
     exit 1
 }
 
+$sha256 = Get-FileHash -Algorithm SHA256 -Path $dllPath
+Write-Host "SHA256 Hash of DLL: $($sha256.Hash.ToLower())"
+
 $sourceFolder = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\*"
 
 $destinationZip = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_Leaderboard_DEBUG_v${versionClean}-${subVersion}.zip"

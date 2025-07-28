@@ -4,6 +4,9 @@ $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).Produc
 
 $versionClean = $version -replace '[^\d\.]', ''
 
+$sha256 = Get-FileHash -Algorithm SHA256 -Path $dllPath
+Write-Host "SHA256 Hash of DLL: $($sha256.Hash.ToLower())"
+
 $sourceFolder = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\*"
 
 $destinationZip = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_Leaderboard_RELEASE_v$versionClean.zip"
