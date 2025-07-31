@@ -294,19 +294,21 @@ namespace SPTLeaderboard.Utils
         private Texture2D CropCentered(Texture2D original)
         {
             const int targetWidth = 1295;
-            const int targetHeight = 2160;
+            int targetHeight = original.height; // Keep full height
+
+            if (original.width < targetWidth)
+            {
+                LeaderboardPlugin.logger.LogWarning("Original width is less than target width. Returning original.");
+                return original;
+            }
 
             int centerX = original.width / 2;
-            int centerY = original.height / 2;
-
             int startX = centerX - (targetWidth / 2);
-            int startY = centerY - (targetHeight / 2);
 
-            // Защита от выхода за пределы изображения
+            // Clamp to avoid out-of-bounds
             startX = Mathf.Clamp(startX, 0, original.width - targetWidth);
-            startY = Mathf.Clamp(startY, 0, original.height - targetHeight);
 
-            Color[] pixels = original.GetPixels(startX, startY, targetWidth, targetHeight);
+            Color[] pixels = original.GetPixels(startX, 0, targetWidth, targetHeight);
             Texture2D cropped = new Texture2D(targetWidth, targetHeight, TextureFormat.RGBA32, false);
             cropped.SetPixels(pixels);
             cropped.Apply();
