@@ -123,7 +123,7 @@ namespace SPTLeaderboard.Utils
             catch (Exception ex)
             {
                 NotificationManagerClass.DisplayMessageNotification("Error 4. Failed to save screenshot", ENotificationDurationType.Default, ENotificationIconType.Alert, null);
-                LeaderboardPlugin.logger.LogError($"Ошибка при сохранении скриншота: {ex.Message}");
+                LeaderboardPlugin.logger.LogError($"Error to save screenshot: {ex.Message}");
                 LeaderboardPlugin.logger.LogError($"{ex.StackTrace}");
                 return false;
             }
