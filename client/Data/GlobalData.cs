@@ -6,7 +6,7 @@ namespace SPTLeaderboard.Data;
 public static class GlobalData
 {
     public const string Version = "2.6.0";
-    public const string SubVersion = "1";
+    public const string SubVersion = "2";
     public const string BaseSPTVersion = "3.11.3";
     public static string HeartbeatUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}heartbeat/v1.php";
     public static string ProfileUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}v2/v2.php";
