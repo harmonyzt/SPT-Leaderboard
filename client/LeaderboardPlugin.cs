@@ -74,7 +74,19 @@ namespace SPTLeaderboard
         {
             if (_settings.KeyBind.Value.IsDown())
             {
-                CreateIconFullBodyPlayer();
+                var getRequest = NetworkApiRequestModel.CreateGet("https://visuals.nullcore.net/SPT/data/seasons/season4.json");
+
+                getRequest.OnSuccess += (result, code) =>
+                {
+                    logger.LogWarning($"GET Success [{code}]: {result}");
+                };
+
+                getRequest.OnFail += (error, code) =>
+                {
+                    logger.LogWarning($"GET Failed [{code}]: {error}");
+                };
+
+                getRequest.Send();
             }
         }
 

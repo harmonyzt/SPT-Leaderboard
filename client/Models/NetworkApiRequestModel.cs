@@ -10,6 +10,7 @@ namespace SPTLeaderboard.Models
     {
         private string _url;
         private string _jsonBody;
+        private string _httpMethod = UnityWebRequest.kHttpVerbPOST;
 
         public Action<string, long> OnSuccess;
         public Action<string, long> OnFail;
@@ -29,18 +30,34 @@ namespace SPTLeaderboard.Models
         }
 
         /// <summary>
-        /// Factory create request
+        /// Factory method for POST requests
         /// </summary>
         public static NetworkApiRequestModel Create(string url)
         {
 #if DEBUG || BETA
-            LeaderboardPlugin.logger.LogWarning($"Request Url -> '{url}'");
+            LeaderboardPlugin.logger.LogWarning($"[POST] Request Url -> '{url}'");
 #endif
-            
             var obj = new GameObject("[SPTLeaderboard] NetworkRequest");
             DontDestroyOnLoad(obj);
             var request = obj.AddComponent<NetworkApiRequestModel>();
             request._url = url;
+            request._httpMethod = UnityWebRequest.kHttpVerbPOST;
+            return request;
+        }
+
+        /// <summary>
+        /// Factory method for GET requests
+        /// </summary>
+        public static NetworkApiRequestModel CreateGet(string url)
+        {
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"[GET] Request Url -> '{url}'");
+#endif
+            var obj = new GameObject("[SPTLeaderboard] NetworkRequest");
+            DontDestroyOnLoad(obj);
+            var request = obj.AddComponent<NetworkApiRequestModel>();
+            request._url = url;
+            request._httpMethod = UnityWebRequest.kHttpVerbGET;
             return request;
         }
 
@@ -62,9 +79,9 @@ namespace SPTLeaderboard.Models
 
         private IEnumerator RunBaseRequest()
         {
-            if (string.IsNullOrEmpty(_jsonBody))
+            if (_httpMethod == UnityWebRequest.kHttpVerbPOST && string.IsNullOrEmpty(_jsonBody))
             {
-                LeaderboardPlugin.logger.LogWarning("Data is null or empty, skipping request");
+                LeaderboardPlugin.logger.LogWarning("Data is null or empty, skipping POST request");
                 yield break;
             }
             
@@ -75,12 +92,22 @@ namespace SPTLeaderboard.Models
             
             _isComplete = true;
             
-            using var request = new UnityWebRequest(_url, UnityWebRequest.kHttpVerbPOST);
-            var bodyRaw = Encoding.UTF8.GetBytes(_jsonBody);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
+            UnityWebRequest request;
 
-            request.SetRequestHeader("Content-Type", "application/json");
+            if (_httpMethod == UnityWebRequest.kHttpVerbPOST)
+            {
+                request = new UnityWebRequest(_url, UnityWebRequest.kHttpVerbPOST);
+                var bodyRaw = Encoding.UTF8.GetBytes(_jsonBody);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+            }
+            else // GET
+            {
+                request = UnityWebRequest.Get(_url);
+            }
+
+            request.downloadHandler ??= new DownloadHandlerBuffer();
             request.SetRequestHeader("X-SPT-Mod", "SPTLeaderboard");
             
 #if DEBUG || BETA
