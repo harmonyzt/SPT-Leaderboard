@@ -213,6 +213,8 @@ public class ProcessProfileModel
                 
                 if (!SettingsModel.Instance.EnableModSupport.Value && !statTrackIsUsed)
                 {
+                    LeaderboardPlugin.logger.LogWarning(
+                        $"StatTrack process data skip. StatTrack Find? : {statTrackIsUsed} | Enabled Mod Support? : {SettingsModel.Instance.EnableModSupport.Value}");
                     processedStatTrackData = null;
                 }
                 else
@@ -226,12 +228,11 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning(
                             $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
 #endif
-
                         processedStatTrackData = GetAllValidWeapons(profileID ,dataStatTrack);
 #if DEBUG || BETA
                         if (processedStatTrackData != null)
                         {
-                            LeaderboardPlugin.logger.LogWarning(JsonConvert.SerializeObject(processedStatTrackData).ToJson());
+                            LeaderboardPlugin.logger.LogWarning("processedStatTrackData != null: Data -> "+JsonConvert.SerializeObject(processedStatTrackData).ToJson());
                         }
 #endif
                     }
@@ -468,6 +469,7 @@ public class ProcessProfileModel
     {
         if (!info.ContainsKey(sessionId))
         {
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists data for current session: {sessionId}");
             return null;
         }
 
@@ -485,19 +487,13 @@ public class ProcessProfileModel
             // Skip weapons with unknown names
             if (weaponName == "Unknown")
             {
-#if DEBUG
-                if (SettingsModel.Instance.Debug.Value)
-                {
-                    LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName + " ShortName"}");
-                }
+#if DEBUG || BETA
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName + " ShortName"}");
 #endif
                 continue;
             }
-#if DEBUG
-            if (SettingsModel.Instance.Debug.Value)
-            {
-                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName + " ShortName"}");
-            }
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName + " ShortName"}");
 #endif
             result[sessionId][weaponName] = new WeaponInfo
             {
@@ -508,11 +504,8 @@ public class ProcessProfileModel
 
         if (result[sessionId].Count == 0)
         {
-#if DEBUG
-            if (SettingsModel.Instance.Debug.Value)
-            {
-                LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
-            }
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
 #endif
             return null;
         }
