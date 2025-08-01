@@ -15,6 +15,18 @@ namespace SPTLeaderboard.Models
         public Action<string, long> OnFail;
         
         private bool _isComplete;
+        
+        private int _retryCount = 0;
+        private int _maxRetries = 2;
+        
+        /// <summary>
+        /// Set count tries when reqeust timeout
+        /// </summary>
+        /// <param name="maxRetries"></param>
+        public void SetMaxRetries(int maxRetries)
+        {
+            _maxRetries = maxRetries;
+        }
 
         /// <summary>
         /// Factory create request
@@ -60,6 +72,7 @@ namespace SPTLeaderboard.Models
             {
                 yield break;
             }
+            
             _isComplete = true;
             
             using var request = new UnityWebRequest(_url, UnityWebRequest.kHttpVerbPOST);
@@ -82,17 +95,33 @@ namespace SPTLeaderboard.Models
             if (request.result == UnityWebRequest.Result.Success)
             {
                 OnSuccess?.Invoke(request.downloadHandler.text, request.responseCode);
+                Destroy(gameObject);
             }
             else
             {
-#if DEBUG || BETA
-                LeaderboardPlugin.logger.LogWarning($"OnFail response {request.downloadHandler.text}");
+                bool isTimeout = request.error != null && request.error.ToLower().Contains("timeout");
+                
+                if (isTimeout && _retryCount < _maxRetries)
+                {
+                    _retryCount++;
+                    LeaderboardPlugin.logger.LogWarning($"Timeout, retrying {_retryCount}/{_maxRetries}...");
+                    _isComplete = false;
+                    yield return new WaitForSeconds(0.5f);
+                    StartCoroutine(RunBaseRequest());
+                }
+                else
+                {
+                    if (_retryCount >= _maxRetries && isTimeout)
+                    {
+                        LeaderboardPlugin.logger.LogWarning("After five tries, nothing came out");
+                    }
+#if DEBUG || BETA           
+                    LeaderboardPlugin.logger.LogWarning($"OnFail response {request.downloadHandler.text}");
 #endif
-                OnFail?.Invoke(request.error, request.responseCode);
+                    OnFail?.Invoke(request.error, request.responseCode);
+                    Destroy(gameObject);
+                }
             }
-            
-            Destroy(gameObject);
         }
-        
     }
 }
