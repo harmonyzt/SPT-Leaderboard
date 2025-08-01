@@ -29,13 +29,9 @@ namespace SPTLeaderboard.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            if (!SettingsModel.Instance.EnableSendData.Value)
-                return true;
-            
-            if (!PlayerHelper.HasRaidStarted())
+            if (!LeaderboardPlugin.Instance.cachedPlayerModelPreview)
             {
-                HeartbeatSender.Send(PlayerState.IN_MENU);
-                LeaderboardPlugin.logger.LogWarning("[State] Player opened MainMenu screen");
+                LeaderboardPlugin.Instance.CacheFullBodyPlayerModelView();
             }
             
             if (!LeaderboardPlugin.Instance.engLocaleLoaded)
@@ -48,8 +44,16 @@ namespace SPTLeaderboard.Patches
                 else
                 {
                     LeaderboardPlugin.Instance.engLocaleLoaded = true;
-                    return true;
                 }
+            }
+            
+            if (!SettingsModel.Instance.EnableSendData.Value)
+                return true;
+            
+            if (!PlayerHelper.HasRaidStarted())
+            {
+                HeartbeatSender.Send(PlayerState.IN_MENU);
+                LeaderboardPlugin.logger.LogWarning("[State] Player opened MainMenu screen");
             }
             
             return true;

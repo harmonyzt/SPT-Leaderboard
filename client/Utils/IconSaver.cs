@@ -19,6 +19,7 @@ namespace SPTLeaderboard.Utils
         private PlayerModelView _targetPlayerModelView;
         
         public GameObject clonePlayerModelViewObj;
+        public GameObject cachedPlayerModelViewObj;
         
         /// <summary>
         /// Create icon with face player model 500*500
@@ -147,26 +148,51 @@ namespace SPTLeaderboard.Utils
                 if (CaptureFromRenderTexture(rawImage, GlobalData.LeaderboardFullImagePath))
                 {
                     LeaderboardPlugin.logger.LogInfo("Saved fullbody icon");
+                    _isShowed = false;
+                    _targetPlayerModelView.Close();
+                    Destroy(clonePlayerModelViewObj);
+                    clonePlayerModelViewObj = null;
+                    _targetPlayerModelView = null;
                 }
                 else
                 {
                     LeaderboardPlugin.logger.LogWarning("Not saved fullbody icon");
+                    _isShowed = false;
+                    _targetPlayerModelView.Close();
+                    Destroy(clonePlayerModelViewObj);
+                    clonePlayerModelViewObj = null;
+                    _targetPlayerModelView = null;
                 }
             }
             else
             {
                 LeaderboardPlugin.logger.LogWarning("RawImage not found in PlayerModelView");
+                _isShowed = false;
+                _targetPlayerModelView.Close();
+                Destroy(clonePlayerModelViewObj);
+                clonePlayerModelViewObj = null;
+                _targetPlayerModelView = null;
             }
         }
         
         /// <summary>
         /// Create clone gameObject and place it in other gameObject
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="prefab"></param>
-        /// <returns></returns>
-        public GameObject CreateClonedPlayerModelView(GameObject parent, GameObject prefab)
+        public GameObject CreateClonedPlayerModelView()
         {
+            GameObject prefab;
+            if (cachedPlayerModelViewObj == null)
+            {
+                prefab = GameObject.Find("Common UI/Common UI/InventoryScreen/Overall Panel/LeftSide/CharacterPanel/PlayerModelView");
+                LeaderboardPlugin.logger.LogError("CreateClonedPlayerModelView - Cache not exists, create from original obj");
+            }
+            else
+            {
+                prefab = cachedPlayerModelViewObj;
+                LeaderboardPlugin.logger.LogWarning("CreateClonedPlayerModelView - Prefab is cache.");
+            }
+            GameObject parent = GameObject.Find("Menu UI/UI/Matchmaker Time Has Come");
+            
             var flag = parent == null || prefab == null;
             GameObject clonedPlayerModelObject;
             if (flag)
@@ -214,6 +240,26 @@ namespace SPTLeaderboard.Utils
                 clonedPlayerModelObject = copyPlayerModel;
             }
             return clonedPlayerModelObject;
+        }
+        
+        /// <summary>
+        /// Create clone gameObject and cache it in other gameObject
+        /// </summary>
+        public void CachePlayerModelView()
+        {
+            LeaderboardPlugin.logger.LogWarning($"CachePlayerModelView - Start caching...");
+            
+            GameObject prefab = GameObject.Find("Common UI/Common UI/InventoryScreen/Overall Panel/LeftSide/CharacterPanel/PlayerModelView");
+            GameObject parent = GameObject.Find("Common UI/Common UI/MenuScreen");
+
+            GameObject cachePlayerModel = Instantiate(prefab, parent.transform);
+            cachePlayerModel.name = "[SPTLeaderboard][Cache] PlayerModelView";
+            cachePlayerModel.SetActive(false);
+            cachePlayerModel.transform.position = GetOffScreenPosition();
+            cachedPlayerModelViewObj = cachePlayerModel;
+            
+            LeaderboardPlugin.logger.LogWarning($"CachePlayerModelView - Cache created!");
+            LeaderboardPlugin.Instance.cachedPlayerModelPreview = true;
         }
 
         #region Utils

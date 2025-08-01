@@ -26,6 +26,7 @@ namespace SPTLeaderboard
         private Timer _preRaidCheckTimer;
         
         public bool canPreRaidCheck = true;
+        public bool cachedPlayerModelPreview = false;
         public bool engLocaleLoaded = false;
 
         public static ManualLogSource logger;
@@ -68,14 +69,19 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-        
+
+        private void Update()
+        {
+            if (_settings.KeyBind.Value.IsDown())
+            {
+                CreateIconFullBodyPlayer();
+            }
+        }
+
         #region Icons
         
         public void CreateIconFullBodyPlayer()
         {
-            GameObject playerModelViewPrefab = GameObject.Find("Common UI/Common UI/InventoryScreen/Overall Panel/LeftSide/CharacterPanel/PlayerModelView");
-            GameObject menuScreenParent = GameObject.Find("Menu UI/UI/Matchmaker Time Has Come");
-
             if (!_iconSaver)
             {
                 _iconSaver = gameObject.AddComponent<IconSaver>();
@@ -83,11 +89,21 @@ namespace SPTLeaderboard
 
             if (!_iconSaver.clonePlayerModelViewObj)
             {
-                _iconSaver.clonePlayerModelViewObj = _iconSaver.CreateClonedPlayerModelView(menuScreenParent, playerModelViewPrefab);
+                _iconSaver.clonePlayerModelViewObj = _iconSaver.CreateClonedPlayerModelView();
                 _iconSaver.HidePlayerModelExtraElements();
             }
                 
             _iconSaver.CreateFullBodyIcon();
+        }
+        
+        public void CacheFullBodyPlayerModelView()
+        {
+            if (!_iconSaver)
+            {
+                _iconSaver = gameObject.AddComponent<IconSaver>();
+            }
+
+            _iconSaver.CachePlayerModelView();
         }
 
         public void CreateIconPlayer()
@@ -137,7 +153,6 @@ namespace SPTLeaderboard
                 logger.LogWarning($"Request Image Data {jsonBody}");
             }
 #endif
-                    
             request.SetData(jsonBody);
             request.Send();
         }
