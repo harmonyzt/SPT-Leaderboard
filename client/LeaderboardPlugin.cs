@@ -26,6 +26,7 @@ namespace SPTLeaderboard
         private Timer _preRaidCheckTimer;
         
         public bool canPreRaidCheck = true;
+        public bool engLocaleLoaded = false;
 
         public static ManualLogSource logger;
 
@@ -67,7 +68,7 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
         }
-
+        
         #region Icons
         
         public void CreateIconFullBodyPlayer()

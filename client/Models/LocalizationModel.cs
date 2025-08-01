@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
 using Newtonsoft.Json;
@@ -140,10 +142,25 @@ namespace SPTLeaderboard.Models
         {
             return profileData.Side == EPlayerSide.Savage ? Transliterate(profileData.Nickname) : profileData.Nickname;
         }
-        
-        public static string Transliterate(string text)
+
+        private static string Transliterate(string text)
         {
             return GClass930.dictionary_0.Aggregate(text, (current, key) => current.Replace(key.Key, key.Value));
+        }
+
+        public async Task LoadEnglishLocaleAsync()
+        {
+            try
+            {
+                LeaderboardPlugin.logger.LogInfo("Request to load english locale");
+                var session = PlayerHelper.GetSession();
+                Dictionary<string, string> result = await session.GetLocalization("en");
+                LocaleManagerClass.LocaleManagerClass.UpdateLocales("en", result);
+            }
+            catch (Exception e)
+            {
+                LeaderboardPlugin.logger.LogError($"Fail Request load english locale -> {e}");
+            }
         }
     }
 }

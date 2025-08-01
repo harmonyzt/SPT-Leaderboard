@@ -38,6 +38,20 @@ namespace SPTLeaderboard.Patches
                 LeaderboardPlugin.logger.LogWarning("[State] Player opened MainMenu screen");
             }
             
+            if (!LeaderboardPlugin.Instance.engLocaleLoaded)
+            { 
+                bool hasEnLocale = LocaleManagerClass.LocaleManagerClass.dictionary_4.TryGetValue("en", out _);
+                if (!hasEnLocale)
+                {
+                    _ = LocalizationModel.Instance.LoadEnglishLocaleAsync();
+                }
+                else
+                {
+                    LeaderboardPlugin.Instance.engLocaleLoaded = true;
+                    return true;
+                }
+            }
+            
             return true;
         }
     }

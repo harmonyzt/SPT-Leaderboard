@@ -464,7 +464,7 @@ public class ProcessProfileModel
         { "656f0f98d80a697f855d34b1", "BTR_DRIVER" },
         { "5c0647fdd443bc2504c2d371", "JAEGER" }
     };
-    
+
     private Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
     {
         if (!info.ContainsKey(sessionId))
@@ -488,12 +488,12 @@ public class ProcessProfileModel
             if (weaponName == "Unknown")
             {
 #if DEBUG || BETA
-                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponName + " ShortName"}");
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponId + " ShortName"}");
 #endif
                 continue;
             }
 #if DEBUG || BETA
-            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponName + " ShortName"}");
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponId + " ShortName"}");
 #endif
             result[sessionId][weaponName] = new WeaponInfo
             {
