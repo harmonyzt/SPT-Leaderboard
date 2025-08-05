@@ -201,9 +201,9 @@ public class ProcessProfileModel
                 #endregion
                 
                 var listModsPlayer = DataUtils.GetServerMods()
-                    .Concat(DataUtils.GetDirectories(GlobalData.UserModsPath))
-                    .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
-                    .Concat(DataUtils.GetDirectories(BepInEx.Paths.PluginPath))
+                    .Concat(DataUtils.GetUserMods())
+                    .Concat(DataUtils.GetBepinexMods())
+                    .Concat(DataUtils.GetBepinexDll())
                     .ToList();
                 
                 #region StatTrack

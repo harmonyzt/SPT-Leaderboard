@@ -65,6 +65,7 @@ public class PlayerHelper
         equipmentData.Pockets = GetSlotCapacity(pmcData, EquipmentSlot.Pockets);
         equipmentData.Backpack = GetSlotCapacity(pmcData, EquipmentSlot.Backpack);
         equipmentData.SecuredContainer = GetSlotCapacity(pmcData, EquipmentSlot.SecuredContainer);
+        equipmentData.Stash = GetStashCapacity(pmcData);
 
         return equipmentData;
     }
@@ -84,6 +85,25 @@ public class PlayerHelper
         var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
 #if DEBUG
         LeaderboardPlugin.logger.LogWarning($"Size {slot.ToString()} {capacity}");
+#endif
+        return capacity;
+    }
+    
+    /// <summary>
+    /// Get capacity stash player
+    /// </summary>
+    /// <param name="pmcData"></param>
+    /// <param name="slot"></param>
+    /// <returns></returns>
+    private static int GetStashCapacity(Profile pmcData)
+    {
+        var item = pmcData.Inventory.Stash as CompoundItem;
+        if (item == null)
+            return 0;
+
+        var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
+#if DEBUG
+        LeaderboardPlugin.logger.LogWarning($"Size Stash {capacity}");
 #endif
         return capacity;
     }
@@ -113,6 +133,11 @@ public class PlayerHelper
                 NotificationManagerClass.DisplayWarningNotification(
                     LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "SecuredContainer"), 
                     ENotificationDurationType.Long);
+        
+        if (input.Stash > GlobalData.EquipmentLimits.Stash)
+            NotificationManagerClass.DisplayWarningNotification(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "STASH"), 
+                ENotificationDurationType.Long);
     }
     
     /// <summary>

@@ -27,6 +27,7 @@ public static class GlobalData
         TacticalVest = 25,
         Pockets = 6,
         Backpack = 48,
-        SecuredContainer = 12
+        SecuredContainer = 12,
+        Stash = 999
     };
 }

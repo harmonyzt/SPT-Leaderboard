@@ -15,4 +15,7 @@ public class EquipmentData
     
     [JsonProperty("securedContainer")]
     public int SecuredContainer { get; set; } = 0;
+    
+    [JsonProperty("stash")]
+    public int Stash { get; set; } = 0;
 }
