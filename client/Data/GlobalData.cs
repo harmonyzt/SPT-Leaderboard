@@ -28,6 +28,6 @@ public static class GlobalData
         Pockets = 6,
         Backpack = 48,
         SecuredContainer = 12,
-        Stash = 999
+        Stash = 750
     };
 }
