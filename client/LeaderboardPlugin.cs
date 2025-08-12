@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace SPTLeaderboard
 {
-    [BepInPlugin("harmonyzt.SPTLeaderboard", "SPTLeaderboard", "3.1.0")]
+    [BepInPlugin("harmonyzt.SPTLeaderboard", "SPTLeaderboard", "4.0.0")]
     public class LeaderboardPlugin : BaseUnityPlugin
     {
         public static LeaderboardPlugin Instance { get; private set; }
@@ -68,26 +68,6 @@ namespace SPTLeaderboard
             
             Instance = this;
             logger.LogInfo("[SPT Leaderboard] successful loaded!");
-        }
-
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                var getRequest = NetworkApiRequestModel.CreateGet("https://visuals.nullcore.net/SPT/data/seasons/season4.json");
-
-                getRequest.OnSuccess += (result, code) =>
-                {
-                    logger.LogWarning($"GET Success [{code}]: {result}");
-                };
-
-                getRequest.OnFail += (error, code) =>
-                {
-                    logger.LogWarning($"GET Failed [{code}]: {error}");
-                };
-
-                getRequest.Send();
-            }
         }
 
         #region Icons

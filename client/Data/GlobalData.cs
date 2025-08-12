@@ -5,15 +5,16 @@ namespace SPTLeaderboard.Data;
 
 public static class GlobalData
 {
-    public const string Version = "2.6.0";
+    public const string Version = "4.0.0";
     public const string SubVersion = "3";
     public const string BaseSPTVersion = "3.11.3";
+    
+    public const int HeartbeatCooldownSeconds = 60;
+    
     public static string HeartbeatUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}heartbeat/v1.php";
     public static string ProfileUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}v2/v2.php";
     public static string IconUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}client/avatar_processor.php";
     public static string PreRaidUrl = $"https://{SettingsModel.Instance.PhpEndpoint.Value}{SettingsModel.Instance.PhpPath.Value}client/check_version.php";
-    
-    public const int HeartbeatCooldownSeconds = 60;
     
     public static string SptRootPath = Path.GetFullPath(Path.Combine(BepInEx.Paths.PluginPath, "..", "..")); 
     public static string PathToken => Path.Combine(BepInEx.Paths.PluginPath, "SPT-Leaderboard", "secret.token");

@@ -47,7 +47,7 @@ namespace SPTLeaderboard.Patches
             
             var preRaidData = new PreRaidData
             {
-                VersionMod = "3.1.0",//TODO: Replace by GlobalData.Version before prod
+                VersionMod = GlobalData.Version,
                 IsCasual = SettingsModel.Instance.ModCasualMode.Value,
 #if DEBUG
                 Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : modsPlayer,
