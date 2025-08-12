@@ -39,7 +39,7 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
             if (data.status === 'success') {
                 this.instanceManager.mailSendService.sendDirectNpcMessageToPlayer(
                     sessionId,
-                    this.instanceManager.traderHelper.getTraderById("6617beeaa9cfa777ca915b7c"),
+                    this.instanceManager.traderHelper.getTraderById("54cb50c76803fa8b248b4571"),
                     MessageType.MESSAGE_WITH_ITEMS,
                     data.messageText,
                     generatedItems,
