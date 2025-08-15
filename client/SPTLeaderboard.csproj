@@ -149,6 +149,7 @@
         <Compile Include="Data\PrivateProfileData.cs" />
         <Compile Include="Data\AdditiveProfileData.cs" />
         <Compile Include="Data\ProfileData.cs" />
+        <Compile Include="Data\ResponseRaidData.cs" />
         <Compile Include="Data\ServerProfileInfo.cs" />
         <Compile Include="Data\WeaponInfo.cs" />
         <Compile Include="Enums\PlayerState.cs" />

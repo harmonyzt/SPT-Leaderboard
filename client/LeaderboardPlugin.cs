@@ -155,7 +155,23 @@ namespace SPTLeaderboard
 
             request.OnSuccess = (response, code) =>
             {
-                logger.LogWarning($"Request OnSuccess {response}");
+                logger.LogInfo($"Request OnSuccess {response}");
+                try
+                {
+                    var responseData =  JsonConvert.DeserializeObject<ResponseRaidData>(response.ToString());
+
+                    if (responseData.Response == "success")
+                    {
+                        if (responseData.AddedToBalance > 0)
+                        {
+                            LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(responseData.AddedToBalance));
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                   //
+                }
             };
 
             request.OnFail = (error, code) =>
