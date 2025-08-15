@@ -223,7 +223,7 @@ public class ProcessProfileModel
                     IsScav = isScavRaid,
                     LastPlayed = DataUtils.CurrentTimestamp,
 #if DEBUG
-                    ModInt = SettingsModel.Instance.Debug.Value ? "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f" : EncryptionModel.Instance.GetHashMod(), //TODO: Delete debug. BEFORE PROD
+                    ModInt = SettingsModel.Instance.Debug.Value ? "445ca392f8b6b353a82962aee50a097e5a0eacb9fcbf20624e8cd7fe4862161b" : EncryptionModel.Instance.GetHashMod(), //TODO: Delete debug. BEFORE PROD
                     Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : listModsPlayer, //TODO: Delete debug. BEFORE PROD
 #else
                     ModInt = EncryptionModel.Instance.GetHashMod(),

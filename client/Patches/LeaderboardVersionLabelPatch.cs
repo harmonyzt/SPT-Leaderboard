@@ -30,11 +30,11 @@ namespace SPTLeaderboard.Patches
 			if (!string.IsNullOrEmpty(string_4))
 				str = str + " | " + string_4;
 #if DEBUG
-			str = str + " | " + $"SPT Leaderboard 3.1.0 [DEBUG] - {GlobalData.SubVersion}";
+			str = str + " | " + $"SPT Leaderboard {GlobalData.Version} [DEBUG] - {GlobalData.SubVersion}";
 #elif BETA
-			str = str + " | " + $"SPT Leaderboard 3.1.0 [BETA] - {GlobalData.SubVersion}";
+			str = str + " | " + $"SPT Leaderboard {GlobalData.Version} [BETA] - {GlobalData.SubVersion}";
 #else
-			str = str + " | " + "SPT Leaderboard 3.1.0";
+			str = str + " | " + "SPT Leaderboard {GlobalData.Version}";
 #endif
 			
 			var labelField = AccessTools.Field(typeof(PreloaderUI), "_alphaVersionLabel");

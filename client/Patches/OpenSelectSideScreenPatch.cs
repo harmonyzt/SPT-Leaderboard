@@ -52,7 +52,7 @@ namespace SPTLeaderboard.Patches
 #if DEBUG
                 Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : modsPlayer,
                 Hash = SettingsModel.Instance.Debug.Value
-                    ? "fb75631b7a153b1b95cdaa7dfdc297b4a7c40f105584561f78e5353e7e925c6f"
+                    ? "445ca392f8b6b353a82962aee50a097e5a0eacb9fcbf20624e8cd7fe4862161b"
                     : EncryptionModel.Instance.GetHashMod()
 #else
                 Mods = modsPlayer,
