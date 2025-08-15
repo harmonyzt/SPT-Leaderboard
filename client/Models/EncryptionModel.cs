@@ -54,7 +54,7 @@ namespace SPTLeaderboard.Models
             catch (Exception e)
             {
                 LeaderboardPlugin.logger.LogError(
-                    $"[SPT Leaderboard] Error handling token file: ${e.Message}");
+                    $"Error handling token file: ${e.Message}");
                 _token = GenerateToken();
             }
         }
@@ -101,7 +101,7 @@ namespace SPTLeaderboard.Models
             }
             catch (Exception)
             {
-                LeaderboardPlugin.logger.LogError($"[SPT Leaderboard] Error check integrity mod");
+                LeaderboardPlugin.logger.LogError($"Error check integrity mod");
                 return "ERROR CHECK INTEGRITY";
             }
         }

@@ -5,6 +5,7 @@ using BepInEx.Bootstrap;
 using Newtonsoft.Json;
 using SPT.Common.Http;
 using SPTLeaderboard.Data;
+using SPTLeaderboard.Models;
 
 namespace SPTLeaderboard.Utils;
 
@@ -45,5 +46,53 @@ public static class StatTrackInterop
         }
 
         return null;
+    }
+    
+    public static Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
+    {
+        if (!info.ContainsKey(sessionId))
+        {
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists data for current session: {sessionId}");
+            return null;
+        }
+
+        var result = new Dictionary<string, Dictionary<string, WeaponInfo>>
+        {
+            [sessionId] = new Dictionary<string, WeaponInfo>()
+        };
+
+        foreach (var weaponInfo in info[sessionId])
+        {
+            string weaponId = weaponInfo.Key;
+            CustomizedObject weaponStats = weaponInfo.Value;
+            string weaponName = LocalizationModel.GetLocaleName(weaponId + " ShortName");
+
+            // Skip weapons with unknown names
+            if (weaponName == "Unknown")
+            {
+#if DEBUG || BETA
+                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponId + " ShortName"}");
+#endif
+                continue;
+            }
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponId + " ShortName"}");
+#endif
+            result[sessionId][weaponName] = new WeaponInfo
+            {
+                stats = weaponStats,
+                originalId = weaponId
+            };
+        }
+
+        if (result[sessionId].Count == 0)
+        {
+#if DEBUG || BETA
+            LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
+#endif
+            return null;
+        }
+
+        return result;
     }
 }

@@ -7,12 +7,14 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using Comfort.Common;
 using EFT;
+using EFT.InventoryLogic;
 using SPT.Common.Http;
 using SPT.Common.Utils;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Enums;
 using UnityEngine;
+using TraderData = SPTLeaderboard.Data.TraderData;
 
 namespace SPTLeaderboard.Utils;
 
@@ -44,11 +46,11 @@ public static class DataUtils
             return version;
         }
 
-        return GlobalData.BaseSPTVersion;
+        return GlobalData.BaseSptVersion;
     }
     
     /// <summary>
-    /// Get list loaded mods from server in user
+    /// Get list loaded mods from server for user
     /// </summary>
     /// <returns></returns>
     public static List<string> GetServerMods()
@@ -203,5 +205,121 @@ public static class DataUtils
         {
             return "";
         }
+    }
+    
+    public static Dictionary<string, TraderData> GetTraderInfo(Profile pmcData)
+    {
+        var traderInfoPmc = pmcData.TradersInfo;
+        
+        Dictionary<string, TraderData> tradersData = new Dictionary<string, TraderData>();
+        foreach (var trader in GlobalData.TraderMap)
+        {
+            if (traderInfoPmc.ContainsKey(trader.Key))
+            {
+                tradersData[trader.Value] = new TraderData
+                {
+                    ID = trader.Key,
+                    SalesSum = traderInfoPmc[trader.Key].SalesSum,
+                    Unlocked = traderInfoPmc[trader.Key].Unlocked,
+                    Standing = traderInfoPmc[trader.Key].Standing,
+                    LoyaltyLevel = traderInfoPmc[trader.Key].LoyaltyLevel,
+                    Disabled = traderInfoPmc[trader.Key].Disabled
+                };
+            }
+            else
+            {
+                tradersData[trader.Value] = new TraderData
+                {
+                    ID = trader.Key,
+                    SalesSum = 0,
+                    Unlocked = false,
+                    Standing = 0,
+                    LoyaltyLevel = 0,
+                    Disabled = true,
+                    NotFound = true
+                };
+            }
+        }
+
+        return tradersData;
+    }
+    
+    public static string GetPrettyMapName(string entry)
+    {
+        return entry switch
+        {
+            "bigmap" => "Customs",
+            "factory4_day" => "Factory",
+            "factory4_night" => "Night Factory",
+            "interchange" => "Interchange",
+            "laboratory" => "Labs",
+            "rezervbase" => "Reserve",
+            "shoreline" => "Shoreline",
+            "woods" => "Woods",
+            "lighthouse" => "Lighthouse",
+            "tarkovstreets" => "Streets of Tarkov",
+            "sandbox" => "Ground Zero - Low",
+            "sandbox_high" => "Ground Zero - High",
+            _ => "UNKNOWN"
+        };
+    }
+
+    public static void TryGetTransitionData(GClass1959 resultRaid, Action<string, bool> callback)
+    {
+        var isTransition = false;
+        var lastRaidTransitionTo = "None";
+        if (resultRaid.result == ExitStatus.Transit
+            && TransitControllerAbstractClass.Exist<GClass1676>(out var transitController))
+        {
+            if (transitController.localRaidSettings_0.location != "None")
+            {
+                isTransition = true;
+                var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
+                lastRaidTransitionTo = DataUtils.GetPrettyMapName(locationTransit.location.ToLower());
+                
+                LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {lastRaidTransitionTo}");
+                LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
+                callback.Invoke(lastRaidTransitionTo, isTransition);
+                return;
+            }
+            callback.Invoke(lastRaidTransitionTo, isTransition);
+            return;
+        }
+        callback.Invoke(lastRaidTransitionTo, isTransition);
+        return;
+    }
+    
+    /// <summary>
+    /// Checking exists kappa secured container in items 
+    /// </summary>
+    /// <param name="allItems"></param>
+    /// <returns></returns>
+    public static bool CheckHasKappa(IEnumerable<Item> allItems)
+    {
+        foreach (var item in allItems)
+        {
+            if (item.TemplateId == "676008db84e242067d0dc4c9" || item.TemplateId == "5c093ca986f7740a1867ab12")
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /// <summary>
+    /// Checking exists dev items in items 
+    /// </summary>
+    /// <param name="allItems"></param>
+    /// <returns></returns>
+    public static bool CheckDevItems(IEnumerable<Item> allItems)
+    {
+        foreach (var item in allItems)
+        {
+            if (item.TemplateId == "58ac60eb86f77401897560ff" || item.TemplateId == "5c0a5a5986f77476aa30ae64")
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

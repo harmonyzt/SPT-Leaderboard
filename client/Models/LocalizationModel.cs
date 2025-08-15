@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
-using Newtonsoft.Json;
-using Sirenix.Serialization;
+using EFT.Communications;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
 
@@ -66,7 +63,19 @@ namespace SPTLeaderboard.Models
 
                 return GetLocaleTypeError(errorType)["en"]; // fallback to English 
             }
+        }
+
+        public string GetLocaleCoin(int value = 0)
+        {
+            if (LocalizationData.AddCoin.TryGetValue(CurrentLanguage(), out var textAddCoin))
+            {
+                var formatedText = string.Format(textAddCoin, value);
+                return formatedText;
+            }
             
+            var addCoin = LocalizationData.AddCoin["en"]; 
+            var localeCoin = string.Format(addCoin, value);
+            return localeCoin;
         }
         
         /// <summary>
@@ -120,6 +129,18 @@ namespace SPTLeaderboard.Models
             return "Unknown";
         }
 
+        
+        /// <summary>
+        /// Returns the localized error message dictionary for the specified <see cref="ErrorType"/>.
+        /// </summary>
+        /// <param name="errorType">The type of error to retrieve localization for.</param>
+        /// <returns>
+        /// A dictionary mapping locale keys to localized error message strings.
+        /// </returns>
+        /// <remarks>
+        /// The returned dictionary comes from <see cref="LocalizationData"/> and contains localized
+        /// strings for different languages keyed by locale codes.
+        /// </remarks>
         private Dictionary<string, string> GetLocaleTypeError(ErrorType errorType)
         {
             return errorType switch
@@ -143,11 +164,19 @@ namespace SPTLeaderboard.Models
             return profileData.Side == EPlayerSide.Savage ? Transliterate(profileData.Nickname) : profileData.Nickname;
         }
 
+        /// <summary>
+        /// Transliteration of Cyrillic
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private static string Transliterate(string text)
         {
             return GClass930.dictionary_0.Aggregate(text, (current, key) => current.Replace(key.Key, key.Value));
         }
 
+        /// <summary>
+        /// Request eng lcoalization for non-eng users
+        /// </summary>
         public async Task LoadEnglishLocaleAsync()
         {
             try
@@ -159,8 +188,45 @@ namespace SPTLeaderboard.Models
             }
             catch (Exception e)
             {
-                LeaderboardPlugin.logger.LogError($"Fail Request load english locale -> {e}");
+                LeaderboardPlugin.logger.LogError($"Fail Request load english locale: {e}");
             }
+        }
+
+        
+        /// <summary>
+        /// Displays a message notification to the player.
+        /// </summary>
+        /// <param name="text">The message to display.</param>
+        /// <param name="durationType">
+        /// The duration for which the notification should be displayed.  
+        /// Defaults to <see cref="ENotificationDurationType.Default"/>.
+        /// </param>
+        /// <remarks>
+        /// Internally calls <see cref="NotificationManagerClass.DisplayMessageNotification"/> to show the message.
+        /// </remarks>
+        public static void Notification(string text, ENotificationDurationType durationType = ENotificationDurationType.Default)
+        {
+            NotificationManagerClass.DisplayMessageNotification(
+                text, 
+                durationType);
+        }
+        
+        /// <summary>
+        /// Displays a warning notification to the player.
+        /// </summary>
+        /// <param name="text">The warning message to display.</param>
+        /// <param name="durationType">
+        /// The duration for which the notification should be displayed.  
+        /// Defaults to <see cref="ENotificationDurationType.Long"/>.
+        /// </param>
+        /// <remarks>
+        /// Internally calls <see cref="NotificationManagerClass.DisplayWarningNotification"/> to show the message.
+        /// </remarks>
+        public static void NotificationWarning(string text, ENotificationDurationType durationType = ENotificationDurationType.Long)
+        {
+            NotificationManagerClass.DisplayWarningNotification(
+                text, 
+                durationType);
         }
     }
 }

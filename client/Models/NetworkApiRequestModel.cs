@@ -6,6 +6,10 @@ using UnityEngine.Networking;
 
 namespace SPTLeaderboard.Models
 {
+    /// <summary>
+    /// Handles HTTP network requests (GET/POST) with optional JSON payload, retries on timeout,
+    /// and callbacks for success or failure.
+    /// </summary>
     public class NetworkApiRequestModel : MonoBehaviour
     {
         private string _url;
@@ -21,17 +25,19 @@ namespace SPTLeaderboard.Models
         private int _maxRetries = 2;
         
         /// <summary>
-        /// Set count tries when reqeust timeout
+        /// Sets the maximum number of retries when a request times out.
         /// </summary>
-        /// <param name="maxRetries"></param>
+        /// <param name="maxRetries">Maximum number of retry attempts.</param>
         public void SetMaxRetries(int maxRetries)
         {
             _maxRetries = maxRetries;
         }
 
         /// <summary>
-        /// Factory method for POST requests
+        /// Factory method to create a POST request instance.
         /// </summary>
+        /// <param name="url">The URL to send the request to.</param>
+        /// <returns>A new <see cref="NetworkApiRequestModel"/> configured for POST.</returns>
         public static NetworkApiRequestModel Create(string url)
         {
 #if DEBUG || BETA
@@ -46,8 +52,10 @@ namespace SPTLeaderboard.Models
         }
 
         /// <summary>
-        /// Factory method for GET requests
+        /// Factory method to create a GET request instance.
         /// </summary>
+        /// <param name="url">The URL to send the request to.</param>
+        /// <returns>A new <see cref="NetworkApiRequestModel"/> configured for GET.</returns>
         public static NetworkApiRequestModel CreateGet(string url)
         {
 #if DEBUG || BETA
@@ -62,21 +70,30 @@ namespace SPTLeaderboard.Models
         }
 
         /// <summary>
-        /// Set body data request
+        /// Sets the JSON payload for a POST request.
         /// </summary>
+        /// <param name="jsonBody">The JSON string to send in the request body.</param>
         public void SetData(string jsonBody)
         {
             _jsonBody = jsonBody;
         }
 
         /// <summary>
-        /// Starting request start
+        /// Starts sending the request. Handles retries on timeout automatically.
         /// </summary>
         public void Send()
         {
             StartCoroutine(RunBaseRequest());
         }
 
+        /// <summary>
+        /// Internal coroutine that executes the HTTP request and handles success, failure, and retries.
+        /// </summary>
+        /// <remarks>
+        /// - Calls <see cref="OnSuccess"/> if the request succeeds.  
+        /// - Calls <see cref="OnFail"/> if the request fails or exceeds retry attempts.  
+        /// - Automatically destroys the GameObject after completion.
+        /// </remarks>
         private IEnumerator RunBaseRequest()
         {
             if (_httpMethod == UnityWebRequest.kHttpVerbPOST && string.IsNullOrEmpty(_jsonBody))

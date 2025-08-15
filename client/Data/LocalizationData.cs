@@ -235,25 +235,46 @@ public class LocalizationData
         { "ro", "{0} este prea mare. Datele raidului nu vor fi trimise." }
     };
     
+    public static Dictionary<string, string> AddCoin = new Dictionary<string, string> //Message about add leaderboard coin 
+    {
+        { "ch", "获得了 {0} 板块币" },             // Chinese
+        { "cz", "Připsáno {0} leaderboardových rublů" }, // Czech
+        { "en", "Credited with {0} leaderboard rubles" }, // English
+        { "fr", "{0} roubles du leaderboard crédités" },   // French
+        { "ge", "Es wurden {0} Leaderboard-Rubel gutgeschrieben" }, // German
+        { "hu", "{0} ranglista rubel jóváírva" },       // Hungarian
+        { "it", "Accreditati {0} rubli della classifica" }, // Italian
+        { "jp", "{0} リーダーボードルーブルが付与されました" }, // Japanese
+        { "kr", "{0} 리더보드 루블이 지급되었습니다" },     // Korean
+        { "pl", "Przyznano {0} rubli rankingowych" },    // Polish
+        { "po", "Przyznano {0} rubli w rankingu" },      // Portuguese
+        { "sk", "Pripísané {0} leaderboard rubľov" },    // Slovak
+        { "es", "Se han acreditado {0} rublos del ranking" }, // Spanish (ES)
+        { "es-mx", "Se acreditaron {0} rublos del leaderboard" }, // Spanish (MX)
+        { "tu", "{0} lider tablosu rublesi eklendi" },  // Turkish
+        { "ru", "Начислено {0} лидерборд рублей" },     // Russian
+        { "ro", "Au fost creditate {0} ruble de leaderboard" } // Romanian
+    };
+    
     // Template for translating
     // public static Dictionary<string, string> TEMPLATE = new Dictionary<string, string>
     // {
-    //     { "ch", "" },
-    //     { "cz", "" },
-    //     { "en", "" },
-    //     { "fr", "" },
-    //     { "ge", "" },
-    //     { "hu", "" },
-    //     { "it", "" },
-    //     { "jp", "" },
-    //     { "kr", "" },
-    //     { "pl", "" },
-    //     { "po", "" },
-    //     { "sk", "" },
-    //     { "es", "" },
-    //     { "es-mx", "" },
-    //     { "tu", "" },
-    //     { "ru", "" },
-    //     { "ro", "" }
+    //     { "ch", "" },     // Chinese
+    //     { "cz", "" },     // Czech
+    //     { "en", "" },     // English
+    //     { "fr", "" },     // French
+    //     { "ge", "" },     // German
+    //     { "hu", "" },     // Hungarian
+    //     { "it", "" },     // Italian
+    //     { "jp", "" },     // Japanese
+    //     { "kr", "" },     // Korean
+    //     { "pl", "" },     // Polish
+    //     { "po", "" },     // Portuguese
+    //     { "sk", "" },     // Slovak
+    //     { "es", "" },     // Spanish (ES)
+    //     { "es-mx", "" },     // Spanish (MX)
+    //     { "tu", "" },     // Turkish
+    //     { "ru", "" },     // Russian
+    //     { "ro", "" }     // Romanian
     // };
 }

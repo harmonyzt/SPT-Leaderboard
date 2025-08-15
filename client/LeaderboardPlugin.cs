@@ -34,7 +34,7 @@ namespace SPTLeaderboard
         private void Awake()
         {
             logger = Logger;
-            logger.LogInfo("[SPT Leaderboard] Loading...");
+            logger.LogInfo("Loading...");
             
             _settings = SettingsModel.Create(Config);
             _encrypt = EncryptionModel.Create();
@@ -61,17 +61,30 @@ namespace SPTLeaderboard
                     logger.LogInfo("FIKA is found. Enable patch for hit hook");
                 });
             }
+            
 #if DEBUG
+            // Enable patches for overlay with hits
             new OnGameWorldStartPatch().Enable();
             new OnGameWorldDisposePatch().Enable();
 #endif
             
             Instance = this;
-            logger.LogInfo("[SPT Leaderboard] successful loaded!");
+            logger.LogInfo("Successful loaded!");
         }
 
+        private void Update()
+        {
+            if (_settings.KeyBind.Value.IsDown())
+            {
+                LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(14));
+            }
+        }
+        
         #region Icons
         
+        /// <summary>
+        /// Capture icon preview with PMC full body
+        /// </summary>
         public void CreateIconFullBodyPlayer()
         {
             if (!_iconSaver)
@@ -88,6 +101,9 @@ namespace SPTLeaderboard
             _iconSaver.CreateFullBodyIcon();
         }
         
+        /// <summary>
+        /// Caching player model view for future actions
+        /// </summary>
         public void CacheFullBodyPlayerModelView()
         {
             if (!_iconSaver)
@@ -98,11 +114,11 @@ namespace SPTLeaderboard
             _iconSaver.CachePlayerModelView();
         }
 
+        /// <summary>
+        /// Capture icon preview only face 
+        /// </summary>
         public void CreateIconPlayer()
         {
-#if BETA || DEBUG
-            logger.LogWarning("Start create icon");
-#endif
             if (!_iconSaver)
             {
                 _iconSaver = gameObject.AddComponent<IconSaver>();
@@ -115,13 +131,25 @@ namespace SPTLeaderboard
 
         #region Network
         
+        /// <summary>
+        /// Sends the player's profile image to the server.
+        /// </summary>
+        /// <param name="texture">The texture containing the profile image to send.</param>
+        /// <param name="isFullBody">
+        /// Indicates whether the image is a full-body picture (<c>true</c>) or just an avatar/icon (<c>false</c>).
+        /// </param>
+        /// <remarks>
+        /// The method encodes <paramref name="texture"/> to PNG, then to Base64, creates a JSON payload with 
+        /// the player's ID and image type, and sends it to the server at <see cref="GlobalData.IconUrl"/>.
+        /// On success, the <c>OnSuccess</c> callback is triggered; on failure, the <c>OnFail</c> callback is triggered.
+        /// </remarks>
         public static void SendProfileIcon(Texture2D texture, bool isFullBody)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.IconUrl);
             var session = PlayerHelper.GetSession();
             request.OnSuccess = (response, code) =>
             {
-                logger.LogWarning($"Request OnSuccess {response}");
+                logger.LogInfo($"Request OnSuccess {response}");
             };
 
             request.OnFail = (error, code) =>
@@ -149,7 +177,16 @@ namespace SPTLeaderboard
             request.Send();
         }
         
-        public static void SendProfileData(object data)
+        /// <summary>
+        /// Sends the raid and profile data to the server.
+        /// </summary>
+        /// <param name="data">An object containing the profile and raid data to be serialized and sent.</param>
+        /// <remarks>
+        /// The method serializes <paramref name="data"/> to JSON and sends it to the server at 
+        /// <see cref="GlobalData.ProfileUrl"/>.
+        /// On success, the <c>OnSuccess</c> callback is triggered; on failure, the <c>OnFail</c> callback is triggered.
+        /// </remarks>
+        public static void SendRaidData(object data)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.ProfileUrl);
 
@@ -192,13 +229,25 @@ namespace SPTLeaderboard
             request.Send();
         }
         
+        /// <summary>
+        /// Sends pre-raid data to the server.
+        /// </summary>
+        /// <param name="data">
+        /// An object containing the pre-raid information to be serialized and sent, typically 
+        /// an instance of <see cref="PreRaidData"/>.
+        /// </param>
+        /// <remarks>
+        /// The method serializes <paramref name="data"/> to JSON and sends it to the server at 
+        /// <see cref="GlobalData.PreRaidUrl"/>.
+        /// On success, the <c>OnSuccess</c> callback is triggered; on failure, the <c>OnFail</c> callback is triggered.
+        /// </remarks>
         public static void SendPreRaidData(object data)
         {
             var request = NetworkApiRequestModel.Create(GlobalData.PreRaidUrl);
 
             request.OnSuccess = (response, code) =>
             {
-                logger.LogWarning($"Request OnSuccess {response}");
+                logger.LogInfo($"Request OnSuccess {response}");
             };
 
             request.OnFail = (error, code) =>
@@ -223,6 +272,9 @@ namespace SPTLeaderboard
 
         #region Timers
         
+        /// <summary>
+        /// Start the timer to update the heartbeat during the raid
+        /// </summary>
         public void StartInRaidHeartbeat()
         {
             StopInRaidHeartbeat();
@@ -240,6 +292,9 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer.Start();
         }
 
+        /// <summary>
+        /// Stop the timer to update the heartbeat during the raid
+        /// </summary>
         public void StopInRaidHeartbeat()
         {
             if (_inRaidHeartbeatTimer == null) return;
@@ -249,6 +304,9 @@ namespace SPTLeaderboard
             _inRaidHeartbeatTimer = null;
         }
 
+        /// <summary>
+        /// Start a delay for the preRaid check.
+        /// </summary>
         public void StartPreRaidCheckTimer()
         {
             StopPreRaidCheckTimer();
@@ -266,6 +324,9 @@ namespace SPTLeaderboard
             _preRaidCheckTimer.Start();
         }
         
+        /// <summary>
+        /// Disable the delay for preRaid check
+        /// </summary>
         public void StopPreRaidCheckTimer()
         {
             if (_preRaidCheckTimer == null) return;

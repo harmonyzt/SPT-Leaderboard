@@ -83,7 +83,7 @@ public class PlayerHelper
             return 0;
 
         var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
-#if DEBUG
+#if DEBUG || BETA
         LeaderboardPlugin.logger.LogWarning($"Size {slot.ToString()} {capacity}");
 #endif
         return capacity;
@@ -102,7 +102,7 @@ public class PlayerHelper
             return 0;
 
         var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
-#if DEBUG
+#if DEBUG || BETA
         LeaderboardPlugin.logger.LogWarning($"Size Stash {capacity}");
 #endif
         return capacity;
@@ -115,29 +115,24 @@ public class PlayerHelper
     public static void GetLimitViolations(EquipmentData input)
     {
         if (input.TacticalVest > GlobalData.EquipmentLimits.TacticalVest)
-                NotificationManagerClass.DisplayWarningNotification(
-                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "TacticalVest"), 
-                    ENotificationDurationType.Long);
+            LocalizationModel.NotificationWarning(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "TacticalVest"));
 
         if (input.Pockets > GlobalData.EquipmentLimits.Pockets)
-                NotificationManagerClass.DisplayWarningNotification(
-                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Pockets"), 
-                    ENotificationDurationType.Long);
+            LocalizationModel.NotificationWarning(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Pockets"));
 
         if (input.Backpack > GlobalData.EquipmentLimits.Backpack)
-                NotificationManagerClass.DisplayWarningNotification(
-                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Backpack"), 
-                    ENotificationDurationType.Long);
+            LocalizationModel.NotificationWarning(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "Backpack"));
 
         if (input.SecuredContainer > GlobalData.EquipmentLimits.SecuredContainer)
-                NotificationManagerClass.DisplayWarningNotification(
-                    LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "SecuredContainer"), 
-                    ENotificationDurationType.Long);
+            LocalizationModel.NotificationWarning(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "SecuredContainer"));
         
         if (input.Stash > GlobalData.EquipmentLimits.Stash)
-            NotificationManagerClass.DisplayWarningNotification(
-                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "STASH"), 
-                ENotificationDurationType.Long);
+            LocalizationModel.NotificationWarning(
+                LocalizationModel.Instance.GetLocaleErrorText(ErrorType.CAPACITY, "STASH"));
     }
     
     /// <summary>

@@ -1,6 +1,8 @@
 ﻿using BepInEx.Configuration;
+#if DEBUG || BETA
 using SPTLeaderboard.Utils;
 using UnityEngine;
+#endif
 
 namespace SPTLeaderboard.Models
 {

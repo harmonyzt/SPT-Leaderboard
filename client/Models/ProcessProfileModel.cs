@@ -42,7 +42,7 @@ public class ProcessProfileModel
                 
                 var gameVersion = session.Profile.Info.GameVersion;
                 var lastRaidLocationRaw = localRaidSettings.location;
-                var lastRaidLocation = GetPrettyMapName(lastRaidLocationRaw.ToLower());
+                var lastRaidLocation = DataUtils.GetPrettyMapName(lastRaidLocationRaw.ToLower());
                 
                 ProfileData profileData = null;
                 try
@@ -66,19 +66,11 @@ public class ProcessProfileModel
                 var isTransition = false;
                 var lastRaidTransitionTo = "None";
 
-                if (resultRaid.result == ExitStatus.Transit
-                    && TransitControllerAbstractClass.Exist<GClass1676>(out var transitController))
+                DataUtils.TryGetTransitionData(resultRaid, (s, b) =>
                 {
-                    if (transitController.localRaidSettings_0.location != "None")
-                    {
-                        isTransition = true;
-                        var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
-                        lastRaidTransitionTo = GetPrettyMapName(locationTransit.location.ToLower());
-                        
-                        LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {lastRaidTransitionTo}");
-                        LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
-                    }
-                }
+                    lastRaidTransitionTo = s;
+                    isTransition = b;
+                });
 
                 var allAchievementsDict = pmcData.AchievementsData.ToDictionary(
                     pair => pair.Key.ToString(),
@@ -86,28 +78,20 @@ public class ProcessProfileModel
                 );
                 
                 #region CheckGodBalaclava
-
-                bool HaveDevItems = false;
                 
-                var allItems = pmcData.Inventory.GetPlayerItems();
-                foreach (var item in allItems)
+                var allItemsRaw = pmcData.Inventory.GetPlayerItems();
+                var allItems = allItemsRaw.ToList();
+                
+                bool haveDevItems = DataUtils.CheckDevItems(allItems);
+                
+                if (haveDevItems)
                 {
-                    if (item.TemplateId == "58ac60eb86f77401897560ff" || item.TemplateId == "5c0a5a5986f77476aa30ae64")
-                    {
-                        HaveDevItems = true;
-                    }
-                }
-                
-                
-                if (HaveDevItems)
-                {
-                    NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.DEVITEMS),
+                    LocalizationModel.NotificationWarning(LocalizationModel.Instance.GetLocaleErrorText(ErrorType.DEVITEMS),
                         ServerErrorHandler.GetDurationType(ErrorType.DEVITEMS));
-                    
 #if DEBUG
                     if (SettingsModel.Instance.Debug.Value)
                     {
-                        HaveDevItems = false;
+                        haveDevItems = false;
                     }
                     else
                     {
@@ -122,15 +106,7 @@ public class ProcessProfileModel
                 
                 #region CheckHasKappa
 
-                bool hasKappa = false;
-                
-                foreach (var item in allItems)
-                {
-                    if (item.TemplateId == "676008db84e242067d0dc4c9" || item.TemplateId == "5c093ca986f7740a1867ab12")
-                    {
-                        hasKappa = true;
-                    }
-                }
+                bool hasKappa = DataUtils.CheckHasKappa(allItems);
                 
                 #endregion
 
@@ -228,7 +204,7 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning(
                             $"Data raw StatTrack {JsonConvert.SerializeObject(dataStatTrack).ToJson()}");
 #endif
-                        processedStatTrackData = GetAllValidWeapons(profileID ,dataStatTrack);
+                        processedStatTrackData = StatTrackInterop.GetAllValidWeapons(profileID ,dataStatTrack);
 #if DEBUG || BETA
                         if (processedStatTrackData != null)
                         {
@@ -261,7 +237,7 @@ public class ProcessProfileModel
                     RaidTime = resultRaid.playTime,
                     SptVersion = DataUtils.GetSptVersion(),
                     Token = EncryptionModel.Instance.Token,
-                    DBinInv = HaveDevItems,
+                    DBinInv = haveDevItems,
                     IsCasual = SettingsModel.Instance.ModCasualMode.Value
                 };
 
@@ -284,11 +260,11 @@ public class ProcessProfileModel
                         $"DATA privateProfileData {JsonConvert.SerializeObject(betaDataPrivateProfile)}");
 #endif
 
-                    LeaderboardPlugin.SendProfileData(privateProfileData);
+                    LeaderboardPlugin.SendRaidData(privateProfileData);
                 }
                 else if (SettingsModel.Instance.PublicProfile.Value && !isScavRaid)
                 {
-                    var traderInfoData = GetTraderInfo(pmcData);
+                    var traderInfoData = DataUtils.GetTraderInfo(pmcData);
                     
                     var pmcProfileData = new AdditiveProfileData(baseData)
                     {
@@ -331,11 +307,11 @@ public class ProcessProfileModel
                     LeaderboardPlugin.logger.LogWarning($"DATA PMC {JsonConvert.SerializeObject(betaDataPmcProfile)}");
 #endif
 
-                    LeaderboardPlugin.SendProfileData(pmcProfileData);
+                    LeaderboardPlugin.SendRaidData(pmcProfileData);
                 }
                 else if (SettingsModel.Instance.PublicProfile.Value && isScavRaid)
                 {
-                    var traderInfoData = GetTraderInfo(pmcData);
+                    var traderInfoData = DataUtils.GetTraderInfo(pmcData);
                     
                     var scavProfileData = new AdditiveProfileData(baseData)
                     {
@@ -379,7 +355,7 @@ public class ProcessProfileModel
                     LeaderboardPlugin.logger.LogWarning($"DATA SCAV {JsonConvert.SerializeObject(betaDataScavProfile)}");
 #endif
 
-                    LeaderboardPlugin.SendProfileData(scavProfileData);
+                    LeaderboardPlugin.SendRaidData(scavProfileData);
                 }
             }
         }
@@ -392,124 +368,5 @@ public class ProcessProfileModel
             return Instance;
         }
         return Instance = new ProcessProfileModel();
-    }
-
-    private string GetPrettyMapName(string entry)
-    {
-        return entry switch
-        {
-            "bigmap" => "Customs",
-            "factory4_day" => "Factory",
-            "factory4_night" => "Night Factory",
-            "interchange" => "Interchange",
-            "laboratory" => "Labs",
-            "rezervbase" => "Reserve",
-            "shoreline" => "Shoreline",
-            "woods" => "Woods",
-            "lighthouse" => "Lighthouse",
-            "tarkovstreets" => "Streets of Tarkov",
-            "sandbox" => "Ground Zero - Low",
-            "sandbox_high" => "Ground Zero - High",
-            _ => "UNKNOWN"
-        };
-    }
-
-    private Dictionary<string, TraderData> GetTraderInfo(Profile pmcData)
-    {
-        var traderInfoPmc = pmcData.TradersInfo;
-        
-        Dictionary<string, TraderData> tradersData = new Dictionary<string, TraderData>();
-        foreach (var trader in TraderMap)
-        {
-            if (traderInfoPmc.ContainsKey(trader.Key))
-            {
-                tradersData[trader.Value] = new TraderData
-                {
-                    ID = trader.Key,
-                    SalesSum = traderInfoPmc[trader.Key].SalesSum,
-                    Unlocked = traderInfoPmc[trader.Key].Unlocked,
-                    Standing = traderInfoPmc[trader.Key].Standing,
-                    LoyaltyLevel = traderInfoPmc[trader.Key].LoyaltyLevel,
-                    Disabled = traderInfoPmc[trader.Key].Disabled
-                };
-            }
-            else
-            {
-                tradersData[trader.Value] = new TraderData
-                {
-                    ID = trader.Key,
-                    SalesSum = 0,
-                    Unlocked = false,
-                    Standing = 0,
-                    LoyaltyLevel = 0,
-                    Disabled = true,
-                    NotFound = true
-                };
-            }
-        }
-
-        return tradersData;
-    }
-
-    private readonly Dictionary<string, string> TraderMap = new() {
-        { "6617beeaa9cfa777ca915b7c", "REF" },
-        { "54cb50c76803fa8b248b4571", "PRAPOR" },
-        { "54cb57776803fa99248b456e", "THERAPIST" },
-        { "579dc571d53a0658a154fbec", "FENCE" },
-        { "58330581ace78e27b8b10cee", "SKIER" },
-        { "5935c25fb3acc3127c3d8cd9", "PEACEKEEPER" },
-        { "5a7c2eca46aef81a7ca2145d", "MECHANIC" },
-        { "5ac3b934156ae10c4430e83c", "RAGMAN" },
-        { "638f541a29ffd1183d187f57", "LIGHTKEEPER" },
-        { "656f0f98d80a697f855d34b1", "BTR_DRIVER" },
-        { "5c0647fdd443bc2504c2d371", "JAEGER" }
-    };
-
-    private Dictionary<string, Dictionary<string, WeaponInfo>> GetAllValidWeapons(string sessionId, Dictionary<string, Dictionary<string, CustomizedObject>> info)
-    {
-        if (!info.ContainsKey(sessionId))
-        {
-            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists data for current session: {sessionId}");
-            return null;
-        }
-
-        var result = new Dictionary<string, Dictionary<string, WeaponInfo>>
-        {
-            [sessionId] = new Dictionary<string, WeaponInfo>()
-        };
-
-        foreach (var weaponInfo in info[sessionId])
-        {
-            string weaponId = weaponInfo.Key;
-            CustomizedObject weaponStats = weaponInfo.Value;
-            string weaponName = LocalizationModel.GetLocaleName(weaponId + " ShortName");
-
-            // Skip weapons with unknown names
-            if (weaponName == "Unknown")
-            {
-#if DEBUG || BETA
-                LeaderboardPlugin.logger.LogWarning($"[StatTrack] Not exists locale {weaponId + " ShortName"}");
-#endif
-                continue;
-            }
-#if DEBUG || BETA
-            LeaderboardPlugin.logger.LogWarning($"[StatTrack] Add {weaponId + " ShortName"}");
-#endif
-            result[sessionId][weaponName] = new WeaponInfo
-            {
-                stats = weaponStats,
-                originalId = weaponId
-            };
-        }
-
-        if (result[sessionId].Count == 0)
-        {
-#if DEBUG || BETA
-            LeaderboardPlugin.logger.LogWarning($"[StatTrack] list is empty. Return NULL");
-#endif
-            return null;
-        }
-
-        return result;
     }
 }

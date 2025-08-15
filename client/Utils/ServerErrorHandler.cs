@@ -18,7 +18,7 @@ namespace SPTLeaderboard.Utils
             }
         }
 
-        public static ErrorType GetTypeError(long errorCode)
+        private static ErrorType GetTypeError(long errorCode)
         {
             return errorCode switch
             {
