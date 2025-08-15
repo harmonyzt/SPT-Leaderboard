@@ -185,25 +185,26 @@ namespace SPTLeaderboard
             request.OnSuccess = (response, code) =>
             {
                 logger.LogInfo($"Request OnSuccess {response}");
-                try
-                {
-                    var responseData =  JsonConvert.DeserializeObject<ResponseRaidData>(response.ToString());
-
-                    if (SettingsModel.Instance.ShowPointsNotification.Value)
-                    {
-                        if (responseData.Response == "success")
-                        {
-                            if (responseData.AddedToBalance > 0)
-                            {
-                                LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(responseData.AddedToBalance));
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                   //
-                }
+                // Feature notification
+                // try
+                // {
+                //     var responseData =  JsonConvert.DeserializeObject<ResponseRaidData>(response.ToString());
+                //
+                //     if (SettingsModel.Instance.ShowPointsNotification.Value)
+                //     {
+                //         if (responseData.Response == "success")
+                //         {
+                //             if (responseData.AddedToBalance > 0)
+                //             {
+                //                 LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(responseData.AddedToBalance));
+                //             }
+                //         }
+                //     }
+                // }
+                // catch (Exception ex)
+                // {
+                //    //
+                // }
             };
 
             request.OnFail = (error, code) =>
