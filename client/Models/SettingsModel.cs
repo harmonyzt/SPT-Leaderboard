@@ -25,6 +25,7 @@ namespace SPTLeaderboard.Models
 #endif
 		
 		public ConfigEntry<bool> EnableSendData;
+		public ConfigEntry<bool> ShowPointsNotification;
 		public ConfigEntry<bool> ModCasualMode;
 		public ConfigEntry<bool> PublicProfile;
 		public ConfigEntry<bool> EnableModSupport;
@@ -83,6 +84,18 @@ namespace SPTLeaderboard.Models
 				true, 
 				new ConfigDescription(
 					"When disable, stops sending your scores and statistics to the leaderboard server",
+					null, 
+					new ConfigurationManagerAttributes
+					{
+						Order = 8
+					}));
+			
+			ShowPointsNotification = configFile.Bind(
+				"1. Settings", 
+				"Show Notification Points", 
+				true, 
+				new ConfigDescription(
+					"When turned on, display a notification about the issuance of leaderboard points at the end of the raid.",
 					null, 
 					new ConfigurationManagerAttributes
 					{

@@ -71,14 +71,6 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("Successful loaded!");
         }
-
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(14));
-            }
-        }
         
         #region Icons
         
@@ -197,11 +189,14 @@ namespace SPTLeaderboard
                 {
                     var responseData =  JsonConvert.DeserializeObject<ResponseRaidData>(response.ToString());
 
-                    if (responseData.Response == "success")
+                    if (SettingsModel.Instance.ShowPointsNotification.Value)
                     {
-                        if (responseData.AddedToBalance > 0)
+                        if (responseData.Response == "success")
                         {
-                            LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(responseData.AddedToBalance));
+                            if (responseData.AddedToBalance > 0)
+                            {
+                                LocalizationModel.Notification(LocalizationModel.Instance.GetLocaleCoin(responseData.AddedToBalance));
+                            }
                         }
                     }
                 }
