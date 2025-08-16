@@ -37,7 +37,7 @@ public static class GlobalData
         Pockets = 6,
         Backpack = 48,
         SecuredContainer = 12,
-        Stash = 750
+        Stash = 850
     };
     
     public static readonly Dictionary<string, string> TraderMap = new() {
