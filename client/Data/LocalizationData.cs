@@ -235,27 +235,26 @@ public class LocalizationData
         { "ro", "{0} este prea mare. Datele raidului nu vor fi trimise." }
     };
     
-    public static Dictionary<string, string> AddCoin = new()
+    public static Dictionary<string, string> AddCoin = new() //Message earn coin
     {
-        { "ch", "突袭结束！已获得 {0} 排行榜积分" },     // Chinese
-        { "cz", "Nájezd skončil! Získali jste {0} bodů do žebříčku" },     // Czech
-        { "en", "Raid finished! You earned {0} leaderboard points" },     // English
-        { "fr", "Raid terminé ! Vous avez gagné {0} points de classement" },     // French
-        { "ge", "Überfall beendet! Du hast {0} Ranglistenpunkte erhalten" },     // German
-        { "hu", "A rajtaütés véget ért! Szereztél {0} ranglista pontot" },     // Hungarian
-        { "it", "Raid concluso! Hai guadagnato {0} punti classifica" },     // Italian
-        { "jp", "レイド終了！ {0} リーダーボードポイントを獲得しました" },     // Japanese
-        { "kr", "레이드 종료! {0} 리더보드 포인트를 획득했습니다" },     // Korean
-        { "pl", "Najazd zakończony! Zdobyłeś {0} punktów do rankingu" },     // Polish
-        { "po", "Raid concluído! Você ganhou {0} pontos de classificação" },     // Portuguese
-        { "sk", "Nálet skončil! Získali ste {0} bodov do rebríčka" },     // Slovak
-        { "es", "¡Raid terminado! Has ganado {0} puntos de clasificación" },     // Spanish (ES)
-        { "es-mx", "¡Incursión terminada! Ganaste {0} puntos de clasificación" },     // Spanish (MX)
-        { "tu", "Baskın bitti! {0} liderlik puanı kazandınız" },     // Turkish
-        { "ru", "Рейд окончен! Начислено {0} лидерборд поинтов" },     // Russian
-        { "ro", "Raid încheiat! Ai câștigat {0} puncte de clasament" }     // Romanian
+        { "ch", "突袭结束！已获得 {0} 排行榜金币" },     // Chinese
+        { "cz", "Nájezd skončil! Získali jste {0} žebříčkových mincí" },     // Czech
+        { "en", "Raid finished! You earned {0} leaderboard coins" },     // English
+        { "fr", "Raid terminé ! Vous avez gagné {0} pièces de classement" },     // French
+        { "ge", "Überfall beendet! Du hast {0} Ranglisten-Münzen erhalten" },     // German
+        { "hu", "A rajtaütés véget ért! Szereztél {0} ranglista érmét" },     // Hungarian
+        { "it", "Raid concluso! Hai guadagnato {0} monete classifica" },     // Italian
+        { "jp", "レイド終了！ {0} リーダーボードコインを獲得しました" },     // Japanese
+        { "kr", "레이드 종료! {0} 리더보드 코인을 획득했습니다" },     // Korean
+        { "pl", "Najazd zakończony! Zdobyłeś {0} monet rankingowych" },     // Polish
+        { "po", "Raid concluído! Você ganhou {0} moedas de classificação" },     // Portuguese
+        { "sk", "Nálet skončil! Získali ste {0} rebríčkových mincí" },     // Slovak
+        { "es", "¡Raid terminado! Has ganado {0} monedas de clasificación" },     // Spanish (ES)
+        { "es-mx", "¡Incursión terminada! Ganaste {0} monedas de clasificación" },     // Spanish (MX)
+        { "tu", "Baskın bitti! {0} liderlik parası kazandınız" },     // Turkish
+        { "ru", "Рейд окончен! Начислено {0} лидерборд коинов" },     // Russian
+        { "ro", "Raid încheiat! Ai câștigat {0} monede de clasament" }     // Romanian
     };
-
     
     // Template for translating
     // public static Dictionary<string, string> TEMPLATE = new Dictionary<string, string>
