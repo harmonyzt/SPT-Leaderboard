@@ -13,7 +13,7 @@ namespace SPTLeaderboard.Utils
             var typeError = GetTypeError(statusCode);
             if (typeError != ErrorType.SILENT_ERROR)
             {
-                NotificationManagerClass.DisplayWarningNotification(LocalizationModel.Instance.GetLocaleErrorText(typeError),
+                LocalizationModel.NotificationWarning(LocalizationModel.Instance.GetLocaleErrorText(typeError),
                     GetDurationType(typeError));
             }
         }
