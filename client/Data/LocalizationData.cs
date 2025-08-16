@@ -4,7 +4,7 @@ namespace SPTLeaderboard.Data;
 
 public class LocalizationData
 {
-    public static Dictionary<string, string> Error_API_BANNED = new Dictionary<string, string> // TODO: Get error code for this
+    public static Dictionary<string, string> Error_API_BANNED = new() // TODO: Get error code for this
     {
         { "ch", "您因违反排行榜规则而被封禁" },
         { "cz", "Byli jste zabanováni za porušení pravidel žebříčku." },
@@ -25,7 +25,7 @@ public class LocalizationData
         { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
     };
     
-    public static Dictionary<string, string> Error_API_TOO_MUCH_REQUESTS = new Dictionary<string, string>
+    public static Dictionary<string, string> Error_API_TOO_MUCH_REQUESTS = new()
     {
         { "ch", "您向API发送了太多请求。 稍后再试。" },
         { "cz", "Odeslali jste příliš mnoho požadavků na API. Zkuste to znovu později." },
@@ -46,7 +46,7 @@ public class LocalizationData
         { "ro", "Ați trimis prea multe solicitări API. Încercați din nou mai târziu." }
     };
         
-    public static Dictionary<string, string> Error_LA_TOS = new Dictionary<string, string> // 699
+    public static Dictionary<string, string> Error_LA_TOS = new() // 699
     {
         { "ch", "排行榜条目被拒。违反许可协议/服务条款 1.2" },
         { "cz", "Záznam do žebříčku byl zamítnut. Porušení LA/TOS 1.2" },
@@ -67,7 +67,7 @@ public class LocalizationData
         { "ro", "Intrarea în clasament a fost refuzată. Încălcarea LA/TOS 1.2" }
     };
     
-    public static Dictionary<string, string> Error_TokenMismatch = new Dictionary<string, string> // 700
+    public static Dictionary<string, string> Error_TokenMismatch = new() // 700
     {
         { "ch", "令牌不适用于当前资料。它可能正被其他玩家使用。" },
         { "cz", "Token neodpovídá aktuálnímu profilu. Možná jej používá jiný hráč." },
@@ -88,7 +88,7 @@ public class LocalizationData
         { "ro", "Tokenul nu este potrivit pentru profilul curent. Este posibil să fie folosit de un alt jucător." }
     };
     
-    public static Dictionary<string, string> Error_TokenNotSafe = new Dictionary<string, string> // 702
+    public static Dictionary<string, string> Error_TokenNotSafe = new() // 702
     {
         { "ch", "您的令牌被拒绝为不安全。请尝试另一个或重新生成。" },
         { "cz", "Váš token byl zamítnut jako nebezpečný. Zkuste jiný nebo jej znovu vygenerujte." },
@@ -109,7 +109,7 @@ public class LocalizationData
         { "ro", "Tokenul dvs. a fost respins ca nesigur. Încercați altul sau generați unul nou." }
     };
     
-    public static Dictionary<string, string> Error_UpdateMod = new Dictionary<string, string> // 705
+    public static Dictionary<string, string> Error_UpdateMod = new() // 705
     {
         { "ch", "请更新模组到最新版本以提交结果。" },
         { "cz", "Aktualizujte prosím mod na nejnovější verzi pro odeslání výsledků." },
@@ -130,7 +130,7 @@ public class LocalizationData
         { "ro", "Vă rugăm să actualizați modul la cea mai recentă versiune pentru a trimite rezultatele." }
     };
     
-    public static Dictionary<string, string> Error_ScavOnlyPublic = new Dictionary<string, string> // 231
+    public static Dictionary<string, string> Error_ScavOnlyPublic = new() // 231
     {
         { "ch", "仅当启用公开资料时，才能记录SCAV突袭。" },
         { "cz", "Záznam SCAV nájezdu je dostupný pouze s veřejným profilem." },
@@ -151,7 +151,7 @@ public class LocalizationData
         { "ro", "Înregistrarea raidului SCAV este disponibilă doar cu un profil public activat." }
     };
     
-    public static Dictionary<string, string> Error_CharLimit = new Dictionary<string, string> // 232
+    public static Dictionary<string, string> Error_CharLimit = new() // 232
     {
         { "ch", "玩家名称过长。请在游戏设置中缩短。" },
         { "cz", "Jméno hráče je příliš dlouhé. Zkraťte ho v nastavení hry." },
@@ -172,7 +172,7 @@ public class LocalizationData
         { "ro", "Numele jucătorului este prea lung. Vă rugăm să-l scurtați din setările jocului." }
     };
     
-    public static Dictionary<string, string> Error_NsfwName = new Dictionary<string, string> // 707
+    public static Dictionary<string, string> Error_NsfwName = new() // 707
     {
         { "ch", "玩家名称包含禁止的字符或词语。请在游戏设置中修改。" },
         { "cz", "Jméno hráče obsahuje zakázané znaky nebo slova. Změňte ho v nastavení hry." },
@@ -193,7 +193,7 @@ public class LocalizationData
         { "ro", "Numele jucătorului conține caractere sau cuvinte interzise. Vă rugăm să-l modificați din setările jocului." }
     };
     
-    public static Dictionary<string, string> Error_DevItems = new Dictionary<string, string>
+    public static Dictionary<string, string> Error_DevItems = new()
     {
         { "ch", "检测到开发者物品。突袭数据将不会被上传。" },
         { "cz", "Byl u vás nalezen vývojářský předmět. Údaje z nájezdu nebudou odeslány." },
@@ -214,7 +214,7 @@ public class LocalizationData
         { "ro", "A fost detectat un obiect de dezvoltator. Datele raidului nu vor fi trimise." }
     };
     
-    public static Dictionary<string, string> Error_Capacity = new Dictionary<string, string> //Error after check capacity storages violation
+    public static Dictionary<string, string> Error_Capacity = new() //Error after check capacity storages violation
     {
         { "ch", "{0} 太大了。突袭数据将不会被发送。" },
         { "cz", "{0} je příliš velký. Údaje z nájezdu nebudou odeslány." },
@@ -235,26 +235,27 @@ public class LocalizationData
         { "ro", "{0} este prea mare. Datele raidului nu vor fi trimise." }
     };
     
-    public static Dictionary<string, string> AddCoin = new Dictionary<string, string> //Message about add leaderboard coin 
+    public static Dictionary<string, string> AddCoin = new()
     {
-        { "ch", "获得了 {0} 板块币" },             // Chinese
-        { "cz", "Připsáno {0} leaderboardových rublů" }, // Czech
-        { "en", "Credited with {0} leaderboard rubles" }, // English
-        { "fr", "{0} roubles du leaderboard crédités" },   // French
-        { "ge", "Es wurden {0} Leaderboard-Rubel gutgeschrieben" }, // German
-        { "hu", "{0} ranglista rubel jóváírva" },       // Hungarian
-        { "it", "Accreditati {0} rubli della classifica" }, // Italian
-        { "jp", "{0} リーダーボードルーブルが付与されました" }, // Japanese
-        { "kr", "{0} 리더보드 루블이 지급되었습니다" },     // Korean
-        { "pl", "Przyznano {0} rubli rankingowych" },    // Polish
-        { "po", "Przyznano {0} rubli w rankingu" },      // Portuguese
-        { "sk", "Pripísané {0} leaderboard rubľov" },    // Slovak
-        { "es", "Se han acreditado {0} rublos del ranking" }, // Spanish (ES)
-        { "es-mx", "Se acreditaron {0} rublos del leaderboard" }, // Spanish (MX)
-        { "tu", "{0} lider tablosu rublesi eklendi" },  // Turkish
-        { "ru", "Начислено {0} лидерборд рублей" },     // Russian
-        { "ro", "Au fost creditate {0} ruble de leaderboard" } // Romanian
+        { "ch", "突袭结束！已获得 {0} 排行榜积分" },     // Chinese
+        { "cz", "Nájezd skončil! Získali jste {0} bodů do žebříčku" },     // Czech
+        { "en", "Raid finished! You earned {0} leaderboard points" },     // English
+        { "fr", "Raid terminé ! Vous avez gagné {0} points de classement" },     // French
+        { "ge", "Überfall beendet! Du hast {0} Ranglistenpunkte erhalten" },     // German
+        { "hu", "A rajtaütés véget ért! Szereztél {0} ranglista pontot" },     // Hungarian
+        { "it", "Raid concluso! Hai guadagnato {0} punti classifica" },     // Italian
+        { "jp", "レイド終了！ {0} リーダーボードポイントを獲得しました" },     // Japanese
+        { "kr", "레이드 종료! {0} 리더보드 포인트를 획득했습니다" },     // Korean
+        { "pl", "Najazd zakończony! Zdobyłeś {0} punktów do rankingu" },     // Polish
+        { "po", "Raid concluído! Você ganhou {0} pontos de classificação" },     // Portuguese
+        { "sk", "Nálet skončil! Získali ste {0} bodov do rebríčka" },     // Slovak
+        { "es", "¡Raid terminado! Has ganado {0} puntos de clasificación" },     // Spanish (ES)
+        { "es-mx", "¡Incursión terminada! Ganaste {0} puntos de clasificación" },     // Spanish (MX)
+        { "tu", "Baskın bitti! {0} liderlik puanı kazandınız" },     // Turkish
+        { "ru", "Рейд окончен! Начислено {0} лидерборд поинтов" },     // Russian
+        { "ro", "Raid încheiat! Ai câștigat {0} puncte de clasament" }     // Romanian
     };
+
     
     // Template for translating
     // public static Dictionary<string, string> TEMPLATE = new Dictionary<string, string>
