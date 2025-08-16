@@ -44,6 +44,11 @@ namespace SPTLeaderboard.Patches
                     LeaderboardPlugin.Instance.engLocaleLoaded = true;
                 }
             }
+
+            if (!LeaderboardPlugin.Instance.configUpdated)
+            {
+                ConfigUpdater.UpdateEquipmentLimits();
+            }
             
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;

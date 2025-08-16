@@ -28,6 +28,7 @@ namespace SPTLeaderboard
         public bool canPreRaidCheck = true;
         public bool cachedPlayerModelPreview = false;
         public bool engLocaleLoaded = false;
+        public bool configUpdated = false;
 
         public static ManualLogSource logger;
 
