@@ -34,7 +34,7 @@ namespace SPTLeaderboard.Patches
 #elif BETA
 			str = str + " | " + $"SPT Leaderboard {GlobalData.Version} [BETA] - {GlobalData.SubVersion}";
 #else
-			str = str + " | " + "SPT Leaderboard {GlobalData.Version}";
+			str = str + " | " + $"SPT Leaderboard {GlobalData.Version}";
 #endif
 			
 			var labelField = AccessTools.Field(typeof(PreloaderUI), "_alphaVersionLabel");
