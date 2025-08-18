@@ -20,9 +20,10 @@ namespace SPTLeaderboard.Patches
             if (!SettingsModel.Instance.EnableSendData.Value)
                 return true;
 
-            var currentDataHits = HitsTracker.Instance.GetHitsData();
+            var dataHits = HitsTracker.Instance.GetHitsData();
+            var dataDistanceHits = HitsTracker.Instance.GetHitDistances();
             LeaderboardPlugin.Instance.StopInRaidHeartbeat();
-            ProcessProfileModel.Create().ProcessAndSendProfile(results, settings, currentDataHits);
+            ProcessProfileModel.Create().ProcessAndSendProfile(results, settings, dataHits, dataDistanceHits);
             
             HeartbeatSender.Send(results.result == ExitStatus.Transit ? PlayerState.IN_TRANSIT : PlayerState.RAID_END);
             

@@ -51,6 +51,7 @@ namespace SPTLeaderboard
             new HideoutAwakePatch().Enable();
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
+            new OnEnemyDamagePatch().Enable();
             
             if (!DataUtils.IsLoaded)
             {

@@ -15,7 +15,7 @@ public class ProcessProfileModel
 {
     public static ProcessProfileModel Instance { get; private set; }
 
-    public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings, HitsData hitsData)
+    public void ProcessAndSendProfile(GClass1959 resultRaid, LocalRaidSettings localRaidSettings, HitsData hitsData, List<float> dataDistanceHits)
     {
         if (!SettingsModel.Instance.EnableSendData.Value || PlayerHelper.GetLimitViolationsSilent(PlayerHelper.GetEquipmentData()))
             return;
@@ -129,7 +129,15 @@ public class ProcessProfileModel
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                 var TotalDamage = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
-
+                var AverageShot = 0.0f;
+                if (dataDistanceHits.Count > 1)
+                {
+                    AverageShot = dataDistanceHits.Average();
+#if DEBUG || BETA
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
+#endif
+                }
+                
                 if (!isScavRaid)
                 {
 #if DEBUG || BETA
