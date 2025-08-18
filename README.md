@@ -28,4 +28,4 @@ Unpack *user* and *BepInEx* folders from build archive into root SPT folder
 - The author of this mod is not responsible for any misuse, violations of third-party agreements, or bans received as a result of improper use.  
 
 ## 📄 License
-MIT
+MPL 2.0
