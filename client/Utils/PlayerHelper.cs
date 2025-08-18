@@ -6,6 +6,7 @@ using EFT.InventoryLogic;
 using SPT.Reflection.Utils;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Models;
+using UnityEngine;
 
 namespace SPTLeaderboard.Utils;
 
@@ -47,6 +48,13 @@ public class PlayerHelper
     
     public Player Player { get; set; }
 
+    public Vector3 LastDeathPosition { get; set; } = Vector3.zero;
+
+    public static Vector3 ConvertToMapPosition(Vector3 unityPosition)
+    {
+        return new Vector3(unityPosition.x, unityPosition.z, unityPosition.y);
+    }
+    
     #region Equipment
 
     /// <summary>

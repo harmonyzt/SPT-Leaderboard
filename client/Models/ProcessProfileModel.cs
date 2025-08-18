@@ -7,6 +7,7 @@ using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
+using UnityEngine;
 using TraderData = SPTLeaderboard.Data.TraderData;
 
 namespace SPTLeaderboard.Models;
@@ -137,12 +138,16 @@ public class ProcessProfileModel
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
 #endif
                 }
-                
+
+
+                LeaderboardPlugin.logger.LogWarning($"Death coordinates {PlayerHelper.Instance.LastDeathPosition}");
+
+                PlayerHelper.Instance.LastDeathPosition = Vector3.zero;
                 if (!isScavRaid)
                 {
 #if DEBUG || BETA
                     LeaderboardPlugin.logger.LogWarning($"\n");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
+                    LeaderboardPlugin.logger.LogWarning($"\n[Session Counter] KilledPmc {KilledPmc}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");

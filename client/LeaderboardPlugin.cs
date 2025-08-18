@@ -52,6 +52,7 @@ namespace SPTLeaderboard
             new OnApplyDamageInfoPatch().Enable();
             new OnInitPlayerPatch().Enable();
             new OnEnemyDamagePatch().Enable();
+            new PlayerOnDeadPatch().Enable();
             
             if (!DataUtils.IsLoaded)
             {
