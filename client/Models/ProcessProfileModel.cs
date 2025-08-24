@@ -139,10 +139,10 @@ public class ProcessProfileModel
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
 #endif
                 }
-
+#if DEBUG || BETA
                 LeaderboardPlugin.logger.LogWarning($"Death coordinates {PlayerHelper.Instance.LastDeathPosition}");
-
-                PlayerHelper.Instance.LastDeathPosition = Vector3.zero;
+#endif
+                
                 if (!isScavRaid)
                 {
 #if DEBUG || BETA
@@ -343,6 +343,9 @@ public class ProcessProfileModel
                         RaidHits = hitsData,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
+                        AverageShot = AverageShot,
+                        DiedAtX = PlayerHelper.Instance.LastDeathPosition.x,
+                        DiedAtY = PlayerHelper.Instance.LastDeathPosition.y,
                         BossKills = KilledBoss,
                         SavageKills = KilledSavage,
                         ModWeaponStats = processedStatTrackData,

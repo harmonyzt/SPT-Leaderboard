@@ -2,6 +2,7 @@
 using SPT.Reflection.Patching;
 using SPTLeaderboard.Models;
 using SPTLeaderboard.Utils;
+using UnityEngine;
 
 namespace SPTLeaderboard.Patches
 {
@@ -23,6 +24,7 @@ namespace SPTLeaderboard.Patches
             LeaderboardPlugin.Instance.CreateIconPlayer();
             LeaderboardPlugin.Instance.StartInRaidHeartbeat();
             LeaderboardPlugin.logger.LogWarning("[State] Player started raid");
+            PlayerHelper.Instance.LastDeathPosition = Vector3.zero;
             return true;
         }
     }
