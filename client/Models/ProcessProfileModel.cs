@@ -134,11 +134,11 @@ public class ProcessProfileModel
                 if (dataDistanceHits.Count > 1)
                 {
                     AverageShot = dataDistanceHits.Average();
+                    AverageShot = (float)Math.Round(AverageShot, 1);
 #if DEBUG || BETA
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
 #endif
                 }
-
 
                 LeaderboardPlugin.logger.LogWarning($"Death coordinates {PlayerHelper.Instance.LastDeathPosition}");
 
@@ -293,6 +293,9 @@ public class ProcessProfileModel
                         RaidHits = hitsData,
                         AllAchievements = allAchievementsDict,
                         LongestShot = LongestShot,
+                        AverageShot = AverageShot,
+                        DiedAtX = PlayerHelper.Instance.LastDeathPosition.x,
+                        DiedAtY = PlayerHelper.Instance.LastDeathPosition.y,
                         BossKills = KilledBoss,
                         SavageKills = KilledSavage,
                         ModWeaponStats = processedStatTrackData,

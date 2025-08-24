@@ -99,6 +99,15 @@ namespace SPTLeaderboard.Data
         [JsonProperty("longestShot")]
         public int LongestShot { get; set; }
         
+        [JsonProperty("lastRaidAverageShot")]
+        public float AverageShot { get; set; }
+        
+        [JsonProperty("DiedAtX")]
+        public float DiedAtX { get; set; }
+        
+        [JsonProperty("DiedAtY")]
+        public float DiedAtY { get; set; }
+        
         [JsonProperty("savageKills")]
         public int SavageKills { get; set; }
         
@@ -170,6 +179,9 @@ namespace SPTLeaderboard.Data
                 RaidHits = original.RaidHits,
                 AllAchievements = original.AllAchievements,
                 LongestShot = original.LongestShot,
+                AverageShot = original.AverageShot,
+                DiedAtX = original.DiedAtX,
+                DiedAtY = original.DiedAtY,
                 SavageKills = original.SavageKills,
                 BossKills = original.BossKills,
                 ModWeaponStats = original.ModWeaponStats,

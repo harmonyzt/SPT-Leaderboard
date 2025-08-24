@@ -21,7 +21,7 @@ namespace SPTLeaderboard.Patches
                 if (PlayerHelper.Instance.Player == __instance)
                 {
                     LeaderboardPlugin.logger.LogWarning(
-                        "PlayerOnDeadPatch: Player is already on dead. Set position dead");
+                        "PlayerOnDeadPatch: Player is already dead. Set position dead");
                     PlayerHelper.Instance.LastDeathPosition =
                         PlayerHelper.ConvertToMapPosition(__instance.PlayerBones.BodyTransform.position);
                 }
