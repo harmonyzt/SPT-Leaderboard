@@ -1,5 +1,6 @@
 ﻿#if DEBUG || BETA
 using System;
+using SPTLeaderboard.Data;
 using SPTLeaderboard.Models;
 using TMPro;
 using UnityEngine;
@@ -45,17 +46,29 @@ public class OverlayDebug: MonoBehaviour
         rectTransform.sizeDelta = new Vector2(800, 200);
         
         SetOverlayPosition(new Vector2(SettingsModel.Instance.PositionXDebug.Value, SettingsModel.Instance.PositionYDebug.Value));
+
+        LeaderboardPlugin.Instance.Tick += UpdateOverlay;
     }
-    
+
+    private void Update()
+    {
+        UpdateOverlay();
+    }
+
     public void UpdateOverlay()
     {
         if (_overlayText == null) return;
-        
         var currentHitsData = HitsTracker.Instance.GetHitsData();
-        _overlayText.text = string.Format(
-                "Raid hits:\nHead -> {0}\nChest -> {1}\nStomach -> {2}\nLeftArm -> {3}\nRightArm -> {4}\nLeftLeg -> {5}\nRightLeg -> {6}",
+        var debugValues = string.Format(
+                "Raid hits:\nHead -> {0}\nChest -> {1}\nStomach -> {2}\nLeftArm -> {3}\nRightArm -> {4}\nLeftLeg -> {5}\nRightLeg -> {6}\n",
             currentHitsData.Head, currentHitsData.Chest, currentHitsData.Stomach, currentHitsData.LeftArm,
             currentHitsData.RightArm, currentHitsData.LeftLeg, currentHitsData.RightLeg);
+        if (PlayerHelper.Instance.Player != null)
+        {
+            debugValues += $"Player Cords = ({PlayerHelper.Instance.Player.PlayerBones.transform.position.x}, {PlayerHelper.Instance.Player.PlayerBones.transform.position.y}, {PlayerHelper.Instance.Player.PlayerBones.transform.position.z})";
+        }
+        
+        _overlayText.text = debugValues;
     }
 
     public void SetOverlayPosition(Vector2 anchoredPosition)
@@ -72,6 +85,7 @@ public class OverlayDebug: MonoBehaviour
 
     public void Disable()
     {
+        LeaderboardPlugin.Instance.Tick -= UpdateOverlay;
         Destroy(_overlay);
         Destroy(this);
     }

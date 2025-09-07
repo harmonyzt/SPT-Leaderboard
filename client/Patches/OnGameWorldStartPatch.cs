@@ -17,6 +17,7 @@ namespace SPTLeaderboard.Patches
         {
 #if DEBUG
             OverlayDebug.Instance.Enable();
+            ZoneTracker.Instance.Enable();
 #endif
             LeaderboardPlugin.logger.LogWarning("Player started world");
         }

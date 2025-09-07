@@ -152,6 +152,7 @@
         <Compile Include="Data\ResponseRaidData.cs" />
         <Compile Include="Data\ServerProfileInfo.cs" />
         <Compile Include="Data\WeaponInfo.cs" />
+        <Compile Include="Data\ZoneData.cs" />
         <Compile Include="Enums\PlayerState.cs" />
         <Compile Include="LeaderboardPlugin.cs" />
         <Compile Include="Models\ConfigurationManagerAttributes.cs" />
@@ -185,6 +186,7 @@
         <Compile Include="Utils\ServerErrorHandler.cs" />
         <Compile Include="Utils\IconSaver.cs" />
         <Compile Include="Utils\StatTrackInterop.cs" />
+        <Compile Include="Utils\ZoneTracker.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="Dependencies\Keys\sptld.snk" />

@@ -30,6 +30,9 @@ public static class GlobalData
     public static string UserModsPath = Path.GetFullPath(Path.Combine(SptRootPath, "user", "mods")); 
     public static string LeaderboardIconPath = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "SavedIcon.png"));
     public static string LeaderboardFullImagePath = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "SavedFull.png"));
+    #if DEBUG || BETA
+    public static string ZonesConfig = Path.GetFullPath(Path.Combine(SptRootPath, "BepInEx", "plugins", "SPT-Leaderboard", "zones.json"));
+    #endif
 
     // Limits equipment capacity
     public static EquipmentData EquipmentLimits = new()

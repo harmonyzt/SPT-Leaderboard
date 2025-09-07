@@ -30,6 +30,9 @@ namespace SPTLeaderboard
         public bool engLocaleLoaded = false;
         public bool configUpdated = false;
 
+        public Action Tick;
+        public Action FixedTick;
+
         public static ManualLogSource logger;
 
         private void Awake()
@@ -75,6 +78,18 @@ namespace SPTLeaderboard
             logger.LogInfo("Successful loaded!");
         }
         
+#if DEBUG
+        private void Update()
+        {
+            Tick?.Invoke();
+        }
+
+        private void FixedUpdate()
+        {
+            FixedTick?.Invoke();
+        }
+#endif
+
         #region Icons
         
         /// <summary>
@@ -202,7 +217,7 @@ namespace SPTLeaderboard
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                        //
                     }
@@ -333,7 +348,6 @@ namespace SPTLeaderboard
             _preRaidCheckTimer.Dispose();
             _preRaidCheckTimer = null;
         }
-        
         #endregion
     }
 }
