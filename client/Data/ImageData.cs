@@ -12,4 +12,7 @@ public class ImageData
     
     [JsonProperty("isFullBody")]
     public bool IsFullBody;
+    
+    [JsonProperty("token")]
+    public string Token;
 }

@@ -158,7 +158,8 @@ namespace SPTLeaderboard
             {
                 EncodedImage = encodedImage,
                 PlayerId = session.Profile.Id,
-                IsFullBody = isFullBody
+                IsFullBody = isFullBody,
+                Token = EncryptionModel.Instance.Token
             };
             string jsonBody = JsonConvert.SerializeObject(data);
                     
