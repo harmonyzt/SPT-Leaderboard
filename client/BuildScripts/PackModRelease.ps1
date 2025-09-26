@@ -1,4 +1,4 @@
-$dllPath = "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll"
+$dllPath = "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll"
 
 $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).ProductVersion
 

@@ -1,5 +1,5 @@
-$dllPath = "F:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll"
-$globalDataPath = "F:\GitHub\Tarkov\SPT-Leaderboard\client\Data\GlobalData.cs"
+$dllPath = "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll"
+$globalDataPath = "C:\GitHub\Tarkov\SPT-Leaderboard\client\Data\GlobalData.cs"
 
 $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).ProductVersion
 $versionClean = $version -replace '[^\d\.]', ''
