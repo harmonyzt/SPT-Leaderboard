@@ -51,13 +51,10 @@ namespace SPTLeaderboard.Patches
                 IsCasual = SettingsModel.Instance.ModCasualMode.Value,
 #if DEBUG
                 Mods = SettingsModel.Instance.Debug.Value ? ["IhanaMies-LootValueBackend", "SpecialSlots"] : modsPlayer,
-                Hash = SettingsModel.Instance.Debug.Value
-                    ? "445ca392f8b6b353a82962aee50a097e5a0eacb9fcbf20624e8cd7fe4862161b"
-                    : EncryptionModel.Instance.GetHashMod()
 #else
                 Mods = modsPlayer,
-                Hash = EncryptionModel.Instance.GetHashMod()
 #endif
+                Hash = EncryptionModel.Instance.GetHashMod()
             };
             
             LeaderboardPlugin.SendPreRaidData(preRaidData);

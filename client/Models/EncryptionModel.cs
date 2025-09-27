@@ -91,6 +91,13 @@ namespace SPTLeaderboard.Models
         
         public string GetHashMod()
         {
+            #if DEBUG
+            if (SettingsModel.Instance.Debug.Value)
+            {
+                return "";
+            }
+            #endif
+            
             try
             {
                 var assemblyLocation = Assembly.GetExecutingAssembly().Location;
