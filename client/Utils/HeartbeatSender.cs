@@ -45,7 +45,8 @@ namespace SPTLeaderboard.Utils
                         Type = DataUtils.GetPlayerState(playerState),
                         Timestamp = DataUtils.CurrentTimestamp,
                         Version = GlobalData.Version,
-                        SessionId = session.Profile.Id
+                        SessionId = session.Profile.Id,
+                        Token = EncryptionModel.Instance.Token
                     };
 
                     string jsonBody = JsonConvert.SerializeObject(data);
@@ -95,7 +96,8 @@ namespace SPTLeaderboard.Utils
                         SessionId = session.Profile.Id,
                         Map = DataUtils.GetRaidRawMap(),
                         Side = DataUtils.GetRaidPlayerSide(),
-                        GameTime = DataUtils.GetRaidGameTime()
+                        GameTime = DataUtils.GetRaidGameTime(),
+                        Token = EncryptionModel.Instance.Token
                     };
 
                     string jsonBody = JsonConvert.SerializeObject(data);

@@ -153,7 +153,7 @@ namespace SPTLeaderboard.Models
 			
 			PhpEndpoint = configFile.Bind(
 				"1. Settings", 
-				"PHP Endpoint", 
+				"Server Endpoint", 
 				"sptlb.yuyui.moe", 
 				new ConfigDescription(
 					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",
@@ -166,7 +166,7 @@ namespace SPTLeaderboard.Models
 			
 			PhpPath = configFile.Bind(
 				"1. Settings", 
-				"PHP Path", 
+				"Server Path", 
 				"/api/main/", 
 				new ConfigDescription(
 					"DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.\n Domain (or both subdomain + domain) used for PHP requests",

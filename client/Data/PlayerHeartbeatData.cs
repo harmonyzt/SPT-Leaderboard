@@ -15,6 +15,9 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("sessionId")]
         public string SessionId { get; set; }
+        
+        [JsonProperty("token")]
+        public string Token { get; set; }
     }
     
     public class PlayerHeartbeatRaidData
@@ -39,5 +42,8 @@ namespace SPTLeaderboard.Data
 
         [JsonProperty("gameTime")]
         public string GameTime { get; set; }
+        
+        [JsonProperty("token")]
+        public string Token { get; set; }
     }
 }
