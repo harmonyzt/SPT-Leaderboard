@@ -27,7 +27,7 @@ export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
 
     public async checkInbox(sessionId: string): Promise<void> {
         try {
-            const response = await fetch(`https://visuals.nullcore.net/SPT/api/inbox/checkInbox.php?sessionId=${sessionId}`);
+            const response = await fetch(`https://sptlb.yuyui.moe/api/main/inbox/checkInbox.php?sessionId=${sessionId}`);
             const data = await response.json();
 
             let generatedItems = [];
