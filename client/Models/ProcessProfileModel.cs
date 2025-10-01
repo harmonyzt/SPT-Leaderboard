@@ -113,6 +113,20 @@ public class ProcessProfileModel
 
                 #region Stats
                 
+                var AverageShot = 0.0f;
+                var LongestShot = 0;
+                if (dataDistanceHits.Count > 1)
+                {
+                    AverageShot = dataDistanceHits.Average();
+                    AverageShot = (float)Math.Round(AverageShot, 1);
+
+                    LongestShot = (int)dataDistanceHits.Max();
+#if DEBUG || BETA
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+#endif
+                }
+                
                 #region PMCStats
                 
                 var MaxHealth = pmcData.Health.BodyParts.Where(
@@ -126,19 +140,12 @@ public class ProcessProfileModel
                 var KilledPmc = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
                 var KilledSavage = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                 var KilledBoss = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
-                var LongestShot = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
+                // var LongestShot = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot); // Don`t work in 4.1.0 
                 var ExpLooting = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.ExpLooting);
                 var HitCount = session.Profile.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                 var TotalDamage = (int)session.Profile.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
-                var AverageShot = 0.0f;
-                if (dataDistanceHits.Count > 1)
-                {
-                    AverageShot = dataDistanceHits.Average();
-                    AverageShot = (float)Math.Round(AverageShot, 1);
-#if DEBUG || BETA
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] AverageShot {AverageShot}");
-#endif
-                }
+                
+                
 #if DEBUG || BETA
                 LeaderboardPlugin.logger.LogWarning($"Death coordinates {PlayerHelper.Instance.LastDeathPosition}");
 #endif
@@ -146,11 +153,11 @@ public class ProcessProfileModel
                 if (!isScavRaid)
                 {
 #if DEBUG || BETA
-                    LeaderboardPlugin.logger.LogWarning($"\n");
-                    LeaderboardPlugin.logger.LogWarning($"\n[Session Counter] KilledPmc {KilledPmc}");
+                    LeaderboardPlugin.logger.LogWarning("\n");
+                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc {KilledPmc}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage {KilledSavage}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss {KilledBoss}");
-                    LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}");
+                    // LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot {LongestShot}"); // Don`t work in 4.1.0 
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage {TotalDamage}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] ExpLooting {ExpLooting}");
                     LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount {HitCount}");
@@ -166,7 +173,7 @@ public class ProcessProfileModel
                     KilledPmc = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledPmc);
                     KilledSavage = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledSavage);
                     KilledBoss = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.KilledBoss);
-                    LongestShot = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot);
+                    // LongestShot = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.LongestShot); // Don`t work in 4.1.0 
                     HitCount = scavData.Stats.Eft.SessionCounters.GetInt(SessionCounterTypesAbstractClass.HitCount);
                     TotalDamage = (int)scavData.Stats.Eft.SessionCounters.GetFloat(SessionCounterTypesAbstractClass.CauseBodyDamage);
 
@@ -175,7 +182,7 @@ public class ProcessProfileModel
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledPmc Scav {KilledPmc}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledSavage Scav {KilledSavage}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] KilledBoss Scav {KilledBoss}");
-                        LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}");
+                        // LeaderboardPlugin.logger.LogWarning($"[Session Counter] LongestShot Scav {LongestShot}"); // Don`t work in 4.1.0 
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] HitCount Scav {HitCount}");
                         LeaderboardPlugin.logger.LogWarning($"[Session Counter] CauseBodyDamage Scav {TotalDamage}");
 #endif

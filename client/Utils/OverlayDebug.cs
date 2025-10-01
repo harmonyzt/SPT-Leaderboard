@@ -52,10 +52,12 @@ public class OverlayDebug: MonoBehaviour
         if (_overlayText == null) return;
         
         var currentHitsData = HitsTracker.Instance.GetHitsData();
+        var longestShot = HitsTracker.Instance.GetLongestShot();
+        
         _overlayText.text = string.Format(
-                "Raid hits:\nHead -> {0}\nChest -> {1}\nStomach -> {2}\nLeftArm -> {3}\nRightArm -> {4}\nLeftLeg -> {5}\nRightLeg -> {6}",
+                "Raid hits:\nHead -> {0}\nChest -> {1}\nStomach -> {2}\nLeftArm -> {3}\nRightArm -> {4}\nLeftLeg -> {5}\nRightLeg -> {6}\n \n \n LongestShot -> {7}",
             currentHitsData.Head, currentHitsData.Chest, currentHitsData.Stomach, currentHitsData.LeftArm,
-            currentHitsData.RightArm, currentHitsData.LeftLeg, currentHitsData.RightLeg);
+            currentHitsData.RightArm, currentHitsData.LeftLeg, currentHitsData.RightLeg, longestShot);
     }
 
     public void SetOverlayPosition(Vector2 anchoredPosition)
