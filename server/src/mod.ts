@@ -22,7 +22,7 @@ export class SPTLeaderboard implements IPreSptLoadMod {
         container.register<LeaderboardItemCallbacks>("LeaderboardItemCallbacks", LeaderboardItemCallbacks);
         container.register<InboxHelper>("InboxHelper", InboxHelper);
         container.register<LeaderboardItemHelper>("LeaderboardItemHelper", LeaderboardItemHelper);
-        container.register<LeaderboardRagfairHelper>("RagfairHelper", LeaderboardRagfairHelper);
+        container.register<LeaderboardRagfairHelper>("LeaderboardRagfairHelper", LeaderboardRagfairHelper);
         container.registerType("StaticRoutes", "LeaderboardInboxRouter");
         container.registerType("StaticRoutes", "LeaderboardItemRouter");
     }

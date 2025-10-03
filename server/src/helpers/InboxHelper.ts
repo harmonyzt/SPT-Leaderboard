@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { LeaderboardItemHelper } from "./LeaderboardItemHelper";
 import { MailSendService } from "@spt/services/MailSendService";
 import { TraderHelper } from "@spt/helpers/TraderHelper";
@@ -6,6 +6,7 @@ import { ICheckInboxResponse } from "../models/remote/inbox/ICheckInboxResponse"
 import { MessageType } from "@spt/models/enums/MessageType";
 import { SPTLeaderboard } from "../mod";
 
+@injectable()
 export class InboxHelper {
     constructor(
         @inject("LeaderboardItemHelper") protected leaderboardItemHelper: LeaderboardItemHelper,
