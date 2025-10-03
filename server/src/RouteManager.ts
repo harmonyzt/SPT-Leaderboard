@@ -19,12 +19,10 @@ export class RouteManager {
 
     // -------------------------- Public members --------------------------
 
-    public preSptLoad(
-        sptLeaderboard: SPTLeaderboard,
-        instanceManager: InstanceManager
-    ): void {
+    constructor(sptLeaderboard: SPTLeaderboard, instanceManager: InstanceManager, ragfair: RagfairOfferService) {
         this.sptLeaderboard = sptLeaderboard;
         this.InstanceManager = instanceManager;
+        this.offerService = ragfair;
         this.coreConfig = instanceManager.configServer.getConfig<ICoreConfig>(ConfigTypes.CORE);
 
         // Register inbox checking if it's enabled - otherwise do nothing

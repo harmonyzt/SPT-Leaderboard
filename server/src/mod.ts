@@ -11,13 +11,13 @@ import { IItem } from "@spt/models/eft/common/tables/IItem";
 export class SPTLeaderboard implements IPreSptLoadMod, IPostDBLoadMod {
 
     public isInboxChecked: boolean = false;
-    private instanceManager: InstanceManager = new InstanceManager();
-    private routeManager: RouteManager = new RouteManager();
+    private instanceManager: InstanceManager;
+    private routeManager: RouteManager;
+    public static sessionsInboxChecks: Map<string, boolean> = new Map();
 
     public preSptLoad(container: DependencyContainer): void {
-        // Do nothing else before this - Cj
-        this.instanceManager.preSptLoad(container);
-        this.routeManager.preSptLoad(this, this.instanceManager);
+        this.instanceManager = new InstanceManager();
+        this.routeManager = new RouteManager()
     }
 
     public postDBLoad(container: DependencyContainer): void {
