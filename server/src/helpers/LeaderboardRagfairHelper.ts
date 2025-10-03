@@ -1,11 +1,10 @@
 import { ItemHelper } from "@spt/helpers/ItemHelper";
-import { RagfairOfferHelper } from "@spt/helpers/RagfairOfferHelper";
 import { IRagfairOffer } from "@spt/models/eft/ragfair/IRagfairOffer";
 import { RagfairOfferService } from "@spt/services/RagfairOfferService";
 import { inject, injectable } from "tsyringe";
 
 @injectable()
-export class RagfairHelper {
+export class LeaderboardRagfairHelper {
     constructor(
         @inject("RagfairOfferService") protected ragfairOfferService: RagfairOfferService,
         @inject("ItemHelper") protected itemHelper: ItemHelper) {

@@ -1,9 +1,10 @@
 import { inject } from "tsyringe";
-import { LeaderboardItemHelper } from "./ItemHelper";
+import { LeaderboardItemHelper } from "./LeaderboardItemHelper";
 import { MailSendService } from "@spt/services/MailSendService";
 import { TraderHelper } from "@spt/helpers/TraderHelper";
 import { ICheckInboxResponse } from "../models/remote/inbox/ICheckInboxResponse";
 import { MessageType } from "@spt/models/enums/MessageType";
+import { SPTLeaderboard } from "../mod";
 
 export class InboxHelper {
     constructor(
@@ -14,7 +15,10 @@ export class InboxHelper {
 
     public async checkInbox(sessionId: string): Promise<boolean> {
         try {
-            let response = await fetch(`https://sptlb.yuyui.moe/api/main/inbox/checkInbox.php?sessionId=${sessionId}`);
+            const url = new URL("/api/main/checkInbox.php", SPTLeaderboard.apiUrl);
+            const params = new URLSearchParams(`sessionId=${sessionId}`);
+
+            let response = await fetch(url + params.toString());
             if (!response.ok) {
                 return false;
             }

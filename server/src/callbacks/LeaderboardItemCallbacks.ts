@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { LeaderboardItemHelper } from "../helpers/ItemHelper";
+import { LeaderboardItemHelper } from "../helpers/LeaderboardItemHelper";
 import { ILeaderboardGetItemPricesRequest } from "../models/routes/items/ILeaderboardGetItemPricesRequest";
 
 @injectable()

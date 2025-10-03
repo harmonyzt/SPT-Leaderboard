@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { RagfairHelper } from "./RagfairHelper";
+import { LeaderboardRagfairHelper } from "./LeaderboardRagfairHelper";
 import { ItemHelper } from "@spt/helpers/ItemHelper";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { IItem } from "@spt/models/eft/common/tables/IItem";
@@ -7,7 +7,7 @@ import { IItem } from "@spt/models/eft/common/tables/IItem";
 @injectable()
 export class LeaderboardItemHelper {
     constructor(
-        @inject("RagfairHelper") protected ragfairHelper: RagfairHelper,
+        @inject("LeaderboardRagfairHelper") protected leaderboardRagfairHelper: LeaderboardRagfairHelper,
         @inject("ItemHelper") protected itemHelper: ItemHelper,
         @inject("HashUtil") protected hashUtil: HashUtil
     ) { }
@@ -19,7 +19,7 @@ export class LeaderboardItemHelper {
 
         let totalPrice = 0;
         for (let item of templateIds) {
-            let lowestPrice = this.ragfairHelper.getLowestItemPrice(item);
+            let lowestPrice = this.leaderboardRagfairHelper.getLowestItemPrice(item);
             totalPrice += lowestPrice;
         }
         return totalPrice;
