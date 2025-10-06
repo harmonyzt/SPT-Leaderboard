@@ -6,13 +6,13 @@ namespace SPTLeaderboard.Data;
 
 public static class GlobalData
 {
-    public const string Version = "4.1.1";
+    public const string Version = "4.1.0";
     
 #if DEBUG || BETA
-    public const string SubVersion = "4";
+    public const string SubVersion = "7";
 #endif
     
-    public const string BaseSptVersion = "3.11.4";
+    public const string BaseSptVersion = "4.0";
     
     public const int HeartbeatCooldownSeconds = 60;
     

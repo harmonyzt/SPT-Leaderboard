@@ -90,7 +90,7 @@ public class PlayerHelper
         if (item == null)
             return 0;
 
-        var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
+        var capacity = item.Grids.Sum(CompoundItem.Class2341.class2341_0.method_10);
 #if DEBUG || BETA
         LeaderboardPlugin.logger.LogWarning($"Size {slot.ToString()} {capacity}");
 #endif
@@ -109,7 +109,7 @@ public class PlayerHelper
         if (item == null)
             return 0;
 
-        var capacity = item.Grids.Sum(CompoundItem.Class2227.class2227_0.method_10);
+        var capacity = item.Grids.Sum(CompoundItem.Class2341.class2341_0.method_10);
 #if DEBUG || BETA
         LeaderboardPlugin.logger.LogWarning($"Size Stash {capacity}");
 #endif
@@ -165,13 +165,13 @@ public class PlayerHelper
     public static string TryGetAgressorName(Profile profile)
     {
         string nameKiller = "";
-        GClass767 agressorData = profile.EftStats.Aggressor;
+        GClass788 agressorData = profile.EftStats.Aggressor;
         if (agressorData != null)
         {
                     
-            if (((GInterface187)agressorData).ProfileId != profile.Id)
+            if (((GInterface214)agressorData).ProfileId != profile.Id)
             {
-                if (((GInterface187)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
+                if (((GInterface214)agressorData).ProfileId == "66f3fad50ec64d74847d049d")
                 {
                     nameKiller = LocalizationModel.GetLocaleName(agressorData.Name, false);
                 }

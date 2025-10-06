@@ -20,7 +20,7 @@ namespace SPTLeaderboard.Patches
                 "Show",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                [typeof(MatchMakerSideSelectionScreen.GClass3629)],
+                [typeof(MatchMakerSideSelectionScreen.GClass3919)],
                 null
             );
 

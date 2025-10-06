@@ -57,28 +57,29 @@ public static class DataUtils
     {
         List<string> listServerMods = new List<string>();
 
-        try
-        {
-            string json = RequestHandler.GetJson("/launcher/profile/info");
-
-            if (string.IsNullOrWhiteSpace(json))
-                return listServerMods;
-
-            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
-
-            if (serverProfileInfo?.sptData?.Mods != null)
-            {
-                foreach (var serverMod in serverProfileInfo.sptData.Mods)
-                {
-                    if (serverMod?.Name != null)
-                        listServerMods.Add(serverMod.Name);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
-        }
+        // TODO: IMPLEMENT FOR 4.0
+        // try
+        // {
+        //     string json = RequestHandler.GetJson("/launcher/profile/info");
+        //
+        //     if (string.IsNullOrWhiteSpace(json))
+        //         return listServerMods;
+        //
+        //     ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
+        //
+        //     if (serverProfileInfo?.sptData?.Mods != null)
+        //     {
+        //         foreach (var serverMod in serverProfileInfo.sptData.Mods)
+        //         {
+        //             if (serverMod?.Name != null)
+        //                 listServerMods.Add(serverMod.Name);
+        //         }
+        //     }
+        // }
+        // catch (Exception ex)
+        // {
+        //     LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
+        // }
 
         return listServerMods;
     }
@@ -264,29 +265,21 @@ public static class DataUtils
         };
     }
 
-    public static void TryGetTransitionData(GClass1959 resultRaid, Action<string, bool> callback)
+    public static void TryGetTransitionData(RaidEndDescriptorClass resultRaid, Action<string, bool> callback)
     {
-        var isTransition = false;
         var lastRaidTransitionTo = "None";
         if (resultRaid.result == ExitStatus.Transit
-            && TransitControllerAbstractClass.Exist<GClass1676>(out var transitController))
+            && TransitControllerAbstractClass.Exist<LocalGameTransitControllerClass>(out var transitController))
         {
-            if (transitController.localRaidSettings_0.location != "None")
-            {
-                isTransition = true;
-                var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
-                lastRaidTransitionTo = DataUtils.GetPrettyMapName(locationTransit.location.ToLower());
-                
-                LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {lastRaidTransitionTo}");
-                LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
-                callback.Invoke(lastRaidTransitionTo, isTransition);
-                return;
-            }
-            callback.Invoke(lastRaidTransitionTo, isTransition);
+            var locationTransit = transitController.alreadyTransits[resultRaid.ProfileId];
+            lastRaidTransitionTo = GetPrettyMapName(locationTransit.location.ToLower());
+            
+            LeaderboardPlugin.logger.LogWarning($"Player transit to map PRETTY {lastRaidTransitionTo}");
+            LeaderboardPlugin.logger.LogWarning($"Player transit to map RAW {locationTransit.location}");
+            callback.Invoke(lastRaidTransitionTo, true);
             return;
         }
-        callback.Invoke(lastRaidTransitionTo, isTransition);
-        return;
+        callback.Invoke(lastRaidTransitionTo, false);
     }
     
     /// <summary>

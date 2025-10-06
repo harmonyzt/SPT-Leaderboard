@@ -25,8 +25,7 @@
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
         <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModDebug.ps1
         </PostBuildEvent>
@@ -39,8 +38,7 @@
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
         <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModRelease.ps1
         </PostBuildEvent>
@@ -51,8 +49,7 @@
         <Optimize>true</Optimize>
         <DebugType>pdbonly</DebugType>
         <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Games\SPT-Dev\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Games\SPT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
+            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
             powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModBeta.ps1
         </PostBuildEvent>

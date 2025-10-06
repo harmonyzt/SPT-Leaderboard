@@ -9,7 +9,7 @@ namespace SPTLeaderboard.Patches
     internal class OnStartRaidPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod() =>
-            typeof(Class303).GetMethod(
+            typeof(Class308).GetMethod(
                 "LocalRaidStarted",
                 BindingFlags.Instance | BindingFlags.Public);
 

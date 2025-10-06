@@ -21,7 +21,7 @@ namespace SPTLeaderboard.Patches
                     typeof(InventoryController),
                     typeof(AbstractQuestControllerClass),
                     typeof(AbstractAchievementControllerClass),
-                    typeof(GClass3695),
+                    typeof(AbstractPrestigeControllerClass),
                     typeof(CompoundItem),
                     typeof(EInventoryTab),
                     typeof(ISession),

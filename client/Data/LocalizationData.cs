@@ -4,7 +4,7 @@ namespace SPTLeaderboard.Data;
 
 public class LocalizationData
 {
-    public static Dictionary<string, string> Error_API_BANNED = new() // TODO: Get error code for this
+    public static Dictionary<string, string> Error_API_BANNED = new()
     {
         { "ch", "您因违反排行榜规则而被封禁" },
         { "cz", "Byli jste zabanováni za porušení pravidel žebříčku." },

@@ -159,7 +159,7 @@ namespace SPTLeaderboard.Models
             };
         }
         
-        public static string GetCorrectedNickname(GInterface187 profileData)
+        public static string GetCorrectedNickname(GInterface214 profileData)
         {
             return profileData.Side == EPlayerSide.Savage ? Transliterate(profileData.Nickname) : profileData.Nickname;
         }
@@ -171,7 +171,7 @@ namespace SPTLeaderboard.Models
         /// <returns></returns>
         private static string Transliterate(string text)
         {
-            return GClass930.dictionary_0.Aggregate(text, (current, key) => current.Replace(key.Key, key.Value));
+            return GClass953.Dictionary_0.Aggregate(text, (current, key) => current.Replace(key.Key, key.Value));
         }
 
         /// <summary>

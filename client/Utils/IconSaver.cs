@@ -15,7 +15,7 @@ namespace SPTLeaderboard.Utils
     public class IconSaver : MonoBehaviour
     {
         private bool _isShowed;
-        private GClass907 _presetIcon;
+        private GClass929 _presetIcon;
         private PlayerModelView _targetPlayerModelView;
         
         public GameObject clonePlayerModelViewObj;
@@ -30,7 +30,7 @@ namespace SPTLeaderboard.Utils
 
             XYCellSizeStruct textureSize = new XYCellSizeStruct(500, 500);
 
-            _presetIcon = Singleton<GClass905>.Instance.method_11(new GClass910(profile.Inventory.Equipment.CloneVisibleItem(), profile.Customization), textureSize);
+            _presetIcon = Singleton<GClass927>.Instance.method_11(new GClass932(profile.Inventory.Equipment.CloneVisibleItem(), profile.Customization), textureSize);
 
             if (_presetIcon.Sprite == null)
             {

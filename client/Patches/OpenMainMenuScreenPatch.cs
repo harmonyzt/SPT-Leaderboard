@@ -34,7 +34,7 @@ namespace SPTLeaderboard.Patches
             
             if (!LeaderboardPlugin.Instance.engLocaleLoaded)
             { 
-                bool hasEnLocale = LocaleManagerClass.LocaleManagerClass.dictionary_4.TryGetValue("en", out _);
+                bool hasEnLocale = LocaleManagerClass.LocaleManagerClass.Dictionary_4.TryGetValue("en", out _);
                 if (!hasEnLocale)
                 {
                     _ = LocalizationModel.Instance.LoadEnglishLocaleAsync();
