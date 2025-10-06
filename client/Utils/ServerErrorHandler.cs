@@ -18,9 +18,8 @@ namespace SPTLeaderboard.Utils
             }
         }
 
-        private static ErrorType GetTypeError(long errorCode)
-        {
-            return errorCode switch
+        private static ErrorType GetTypeError(long errorCode) =>
+            errorCode switch
             {
                 699 => ErrorType.VIOLATION_LA_TOS,
                 700 => ErrorType.TOKEN_MISMATCH,
@@ -33,10 +32,10 @@ namespace SPTLeaderboard.Utils
                 707 => ErrorType.NSFW_NAME,
                 800 => ErrorType.API_BANNED,
                 801 => ErrorType.API_TOO_MANY_REQUESTS,
+                802 => ErrorType.BANNED,
                 _ => ErrorType.SILENT_ERROR
             };
-        }
-        
+
         public static ENotificationDurationType GetDurationType(ErrorType errorType)
         {
             return errorType switch
@@ -50,6 +49,7 @@ namespace SPTLeaderboard.Utils
                 ErrorType.NSFW_NAME => ENotificationDurationType.Long,
                 ErrorType.DEVITEMS => ENotificationDurationType.Long,
                 ErrorType.API_BANNED => ENotificationDurationType.Infinite,
+                ErrorType.BANNED => ENotificationDurationType.Infinite,
                 ErrorType.API_TOO_MANY_REQUESTS => ENotificationDurationType.Long,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
@@ -69,6 +69,7 @@ namespace SPTLeaderboard.Utils
         DEVITEMS,
         CAPACITY,
         API_BANNED,
+        BANNED,
         API_TOO_MANY_REQUESTS
     }
 }

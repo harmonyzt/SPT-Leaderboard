@@ -154,6 +154,7 @@ namespace SPTLeaderboard.Models
                 ErrorType.NSFW_NAME => LocalizationData.Error_NsfwName,
                 ErrorType.DEVITEMS => LocalizationData.Error_DevItems,
                 ErrorType.API_BANNED => LocalizationData.Error_API_BANNED,
+                ErrorType.BANNED => LocalizationData.Error_BANNED,
                 ErrorType.API_TOO_MANY_REQUESTS => LocalizationData.Error_API_TOO_MUCH_REQUESTS,
                 _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null)
             };
