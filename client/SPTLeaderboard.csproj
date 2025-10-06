@@ -65,7 +65,7 @@
             <HintPath>Dependencies\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="CommonExtensions">
-          <HintPath>..\..\..\..\Games\SPT\EscapeFromTarkov_Data\Managed\CommonExtensions.dll</HintPath>
+          <HintPath>Dependencies\CommonExtensions.dll</HintPath>
         </Reference>
         <Reference Include="spt-common">
             <HintPath>Dependencies\spt-common.dll</HintPath>
@@ -116,7 +116,7 @@
             <HintPath>Dependencies\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.ImageConversionModule">
-          <HintPath>..\..\..\..\Games\SPT\EscapeFromTarkov_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+          <HintPath>Dependencies\UnityEngine.ImageConversionModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
