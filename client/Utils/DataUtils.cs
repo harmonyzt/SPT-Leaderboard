@@ -8,6 +8,7 @@ using BepInEx.Bootstrap;
 using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
+using Newtonsoft.Json;
 using SPT.Common.Http;
 using SPT.Common.Utils;
 using SPT.Reflection.Utils;
@@ -81,6 +82,78 @@ public static class DataUtils
         }
 
         return listServerMods;
+    }
+    
+    
+    /// <summary>
+    /// Get final price from list items
+    /// </summary>
+    /// <returns></returns>
+    public static int GetPriceItems(List<string> listItems)
+    {
+        var price = 0;
+
+        var data = new ItemsData()
+        {
+            Items = listItems
+        };
+        
+        try
+        {
+            var json = RequestHandler.PostJson("/SPTLB/GetItemPrices", JsonConvert.SerializeObject(data));
+            
+            if (string.IsNullOrWhiteSpace(json))
+                return price;
+
+            price = int.Parse(json);
+            
+            LeaderboardPlugin.logger.LogWarning($"GetPriceItems Response = {price}");
+        }
+        catch (Exception ex)
+        {
+            LeaderboardPlugin.logger.LogWarning($"GetPriceItems failed: {ex}");
+            return price;
+        }
+
+        return price;
+    }
+    
+    /// <summary>
+    /// Get price from item
+    /// </summary>
+    /// <returns></returns>
+    public static int GetPriceItem(MongoID item)
+    {
+        var price = 0;
+
+        var listItems = new List<string>()
+        {
+            item.ToString()
+        };
+        
+        var data = new ItemsData()
+        {
+            Items = listItems
+        };
+        
+        try
+        {
+            var json = RequestHandler.PostJson("/SPTLB/GetItemPrices", JsonConvert.SerializeObject(data));
+
+            if (string.IsNullOrWhiteSpace(json))
+                return price;
+
+            price = int.Parse(json);
+            
+            LeaderboardPlugin.logger.LogWarning($"GetPriceItems Response = {price}");
+        }
+        catch (Exception ex)
+        {
+            LeaderboardPlugin.logger.LogWarning($"GetPriceItems failed: {ex}");
+            return price;
+        }
+        
+        return price;
     }
 
     public static List<string> GetUserMods()

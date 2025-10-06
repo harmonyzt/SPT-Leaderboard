@@ -138,6 +138,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Data\BaseData.cs" />
+        <Compile Include="Data\ItemsData.cs" />
         <Compile Include="Data\PreRaidData.cs" />
         <Compile Include="Data\CustomizedObject.cs" />
         <Compile Include="Data\EquipmentData.cs" />
@@ -169,6 +170,8 @@
         <Compile Include="Patches\OnGameWorldDisposePatch.cs" />
         <Compile Include="Patches\OnGameWorldStartPatch.cs" />
         <Compile Include="Patches\OnInitPlayerPatch.cs" />
+        <Compile Include="Patches\OnPlayerAddedItem.cs" />
+        <Compile Include="Patches\OnPlayerRemovedItem.cs" />
         <Compile Include="Patches\OnStartRaidPatch.cs" />
         <Compile Include="Patches\OpenInventoryScreenPatch.cs" />
         <Compile Include="Patches\OpenLoadingRaidScreenPatch.cs" />
@@ -185,6 +188,7 @@
         <Compile Include="Utils\ServerErrorHandler.cs" />
         <Compile Include="Utils\IconSaver.cs" />
         <Compile Include="Utils\StatTrackInterop.cs" />
+        <Compile Include="Utils\TrackingLoot.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="Dependencies\Keys\sptld.snk" />

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Comfort.Common;
 using EFT;
 using EFT.Communications;
@@ -53,6 +54,22 @@ public class PlayerHelper
     public static Vector3 ConvertToMapPosition(Vector3 unityPosition)
     {
         return new Vector3(unityPosition.x, unityPosition.z, unityPosition.y);
+    }
+    
+    public static List<string> GetEquipmentItemsIds(){
+        var session = GetSession();
+        var pmcData = session?.GetProfileBySide(ESideType.Pmc);
+        var listEquipment = pmcData.Inventory.GetPlayerItems(EPlayerItems.Equipment);
+        
+        return listEquipment.Select(item => item.Id).Select(dummy => dummy).ToList();
+    }
+    
+    public static List<string> GetEquipmentItemsTemplateId(){
+        var session = GetSession();
+        var pmcData = session?.GetProfileBySide(ESideType.Pmc);
+        var listEquipment = pmcData.Inventory.GetPlayerItems(EPlayerItems.Equipment);
+        
+        return listEquipment.Select(item => item.TemplateId).Select(dummy => (string)dummy).ToList();
     }
     
     #region Equipment

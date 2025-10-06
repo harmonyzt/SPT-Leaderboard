@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Timers;
 using BepInEx;
 using BepInEx.Logging;
@@ -9,6 +10,7 @@ using SPTLeaderboard.Models;
 using SPTLeaderboard.Patches;
 using SPTLeaderboard.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SPTLeaderboard
 {
@@ -21,6 +23,7 @@ namespace SPTLeaderboard
         private LocalizationModel _localization;
         private EncryptionModel _encrypt;
         private IconSaver _iconSaver;
+        private TrackingLoot _trackingLoot = new TrackingLoot();
         
         private Timer _inRaidHeartbeatTimer;
         private Timer _preRaidCheckTimer;
@@ -29,6 +32,8 @@ namespace SPTLeaderboard
         public bool cachedPlayerModelPreview = false;
         public bool engLocaleLoaded = false;
         public bool configUpdated = false;
+
+        public HashSet<string> BeforeRaidPlayerEquipment = new HashSet<string>();
 
         public static ManualLogSource logger;
 
@@ -53,6 +58,8 @@ namespace SPTLeaderboard
             new OnInitPlayerPatch().Enable();
             new OnEnemyDamagePatch().Enable();
             new PlayerOnDeadPatch().Enable();
+            new OnPlayerAddedItem().Enable();
+            new OnPlayerRemovedItem().Enable();
             
             if (!DataUtils.IsLoaded)
             {
@@ -74,7 +81,16 @@ namespace SPTLeaderboard
             Instance = this;
             logger.LogInfo("Successful loaded!");
         }
-        
+
+        private void Update()
+        {
+            if (_settings.KeyBind.Value.IsDown())
+            {
+                var listItems = PlayerHelper.GetEquipmentItemsTemplateId();
+                DataUtils.GetPriceItems(listItems);
+            }
+        }
+
         #region Icons
         
         /// <summary>
@@ -336,5 +352,7 @@ namespace SPTLeaderboard
         }
         
         #endregion
+        
+        public TrackingLoot TrackingLoot=> _trackingLoot;
     }
 }
