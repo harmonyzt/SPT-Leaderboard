@@ -1,38 +1,28 @@
-# SPT Leaderboard Mod
 
-A mod for Single Player Tarkov (SPT) that tracks and displays player statistics on an online leaderboard.
+# Mod examples for v4.0.0
 
-## Features
+A collection of example mods that perform various actions in SPT
 
-- **Automatic Stat Tracking**: Records raid results, kills, damage, and other performance stats
-- **Public/Private Profiles**: Choose whether to display your stats publicly
-- **Achievement Tracking**: Your most recent achievement with details
-- **Detailed Statistics**: Tracks:
-  - PMC and SCAV levels
-  - Raid results (Survived/Died/Runner)
-  - Damage dealt
-  - Longest kill shot
-  - Win streaks
-  - Play time
-  - And more!
+# Setup
+The solution has numbered folders, starting at 1 and work downwards to find examples with increasing complexity.
 
-## Installation and How it works
+Each mod imports multiple NUGET packages. These are used as libraries of the server code.
 
-1. Download the latest release
-2. Extract the folder into your `Root SPT game` directory
-3. Launch SPT Server to generate your unique token
-4. Finish a raid
+### Prerequisites
+ [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+ Visual Studio Community / Ryder
+ 
+### **Essential Concepts**
+Prioritize understanding Dependency Injection and Inversion of Control, the architectural principles SPT adopts.
 
-## Configuration
+ - [A quick intro to Dependency Injection](https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/)
+ - [Understanding Inversion of Control (IoC) Principle](https://medium.com/@amitkma/understanding-inversion-of-control-ioc-principle-163b1dc97454)
 
-Edit `config/config.js` to customize:
-
-```json
-{
-  "public_profile": true,
-  "connectionRetries": 1,
-  "profile_aboutMe": "Your profile description",
-  "profile_profilePicture": "URL to your profile picture",
-  "profile_profileTheme": "Darker",
-  "profile_usePrestigeStyling": true
-}
+### Build
+`Visual Studio > Build > Rebuild Solution`
+`Rider > TODO`
+ 
+## Distribution
+- Build the project in 'Release' mode
+- Copy the folder inside: `mod\bin\Release` into your servers `/mods` folder
+- Start server
