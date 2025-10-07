@@ -8,6 +8,7 @@ using BepInEx.Bootstrap;
 using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
+using Newtonsoft.Json;
 using SPT.Common.Http;
 using SPT.Common.Utils;
 using SPT.Reflection.Utils;
@@ -58,28 +59,25 @@ public static class DataUtils
         List<string> listServerMods = new List<string>();
 
         // TODO: IMPLEMENT FOR 4.0
-        // try
-        // {
-        //     string json = RequestHandler.GetJson("/launcher/profile/info");
-        //
-        //     if (string.IsNullOrWhiteSpace(json))
-        //         return listServerMods;
-        //
-        //     ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
-        //
-        //     if (serverProfileInfo?.sptData?.Mods != null)
-        //     {
-        //         foreach (var serverMod in serverProfileInfo.sptData.Mods)
-        //         {
-        //             if (serverMod?.Name != null)
-        //                 listServerMods.Add(serverMod.Name);
-        //         }
-        //     }
-        // }
-        // catch (Exception ex)
-        // {
-        //     LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
-        // }
+        try
+        {
+            // string json = RequestHandler.PutJson("/launcher/profile/info", JsonConvert.SerializeObject(new LoginRequestData(PlayerHelper.GetProfile().Nickname, "")));
+            string json = RequestHandler.GetJson("/launcher/server/serverModsUsedByProfile");
+            LeaderboardPlugin.logger.LogWarning($"GetServerMods {json}");
+            if (string.IsNullOrWhiteSpace(json))
+                return listServerMods;
+        
+            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
+        
+            if (serverProfileInfo?.sptData?.Mods != null)
+            {
+                listServerMods.AddRange(from serverMod in serverProfileInfo.sptData.Mods where serverMod?.Name != null select serverMod.Name);
+            }
+        }
+        catch (Exception ex)
+        {
+            LeaderboardPlugin.logger.LogWarning($"GetServerMods failed: {ex}");
+        }
 
         return listServerMods;
     }

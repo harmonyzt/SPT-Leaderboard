@@ -135,6 +135,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Data\BaseData.cs" />
+        <Compile Include="Data\LoginRequestData.cs" />
         <Compile Include="Data\PreRaidData.cs" />
         <Compile Include="Data\CustomizedObject.cs" />
         <Compile Include="Data\EquipmentData.cs" />

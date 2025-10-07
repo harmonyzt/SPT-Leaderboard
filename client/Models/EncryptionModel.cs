@@ -94,7 +94,7 @@ namespace SPTLeaderboard.Models
             #if DEBUG
             if (SettingsModel.Instance.Debug.Value)
             {
-                return "";
+                return "dcb0d416f5ee16a7ea23c5ee028f822b6b19e6a96d61a0bc2049c7560f9f2f56";
             }
             #endif
             
