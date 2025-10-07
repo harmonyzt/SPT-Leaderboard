@@ -3,7 +3,6 @@ using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Servers.Http;
 using SPTarkov.Server.Core.Utils;
 
 namespace SPTLeaderboard;
@@ -29,15 +28,18 @@ public record ModMetadata : AbstractModMetadata
 public class CustomStaticRouter : StaticRouter
 {
     private static HttpResponseUtil _httpResponseUtil;
+    private static ISptLogger<Logging> _logger;
 
     public CustomStaticRouter(
         JsonUtil jsonUtil,
-        HttpResponseUtil httpResponseUtil) : base(
+        HttpResponseUtil httpResponseUtil,
+        ISptLogger<Logging> logger) : base(
         jsonUtil,
         GetCustomRoutes()
     )
     {
         _httpResponseUtil = httpResponseUtil;
+        _logger = logger;
     }
 
     private static List<RouteAction> GetCustomRoutes()
@@ -58,8 +60,23 @@ public class CustomStaticRouter : StaticRouter
 
     private static ValueTask<object> HandleRoute(string url, IRequestData info, MongoId sessionId, object output)
     {
-        Console.WriteLine("Hooked moving items..?");
+        Console.WriteLine("Hooked moving items..");
+        _logger.Success("This is a success message");
+        if (sessionId.IsEmpty) {
+            return new ValueTask<object>(output);
+        }
+        
 
         return new ValueTask<object>(output);
+    }
+}
+
+
+[Injectable(TypePriority = OnLoadOrder.PreSptModLoader + 1)]
+public class Logging(ISptLogger<Logging> logger) : IOnLoad
+{
+    public Task OnLoad()
+    {
+        return Task.CompletedTask;
     }
 }
