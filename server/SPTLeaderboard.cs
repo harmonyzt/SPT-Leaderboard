@@ -24,59 +24,12 @@ public record ModMetadata : AbstractModMetadata
     public override string? License { get; init; } = "MIT";
 }
 
-[Injectable]
-public class CustomStaticRouter : StaticRouter
-{
-    private static HttpResponseUtil _httpResponseUtil;
-    private static ISptLogger<Logging> _logger;
-
-    public CustomStaticRouter(
-        JsonUtil jsonUtil,
-        HttpResponseUtil httpResponseUtil,
-        ISptLogger<Logging> logger) : base(
-        jsonUtil,
-        GetCustomRoutes()
-    )
-    {
-        _httpResponseUtil = httpResponseUtil;
-        _logger = logger;
-    }
-
-    private static List<RouteAction> GetCustomRoutes()
-    {
-        return
-        [
-            new RouteAction(
-                "/client/game/profile/items/moving",
-                async (
-                    url,
-                    info,
-                    sessionId,
-                    output
-                ) => await HandleRoute(url, info, sessionId, output)
-            )
-        ];
-    }
-
-    private static ValueTask<object> HandleRoute(string url, IRequestData info, MongoId sessionId, object output)
-    {
-        Console.WriteLine("Hooked moving items..");
-        _logger.Success("This is a success message");
-        if (sessionId.IsEmpty) {
-            return new ValueTask<object>(output);
-        }
-        
-
-        return new ValueTask<object>(output);
-    }
-}
-
-
 [Injectable(TypePriority = OnLoadOrder.PreSptModLoader + 1)]
 public class Logging(ISptLogger<Logging> logger) : IOnLoad
 {
     public Task OnLoad()
     {
+        logger.Info("Good mornyan everynyan");
         return Task.CompletedTask;
     }
 }
