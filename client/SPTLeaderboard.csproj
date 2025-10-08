@@ -200,8 +200,8 @@
             <OutputDir Include="$(ProjectDir)" />
         </ItemGroup>
         <Exec Condition="'$(Configuration)' == 'Debug'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)BuildScripts\PackModDebug.ps1&quot;" />
-        <Exec Condition="'$(Configuration)' == 'Release'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)\BuildScripts\PackModRelease.ps1&quot;" />
-        <Exec Condition="'$(Configuration)' == 'Beta'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)\BuildScripts\PackModBeta.ps1&quot;" />
+        <Exec Condition="'$(Configuration)' == 'Release'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)BuildScripts\PackModRelease.ps1&quot;" />
+        <Exec Condition="'$(Configuration)' == 'Beta'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)BuildScripts\PackModBeta.ps1&quot;" />
     </Target>
 
 </Project>

@@ -75,14 +75,6 @@ namespace SPTLeaderboard
             logger.LogInfo("Successful loaded!");
         }
 
-        private void Update()
-        {
-            if (_settings.KeyBind.Value.IsDown())
-            {
-                DataUtils.GetServerMods();
-            }
-        }
-
         #region Icons
         
         /// <summary>
