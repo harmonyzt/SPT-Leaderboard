@@ -1,7 +1,16 @@
-$dllPath = "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll"
-$globalDataPath = "C:\GitHub\Tarkov\SPT-Leaderboard\client\Data\GlobalData.cs"
+Set-Location -Path $PSScriptRoot
 
-$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).ProductVersion
+$dllPath = ".\Build\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll"
+$dllFullPath = Join-Path $PSScriptRoot $dllPath
+$globalDataPath = "..\Data\GlobalData.cs"
+
+Write-Host "Checking DLL in path: $dllFullPath"
+if (-Not (Test-Path $dllFullPath)) {
+    Write-Error "DLL file not found: $dllFullPath"
+    exit 1
+}
+
+$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllFullPath).ProductVersion
 $versionClean = $version -replace '[^\d\.]', ''
 
 $subVersionLine = Get-Content $globalDataPath | Where-Object { $_ -match 'SubVersion\s*=\s*"(\d+)"' }
@@ -12,11 +21,11 @@ if ($subVersionLine -match 'SubVersion\s*=\s*"(\d+)"') {
     exit 1
 }
 
-$sha256 = Get-FileHash -Algorithm SHA256 -Path $dllPath
+$sha256 = Get-FileHash -Algorithm SHA256 -Path $dllFullPath
 Write-Host "SHA256 Hash of DLL: $($sha256.Hash.ToLower())"
 
-$sourceFolder = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\*"
-$destination7z = "C:\Users\Katrin0522\Documents\1 - DATA\SPT_Leaderboard_DEBUG_v${versionClean}-${subVersion}.7z"
+$sourceFolder = ".\Build\*"
+$destination7z = ".\SPT_Leaderboard_DEBUG_v${versionClean}-${subVersion}.7z"
 
 # Path 7z
 $sevenZipPath = "C:\Program Files\7-Zip\7z.exe"
