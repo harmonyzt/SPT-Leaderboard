@@ -16,6 +16,12 @@
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>Dependencies\Keys\sptld.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
+    <PropertyGroup>
+        <TarkovDir Condition=" '$(TarkovDir)' == '' ">C:\Games\SPT4_0\</TarkovDir>
+        <TarkovPluginsSPTDir>$(TarkovDir)BepInEx\plugins\spt\</TarkovPluginsSPTDir>
+        <TarkovManagedDir>$(TarkovDir)EscapeFromTarkov_Data\Managed\</TarkovManagedDir>
+        <TarkovBepInExCoreDir>$(TarkovDir)BepInEx\core\</TarkovBepInExCoreDir>
+    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
@@ -24,11 +30,6 @@
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Debug\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModDebug.ps1
-        </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <DebugType>pdbonly</DebugType>
@@ -37,62 +38,52 @@
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-        <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Release\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModRelease.ps1
-        </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Beta|AnyCPU' ">
         <OutputPath>bin\Beta\</OutputPath>
         <DefineConstants>BETA;TRACE</DefineConstants>
         <Optimize>true</Optimize>
         <DebugType>pdbonly</DebugType>
-        <PostBuildEvent>
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Games\SPT4_0\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            copy /Y "C:\GitHub\Tarkov\SPT-Leaderboard\client\bin\Beta\SPTLeaderboard.dll" "C:\Users\Katrin0522\Documents\1 - DATA\SPT_ROOT\BepInEx\plugins\SPT-Leaderboard\SPTLeaderboard.dll
-            powershell -ExecutionPolicy Bypass -File "C:\GitHub\Tarkov\SPT-Leaderboard\client\BuildScripts\PackModBeta.ps1
-        </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup>
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony">
-            <HintPath>Dependencies\0Harmony.dll</HintPath>
+            <HintPath>$(TarkovBepInExCoreDir)0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="CommonExtensions">
-          <HintPath>Dependencies\CommonExtensions.dll</HintPath>
+          <HintPath>$(TarkovManagedDir)CommonExtensions.dll</HintPath>
         </Reference>
         <Reference Include="spt-common">
-            <HintPath>Dependencies\spt-common.dll</HintPath>
+            <HintPath>$(TarkovPluginsSPTDir)spt-common.dll</HintPath>
         </Reference>
         <Reference Include="spt-custom">
-          <HintPath>Dependencies\spt-custom.dll</HintPath>
+          <HintPath>$(TarkovPluginsSPTDir)spt-custom.dll</HintPath>
         </Reference>
         <Reference Include="spt-reflection">
-            <HintPath>Dependencies\spt-reflection.dll</HintPath>
+            <HintPath>$(TarkovPluginsSPTDir)spt-reflection.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp">
-            <HintPath>Dependencies\Assembly-CSharp.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="BepInEx">
-            <HintPath>Dependencies\BepInEx.dll</HintPath>
+            <HintPath>$(TarkovBepInExCoreDir)BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="Comfort">
-            <HintPath>Dependencies\Comfort.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Comfort.dll</HintPath>
         </Reference>
         <Reference Include="Comfort.Unity, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\Comfort.Unity.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Comfort.Unity.dll</HintPath>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\Newtonsoft.Json.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Newtonsoft.Json.dll</HintPath>
         </Reference>
         <Reference Include="Sirenix.Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\Sirenix.Serialization.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Sirenix.Serialization.dll</HintPath>
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
@@ -104,33 +95,33 @@
         <Reference Include="System.Xml"/>
         <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\Unity.TextMeshPro.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)Unity.TextMeshPro.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine">
-            <HintPath>Dependencies\UnityEngine.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>Dependencies\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.ImageConversionModule">
-          <HintPath>Dependencies\UnityEngine.ImageConversionModule.dll</HintPath>
+          <HintPath>$(TarkovManagedDir)UnityEngine.ImageConversionModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\UnityEngine.IMGUIModule.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)UnityEngine.IMGUIModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputLegacyModule">
-            <HintPath>Dependencies\UnityEngine.InputLegacyModule.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>Dependencies\UnityEngine.UI.dll</HintPath>
+            <HintPath>$(TarkovManagedDir)UnityEngine.UI.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UIModule">
-          <HintPath>Dependencies\UnityEngine.UIModule.dll</HintPath>
+          <HintPath>$(TarkovManagedDir)UnityEngine.UIModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UnityWebRequestModule">
-          <HintPath>Dependencies\UnityEngine.UnityWebRequestModule.dll</HintPath>
+          <HintPath>$(TarkovManagedDir)UnityEngine.UnityWebRequestModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -188,4 +179,29 @@
       <None Include="Dependencies\Keys\sptld.snk" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <PropertyGroup>
+        <PostBuildEvent>
+        </PostBuildEvent>
+    </PropertyGroup>
+    <Target Name="CopyDll" AfterTargets="PostBuildEvent">
+        <ItemGroup>
+            <OutputDLL Include="$(ProjectDir)$(OutDir)$(TargetName).dll" />
+        </ItemGroup>
+        <!-- Copies the output to tarkov game folder -->
+        <Copy SourceFiles="@(OutputDLL)" DestinationFolder="$(TarkovDir)BepInEx\plugins\SPT-Leaderboard\%(RecursiveDir)" />
+        <!-- Delete previous build folder -->
+        <RemoveDir Directories="$(ProjectDir)BuildScripts\Build" />
+        <!-- Copy dll to build folder -->
+        <Copy SourceFiles="@(OutputDLL)" DestinationFolder="$(ProjectDir)BuildScripts\Build\BepInEx\plugins\SPT-Leaderboard\%(RecursiveDir)" />
+    </Target>
+    <Target Name="RunPackModScript" AfterTargets="CopyDll">
+        <ItemGroup>
+            <OutputDLL Include="$(ProjectDir)$(OutDir)$(TargetName).dll" />
+            <OutputDir Include="$(ProjectDir)" />
+        </ItemGroup>
+        <Exec Condition="'$(Configuration)' == 'Debug'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)BuildScripts\PackModDebug.ps1&quot;" />
+        <Exec Condition="'$(Configuration)' == 'Release'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)\BuildScripts\PackModRelease.ps1&quot;" />
+        <Exec Condition="'$(Configuration)' == 'Beta'" Command="powershell -ExecutionPolicy Bypass -File &quot;$(OutputDir)\BuildScripts\PackModBeta.ps1&quot;" />
+    </Target>
+
 </Project>

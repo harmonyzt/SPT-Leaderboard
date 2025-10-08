@@ -8,3 +8,5 @@ node_modules
 secret.token
 *vscode
 client/SPTLeaderboard.sln.DotSettings.user
+*.7z
+client/BuildScripts/Build
