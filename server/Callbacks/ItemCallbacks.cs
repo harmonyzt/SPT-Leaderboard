@@ -2,16 +2,17 @@
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
+using SPTarkov.Server.Core.Utils;
 using SPTLeaderboard.Models.Requests;
 using SPTLeaderboard.Utils;
 
 namespace SPTLeaderboard.Callbacks;
 
-[Injectable(InjectionType.Singleton)]
-public class ItemCallbacks(ItemUtils itemUtils)
+[Injectable]
+public class ItemCallbacks(HttpResponseUtil httpResponseUtil, ItemUtils itemUtils)
 {
-    public ValueTask<double> HandleItemPrices(string url, ItemPricesRequestData requestData, MongoId sessionId, string? output)
+    public ValueTask<string> HandleItemPrices(ItemPricesRequestData requestData)
     {
-        return new ValueTask<double>(itemUtils.GetTotalFleaPrice(requestData.TemplateIds));
+        return new ValueTask<string>(httpResponseUtil.NoBody(itemUtils.GetTotalFleaPrice(requestData.TemplateIds)));
     }
 }

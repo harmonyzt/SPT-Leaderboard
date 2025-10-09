@@ -18,6 +18,6 @@ public class ItemRouter : StaticRouter
 
    private static List<RouteAction> GetRoutes()
       => [
-         new("/SPTLB/GetItemPrices", async (url, data, sessionId, output) => await _callbacks.HandleItemPrices(url, (data as ItemPricesRequestData)!, sessionId, output))
+         new RouteAction<ItemPricesRequestData>("/SPTLB/GetItemPrices", async (url, data, sessionId, output) => await _callbacks.HandleItemPrices(data))
       ];
 }

@@ -6,13 +6,13 @@ using SPTLeaderboard.Models;
 
 namespace SPTLeaderboard.Callbacks;
 
-[Injectable(InjectionType.Singleton)]
+[Injectable]
 public class InboxCallbacks(
     SessionInboxChecks inboxChecks,
     HttpResponseUtil httpResponseUtil,
     ILogger<InboxCallbacks> logger)
 {
-    public ValueTask<object> HandleInboxNotChecked(string url, IRequestData data, MongoId sessionId, string? output)
+    public ValueTask<object> HandleInboxNotChecked(MongoId sessionId, string? output)
     {
         logger.LogDebug("{SessionId} not checked", sessionId);
         if (!inboxChecks.TrySetSessionInboxState(sessionId, false))
@@ -24,10 +24,10 @@ public class InboxCallbacks(
         return new ValueTask<object>(httpResponseUtil.NoBody(output));
     }
 
-    public ValueTask<object> HandleInboxChecked(string url, IRequestData data, MongoId sessionId, string? output)
+    public ValueTask<object> HandleInboxChecked(MongoId sessionId, string? output)
     {
         logger.LogDebug("{SessionId} is checked", sessionId);
-        if (!inboxChecks.TryGetSessionInboxState(sessionId))
+        if (!inboxChecks.TrySetSessionInboxState(sessionId, true))
         {
             logger.LogDebug("added {SessionId} to inbox checks", sessionId);
             inboxChecks.AddSessionInboxState(sessionId, true);

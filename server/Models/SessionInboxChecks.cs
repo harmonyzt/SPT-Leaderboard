@@ -28,8 +28,14 @@ public class SessionInboxChecks
         return true;
     }
 
-    public bool TryGetSessionInboxState(MongoId sessionId)
+    public bool TryGetSessionInboxState(MongoId sessionId, out bool indexState)
     {
-        return _inboxChecks.ContainsKey(sessionId) && _inboxChecks[sessionId];
+        indexState = false;
+        if (!_inboxChecks.TryGetValue(sessionId, out bool value))
+        {
+            return false;
+        }
+        indexState = value;
+        return true;
     }
 }

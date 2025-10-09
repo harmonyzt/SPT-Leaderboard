@@ -18,9 +18,9 @@ public class InboxRouter : StaticRouter
     {
         return
         [
-            new RouteAction("/client/match/local/end", async (url, data, sessionId, output) => await _callbacks.HandleInboxNotChecked(url, data, sessionId, output)),
-            new RouteAction("/client/game/logout", async (url, data, sessionId, output) => await _callbacks.HandleInboxNotChecked(url, data, sessionId, output)),
-            new RouteAction("/client/game/profile/items/moving", async (url, data, sessionId, output) => await _callbacks.HandleInboxChecked(url, data, sessionId, output)),
+            new RouteAction("/client/match/local/end", async (url, data, sessionId, output) => await _callbacks.HandleInboxNotChecked(sessionId, output)),
+            new RouteAction("/client/game/logout", async (url, data, sessionId, output) => await _callbacks.HandleInboxNotChecked(sessionId, output)),
+            new RouteAction("/client/game/profile/items/moving", async (url, data, sessionId, output) => await _callbacks.HandleInboxChecked(sessionId, output)),
         ];
     }
     
