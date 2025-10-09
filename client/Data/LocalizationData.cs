@@ -25,6 +25,27 @@ public class LocalizationData
         { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
     };
     
+    public static Dictionary<string, string> Error_BANNED = new() // TODO: Get error code for this
+    {
+        { "ch", "您因违反排行榜规则而被封禁" },
+        { "cz", "Byli jste zabanováni za porušení pravidel žebříčku." },
+        { "en", "You have been banned from Leaderboard. Contact staff for more info." },
+        { "fr", "Vous avez été banni pour avoir enfreint les règles du classement." },
+        { "ge", "Sie wurden wegen Verstoßes gegen die Bestenlistenregeln gesperrt." },
+        { "hu", "Ki lettél tiltva a ranglista szabályainak megsértése miatt." },
+        { "it", "Sei stato bannato per aver violato le regole della classifica." },
+        { "jp", "ランキングのルール違反によりBANされました" },
+        { "kr", "리더보드 규칙 위반으로 인해 이용이 제한되었습니다" },
+        { "pl", "Zostałeś zbanowany za naruszenie zasad rankingu." },
+        { "po", "Você foi banido por violar as regras da tabela de classificação." },
+        { "sk", "Boli ste zabanovaní za porušenie pravidiel rebríčka." },
+        { "es", "Has sido baneado por infringir las reglas del leaderboard." },
+        { "es-mx", "Has sido baneado por violar las reglas del leaderboard." },
+        { "tu", "Liderlik tablosu kurallarını ihlal ettiğiniz için yasaklandınız." },
+        { "ru", "Вы были забанены за нарушение правил SPT Leaderboard." },
+        { "ro", "Ai fost interzis pentru încălcarea regulilor clasamentului." }
+    };
+    
     public static Dictionary<string, string> Error_API_TOO_MUCH_REQUESTS = new()
     {
         { "ch", "您向API发送了太多请求。 稍后再试。" },
