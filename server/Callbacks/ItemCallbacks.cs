@@ -13,6 +13,6 @@ public class ItemCallbacks(HttpResponseUtil httpResponseUtil, ItemUtils itemUtil
 {
     public ValueTask<string> HandleItemPrices(ItemPricesRequestData requestData)
     {
-        return new ValueTask<string>(httpResponseUtil.NoBody(itemUtils.GetTotalFleaPrice(requestData.TemplateIds)));
+        return new ValueTask<string>(httpResponseUtil.NoBody(itemUtils.GetTotalHandBookPrice(requestData.TemplateIds)));
     }
 }
