@@ -58,20 +58,19 @@ public static class DataUtils
     {
         List<string> listServerMods = new List<string>();
 
-        // TODO: IMPLEMENT FOR 4.0
         try
         {
-            // string json = RequestHandler.PutJson("/launcher/profile/info", JsonConvert.SerializeObject(new LoginRequestData(PlayerHelper.GetProfile().Nickname, "")));
             string json = RequestHandler.GetJson("/launcher/server/serverModsUsedByProfile");
-            LeaderboardPlugin.logger.LogWarning($"GetServerMods {json}");
+            LeaderboardPlugin.logger.LogWarning($"GetServerMods: {json}");
             if (string.IsNullOrWhiteSpace(json))
                 return listServerMods;
-        
-            ServerProfileInfo serverProfileInfo = Json.Deserialize<ServerProfileInfo>(json);
-        
-            if (serverProfileInfo?.sptData?.Mods != null)
+            
+            List<ModItem> serverMods = Json.Deserialize<List<ModItem>>(json);
+
+            if (serverMods != null)
             {
-                listServerMods.AddRange(from serverMod in serverProfileInfo.sptData.Mods where serverMod?.Name != null select serverMod.Name);
+                var listMods = serverMods.Select(mod => mod.Name).ToList();
+                listServerMods.AddRange(listMods);
             }
         }
         catch (Exception ex)
@@ -81,6 +80,7 @@ public static class DataUtils
 
         return listServerMods;
     }
+
     
     
     /// <summary>

@@ -10,7 +10,6 @@ using SPTLeaderboard.Models;
 using SPTLeaderboard.Patches;
 using SPTLeaderboard.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace SPTLeaderboard
 {
