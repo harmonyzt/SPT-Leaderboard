@@ -36,10 +36,10 @@ namespace SPTLeaderboard.Data
         public string ProfileID { get; set; }
 
         [JsonProperty("sptData")]
-        public SPTData sptData { get; set; }
+        public SPTModsData SptModsData { get; set; }
     }
 
-    public class SPTData
+    public class SPTModsData
     {
         [JsonProperty("mods")]
         public List<ModItem> Mods { get; set; }

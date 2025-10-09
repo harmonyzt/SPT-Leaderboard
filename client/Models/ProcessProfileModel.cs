@@ -7,8 +7,6 @@ using EFT.UI;
 using Newtonsoft.Json;
 using SPTLeaderboard.Data;
 using SPTLeaderboard.Utils;
-using UnityEngine;
-using TraderData = SPTLeaderboard.Data.TraderData;
 
 namespace SPTLeaderboard.Models;
 
@@ -31,6 +29,21 @@ public class ProcessProfileModel
                 var pmcData = session.GetProfileBySide(ESideType.Pmc);
                 var scavData = session.GetProfileBySide(ESideType.Savage);
 
+                #region ItemsProcess
+
+                var trackingLoot = LeaderboardPlugin.Instance.TrackingLoot;
+                
+                var preRaidItems = DataUtils.GetPriceItems(PlayerHelper.GetEquipmentItemsTemplateId());
+                var afterRaidItems = DataUtils.GetPriceItems(trackingLoot.TrackedIds.ToList());
+                
+                LeaderboardPlugin.logger.LogWarning($"preRaidItems = {preRaidItems}");
+                LeaderboardPlugin.logger.LogWarning($"afterRaidItems = {afterRaidItems}");
+                
+                LeaderboardPlugin.logger.LogWarning($"Difference = {preRaidItems-afterRaidItems}");
+                
+
+                #endregion
+                
                 string nameKiller = "";
                 if (resultRaid.result == ExitStatus.Killed)
                 {
@@ -79,7 +92,7 @@ public class ProcessProfileModel
                 );
                 
                 #region CheckGodBalaclava
-                
+
                 var allItemsRaw = pmcData.Inventory.GetPlayerItems();
                 var allItems = allItemsRaw.ToList();
                 
